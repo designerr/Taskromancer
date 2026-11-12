@@ -244,6 +244,117 @@ fn open_url(app: AppHandle, url: String) -> Result<(), String> {
     app.opener().open_url(url, None::<&str>).map_err(err)
 }
 
+// ---------- boards: reference images live as files next to the data ----------
+
+fn boards_dir(app: &AppHandle) -> Result<PathBuf, String> {
+    let dir = data_dir(app)?.join("boards");
+    fs::create_dir_all(&dir).map_err(err)?;
+    Ok(dir)
+}
+
+fn raw_body<'a>(request: &'a tauri::ipc::Request<'_>) -> Result<&'a [u8], String> {
+    match request.body() {
+        tauri::ipc::InvokeBody::Raw(bytes) => Ok(bytes),
+        _ => Err("expected raw bytes".into()),
+    }
+}
+
+/// Header values arrive percent-encoded so that any file name survives the trip.
+fn header(request: &tauri::ipc::Request<'_>, key: &str) -> Option<String> {
+    let value = request.headers().get(key)?.to_str().ok()?;
+    let bytes = value.as_bytes();
+    let mut out = Vec::with_capacity(bytes.len());
+    let mut i = 0;
+    while i < bytes.len() {
+        if bytes[i] == b'%' && i + 2 < bytes.len() {
+            if let Ok(v) = u8::from_str_radix(&value[i + 1..i + 3], 16) {
+                out.push(v);
+                i += 3;
+                continue;
+            }
+        }
+        out.push(bytes[i]);
+        i += 1;
+    }
+    Some(String::from_utf8_lossy(&out).into_owned())
+}
+
+/// Downloads an image dragged in from a browser (the page itself can't, browsers block cross-site reads).
+#[tauri::command]
+async fn fetch_image(url: String) -> Result<tauri::ipc::Response, String> {
+    if !(url.starts_with("http://") || url.starts_with("https://")) {
+        return Err("only web addresses can be downloaded".into());
+    }
+    let origin = url.splitn(4, '/').take(3).collect::<Vec<_>>().join("/") + "/";
+    let client = reqwest::Client::builder()
+        .user_agent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36")
+        .timeout(std::time::Duration::from_secs(30))
+        .build()
+        .map_err(err)?;
+    let resp = client
+        .get(&url)
+        .header("Referer", origin)
+        .header("Accept", "image/avif,image/webp,image/png,image/jpeg,image/*;q=0.8,*/*;q=0.5")
+        .send()
+        .await
+        .map_err(err)?
+        .error_for_status()
+        .map_err(err)?;
+    let bytes = resp.bytes().await.map_err(err)?;
+    if bytes.len() > 80 * 1024 * 1024 {
+        return Err("that image is larger than 80 MB".into());
+    }
+    Ok(tauri::ipc::Response::new(bytes.to_vec()))
+}
+
+#[tauri::command]
+fn board_dir(app: AppHandle) -> Result<String, String> {
+    Ok(boards_dir(&app)?.to_string_lossy().to_string())
+}
+
+#[tauri::command]
+fn save_board_image(app: AppHandle, request: tauri::ipc::Request<'_>) -> Result<String, String> {
+    static COUNTER: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
+    let bytes = raw_body(&request)?;
+    let ext: String = header(&request, "ext").unwrap_or_default().chars().filter(|c| c.is_ascii_alphanumeric()).take(5).collect();
+    let ext = if ext.is_empty() { "png".to_string() } else { ext };
+    let stamp = SystemTime::now().duration_since(UNIX_EPOCH).map(|d| d.as_millis()).unwrap_or(0);
+    let n = COUNTER.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+    let name = format!("img-{stamp}-{n}.{ext}");
+    fs::write(boards_dir(&app)?.join(&name), bytes).map_err(err)?;
+    Ok(name)
+}
+
+#[tauri::command]
+fn read_board_image(app: AppHandle, name: String) -> Result<tauri::ipc::Response, String> {
+    if name.contains('/') || name.contains('\\') || name.contains("..") {
+        return Err("bad file name".into());
+    }
+    let bytes = fs::read(boards_dir(&app)?.join(name)).map_err(err)?;
+    Ok(tauri::ipc::Response::new(bytes))
+}
+
+/// Asks where to save, then writes the bytes (board exports). Returns false when cancelled.
+#[tauri::command]
+async fn save_bytes_dialog(app: AppHandle, request: tauri::ipc::Request<'_>) -> Result<bool, String> {
+    let bytes = raw_body(&request)?.to_vec();
+    let name = header(&request, "name").unwrap_or_else(|| "export.png".into());
+    let picked = app.dialog().file().set_file_name(&name).blocking_save_file();
+    match picked.and_then(|f| f.into_path().ok()) {
+        Some(path) => {
+            fs::write(path, bytes).map_err(err)?;
+            Ok(true)
+        }
+        None => Ok(false),
+    }
+}
+
+#[tauri::command]
+fn write_bytes(request: tauri::ipc::Request<'_>) -> Result<(), String> {
+    let path = header(&request, "path").ok_or("missing path")?;
+    fs::write(path, raw_body(&request)?).map_err(err)
+}
+
 #[tauri::command]
 fn open_path(app: AppHandle, path: String) -> Result<(), String> {
     app.opener().open_path(path, None::<&str>).map_err(err)
@@ -458,7 +569,13 @@ pub fn run() {
             reveal_path,
             check_update,
             install_update,
-            open_url
+            open_url,
+            board_dir,
+            save_board_image,
+            read_board_image,
+            save_bytes_dialog,
+            write_bytes,
+            fetch_image
         ])
         .run(tauri::generate_context!())
         .expect("error while running Taskromancer");

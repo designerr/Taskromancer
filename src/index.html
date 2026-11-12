@@ -277,6 +277,45 @@ dialog h2{font:500 20px var(--f-px);margin:0;color:var(--bone)}
 .toast.show{display:flex}
 .toast button{font:500 14px var(--f-px);color:var(--soul)}
 
+/* ---------- v13: boards ---------- */
+.bd-wrap{display:flex;flex-direction:column;gap:8px}
+.bd-tools{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.bd-tools select.field{padding:5px 8px;font-size:13px;max-width:200px}
+.bd-tools .bd-name{width:170px;padding:5px 8px;font-size:13px}
+.bd-tools .bd-link{max-width:220px}
+.bd-tools .btn[aria-pressed="true"]{box-shadow:inset 0 0 0 1px var(--soul);color:var(--soul)}
+.bd-stage{position:relative;height:calc(100vh - 210px);min-height:420px;overflow:hidden;background:var(--sink);border:2px solid var(--abyss);box-shadow:inset 0 0 0 1px var(--edge);outline:none;cursor:default;
+  background-image:radial-gradient(circle,color-mix(in srgb,var(--edge) 70%,transparent) 1px,transparent 1px);background-size:24px 24px}
+.bd-stage.grab{cursor:grab}.bd-stage.panning{cursor:grabbing}
+.bd-stage.dropping{box-shadow:inset 0 0 0 2px var(--soul)}
+.bd-stage.gray .bd-world{filter:grayscale(1)}
+.bd-world{position:absolute;left:0;top:0;transform-origin:0 0}
+.bi{position:absolute;transform-origin:center;user-select:none}
+.bi .bimg{position:absolute;inset:0;overflow:hidden}
+.bi img{position:absolute;max-width:none;pointer-events:none;image-rendering:auto}
+.bi.igray img{filter:grayscale(1)}
+.bi.locked{pointer-events:none}
+.bi.cropping{z-index:5}
+.bi.cropping .bimg{overflow:visible}
+.bi.cropping img{outline:calc(1px * var(--iz)) dashed color-mix(in srgb,var(--text) 50%,transparent)}
+.bi.cropping .bimg::after{content:"";position:absolute;inset:0;box-shadow:0 0 0 99999px rgba(0,0,0,.55);pointer-events:none}
+.bsel{position:absolute;pointer-events:none;outline:calc(1.5px * var(--iz)) solid var(--soul);transform-origin:center;z-index:6}
+.bsel.crop{outline-color:#fff}
+.bh{position:absolute;width:calc(10px * var(--iz));height:calc(10px * var(--iz));background:var(--soul);border:calc(1px * var(--iz)) solid #000;pointer-events:auto;transform:translate(-50%,-50%)}
+.bsel.crop .bh{background:#fff}
+.bh.nw{left:0;top:0;cursor:nwse-resize}.bh.ne{left:100%;top:0;cursor:nesw-resize}.bh.se{left:100%;top:100%;cursor:nwse-resize}.bh.sw{left:0;top:100%;cursor:nesw-resize}
+.bh.n{left:50%;top:0;cursor:ns-resize}.bh.s{left:50%;top:100%;cursor:ns-resize}.bh.e{left:100%;top:50%;cursor:ew-resize}.bh.w{left:0;top:50%;cursor:ew-resize}
+.brot{position:absolute;left:50%;top:calc(-26px * var(--iz));width:calc(12px * var(--iz));height:calc(12px * var(--iz));border-radius:50%;background:var(--stone2);border:calc(2px * var(--iz)) solid var(--soul);transform:translate(-50%,-50%);pointer-events:auto;cursor:grab}
+.bd-marq{position:absolute;display:none;border:1px solid var(--soul);background:color-mix(in srgb,var(--soul) 12%,transparent);pointer-events:none;z-index:7}
+.bd-hint{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);max-width:420px;text-align:center;color:var(--muted);font-size:13.5px;pointer-events:none}
+.bmenu{position:fixed;z-index:80;min-width:250px;max-height:86vh;overflow:auto;display:flex;flex-direction:column;padding:4px;background:var(--stone2);border:2px solid var(--abyss);box-shadow:inset 0 0 0 1px var(--edge-hi),0 12px 30px #000b}
+.bmenu button{display:flex;justify-content:space-between;gap:16px;padding:5px 10px;font-size:13px;color:var(--text);text-align:left}
+.bmenu button:hover:not([disabled]){background:var(--stone3)}
+.bmenu button[disabled]{color:var(--dim);cursor:default}
+.bmenu kbd{font:11px var(--f-ui);color:var(--dim)}
+.bmenu hr{border:0;border-top:1px solid var(--edge);margin:3px 0}
+body.compact .bd-stage{height:calc(100vh - 150px)}
+
 /* ---------- v12: links, library, campaign projects, compact timer ---------- */
 .links{display:flex;flex-direction:column;gap:4px}
 .links .lbl{font-size:12px;color:var(--muted)}
@@ -700,6 +739,7 @@ select.field option,select.catsel option{background:var(--card);color:var(--text
 <div class="toast" id="toast" role="status"><span id="toastMsg"></span><button id="toastUndo" data-act="undo">Undo</button></div>
 <input type="file" id="importFile" accept="application/json,.json" hidden>
 <input type="file" id="imgFile" accept="image/*" multiple hidden>
+<input type="file" id="bdFile" accept="image/*" multiple hidden>
 <input type="file" id="qFile" accept=".txt,text/plain" hidden>
 <input type="file" id="txtFile" accept=".txt,text/plain" multiple hidden>
 
@@ -824,7 +864,7 @@ function fresh(){
     timer:{ state:'idle', acc:0, runStart:null, segStart:null },
     pending:[], projects:[], quests:[], goals:[], notes:[], focus:null,
     cats:[{id:'idea',emoji:'💡',name:'Ideas'},{id:'work',emoji:'📌',name:'Work'},{id:'learn',emoji:'🧠',name:'Learning'},{id:'life',emoji:'🏠',name:'Personal'}],
-    calc:['',''], dayTimed:{ day:'', ms:0 }, sess:sessDefaults(), rnd:rndDefaults(), quotes:{ active:'auto', lists:quoteDefaults() }, roots:[],
+    calc:['',''], dayTimed:{ day:'', ms:0 }, sess:sessDefaults(), rnd:rndDefaults(), quotes:{ active:'auto', lists:quoteDefaults() }, roots:[], boards:[],
     stats:{ cuts:0, allocs:0, questsDone:0, since:now() },
     ui:{ tab:'board', q:'', hideDone:false, crypt:false, edit:null, goalSort:'deadline', goalIcon:'', openGoal:null,
          reportDay:'', decimal:false, dayGoal:8, noteCat:'', noteSort:'manual', manageCats:false, noteCatNew:'idea', noteQ:'', draft:'', ritualTab:'tracker', sessOpen:false, tabOrder:null, catPick:null, newCatEmoji:'⭐', deckEdit:null, noteMenu:null, theme:'necro', hiddenTabs:[], qEdit:null } };
@@ -838,6 +878,8 @@ function normalize(s){
   if(!o.dayTimed || typeof o.dayTimed!=='object') o.dayTimed={ day:'', ms:0 };
   if(!Array.isArray(o.ui.hiddenTabs)) o.ui.hiddenTabs=[];
   if(!Array.isArray(o.roots)) o.roots=[];
+  if(!Array.isArray(o.boards)) o.boards=[];
+  o.boards.forEach(b=>{ if(!Array.isArray(b.items)) b.items=[]; b.view ||= { x:0, y:0, z:1 }; });
   if(!o.ui.compact || typeof o.ui.compact!=='object') o.ui.compact={};
   if(!o.quotes || !Array.isArray(o.quotes.lists)) o.quotes={ active:'auto', lists:quoteDefaults() };
   { const d=sessDefaults(), x=s.sess||{}; o.sess=Object.assign(d,x); o.sess.cfg=Object.assign(sessDefaults().cfg,x.cfg||{}); o.sess.run=Object.assign(sessDefaults().run,x.run||{});
@@ -855,15 +897,16 @@ let state;
 try { state = normalize(JSON.parse(localStorage.getItem(LS))); } catch { state = fresh(); }
 
 /* persistence: local first, then the person's private artifact storage, split in two parts so neither hits the size cap */
-let refs=null, saveT=null, saving=false, again=false, pushed={ core:'', notes:'', rnd:'' };
+let refs=null, saveT=null, saving=false, again=false, pushed={ core:'', notes:'', rnd:'', boards:'' };
 const setSync = t => { $('#sync').textContent = t; };
 function save(){ state.updatedAt=now(); try{ localStorage.setItem(LS, JSON.stringify(state)); }catch{} clearTimeout(saveT); saveT=setTimeout(push, 800); deskSave(); }
-function splitState(){ const { notes, cats, rnd, ...core } = state; return { core:JSON.stringify(core), notes:JSON.stringify({ notes, cats }), rnd:JSON.stringify({ rnd }) }; }
+function splitState(){ const { notes, cats, rnd, boards, ...core } = state; return { core:JSON.stringify(core), notes:JSON.stringify({ notes, cats }), rnd:JSON.stringify({ rnd }), boards:JSON.stringify({ boards }) }; }
 async function push(){
   if(!refs) return; if(saving){ again=true; return; } saving=true; setSync('Saving…');
   try{ const p=splitState(), u=state.updatedAt;
     if(p.notes!==pushed.notes){ await refs.notes.set({ json:p.notes, updatedAt:u }); pushed.notes=p.notes; }
     if(p.rnd!==pushed.rnd){ await refs.rnd.set({ json:p.rnd, updatedAt:u }); pushed.rnd=p.rnd; }
+    if(p.boards!==pushed.boards){ await refs.boards.set({ json:p.boards, updatedAt:u }); pushed.boards=p.boards; }
     { await refs.core.set({ json:p.core, updatedAt:u }); pushed.core=p.core; }
     setSync('Synced'); }
   catch(e){ setSync(e?.code==='quota_exceeded' ? 'Too much data, export a backup' : 'Saved on this device'); }
@@ -874,10 +917,10 @@ async function push(){
     if(!window.claude?.use) return;
     const [db,user] = await Promise.all([claude.use('db'), claude.use('user')]);
     if(!db||!user) return; const id = await user.id(); if(!id) return;
-    refs = { core:db.doc(`data/users/${id}/core`), notes:db.doc(`data/users/${id}/notes`), rnd:db.doc(`data/users/${id}/rnd`) };
-    const [c,n,rd,legacy] = await Promise.all([refs.core.get(), refs.notes.get(), refs.rnd.get(), db.doc(`data/users/${id}/taskromancer`).get()]);
+    refs = { core:db.doc(`data/users/${id}/core`), notes:db.doc(`data/users/${id}/notes`), rnd:db.doc(`data/users/${id}/rnd`), boards:db.doc(`data/users/${id}/boards`) };
+    const [c,n,rd,bd,legacy] = await Promise.all([refs.core.get(), refs.notes.get(), refs.rnd.get(), refs.boards.get(), db.doc(`data/users/${id}/taskromancer`).get()]);
     let remote=null, ru=0;
-    if(c.exists){ const d=c.data(); remote=JSON.parse(d.json); ru=d.updatedAt||0; if(n.exists) Object.assign(remote, JSON.parse(n.data().json)); if(rd.exists) Object.assign(remote, JSON.parse(rd.data().json)); }
+    if(c.exists){ const d=c.data(); remote=JSON.parse(d.json); ru=d.updatedAt||0; if(n.exists) Object.assign(remote, JSON.parse(n.data().json)); if(rd.exists) Object.assign(remote, JSON.parse(rd.data().json)); if(bd.exists) Object.assign(remote, JSON.parse(bd.data().json)); }
     else if(legacy.exists){ const d=legacy.data(); remote=JSON.parse(d.json); ru=d.updatedAt||0; }
     if(remote && ru > (state.updatedAt||0)){
       state=normalize(remote); state.updatedAt=ru; try{ localStorage.setItem(LS, JSON.stringify(state)); }catch{}
@@ -1442,7 +1485,7 @@ function renderHarvest(){
   if(A) updateSum();
 }
 
-const TABS = [['board','Quest Board'],['campaigns','Campaigns'],['report','Report'],['notes','Notes'],['rnd','Randomizer'],['lib','Library']];
+const TABS = [['board','Quest Board'],['campaigns','Campaigns'],['report','Report'],['notes','Notes'],['boards','Boards'],['rnd','Randomizer'],['lib','Library']];
 function closeMenu(){ state.ui.noteMenu=null; document.querySelector('.nmenu')?.remove(); }
 function tabOrder(all){ const keys=TABS.map(t=>t[0]), o=(state.ui.tabOrder||[]).filter(k=>keys.includes(k)), full=[...o, ...keys.filter(k=>!o.includes(k))]; return all ? full : full.filter(k=>!state.ui.hiddenTabs.includes(k)); }
 function renderTabs(){
@@ -1452,6 +1495,7 @@ function renderTabs(){
 }
 function renderBoard(){
   const t=state.ui.tab;
+  if(t==='boards'){ renderBoardsTab(); return; } $('#board').dataset.view=t; closeBoardMenu();
   $('#board').innerHTML = t==='campaigns' ? viewCampaigns() : t==='report' ? viewReport() : t==='notes' ? viewNotes() : t==='rnd' ? viewRnd() : t==='lib' ? viewLibrary() : viewBoard();
   document.querySelectorAll('textarea.note-text').forEach(autosize);
   layoutNotes(); decorateChips();
@@ -1497,7 +1541,7 @@ function projectBlock(p){
   return `<div class="project ${p.collapsed?'collapsed':''}">
     <div class="p-head${tint(p)}" draggable="true" data-drag="p:${p.id}" title="Drag to ${T.crypt} to freeze the whole project">
       <button class="ib chev" data-act="p-collapse" data-id="${p.id}" aria-label="Collapse" aria-expanded="${!p.collapsed}">${IC.chev}</button>
-      <button class="p-name" data-act="p-collapse" data-id="${p.id}">${emo(p)}${esc(p.name)}${state.goals.filter(g=>g.projectId===p.id).map(g=>{ const tm=goalTimes(g); return `<span class="cbadge" data-act="goal-goto" data-id="${g.id}" title="Campaign: ${esc(g.title)}, due ${fmtDate(g.deadline)}">${g.icon} ${tm.over?'overdue':tm.daysLeft+'d'}</span>`; }).join('')}</button>
+      <button class="p-name" data-act="p-collapse" data-id="${p.id}">${emo(p)}${esc(p.name)}${state.boards.filter(b=>b.link==='p:'+p.id).map(b=>`<span class="cbadge" data-act="board-open" data-id="${b.id}" title="Open board">🖼 ${esc(b.name)}</span>`).join('')}${state.goals.filter(g=>g.projectId===p.id).map(g=>{ const tm=goalTimes(g); return `<span class="cbadge" data-act="goal-goto" data-id="${g.id}" title="Campaign: ${esc(g.title)}, due ${fmtDate(g.deadline)}">${g.icon} ${tm.over?'overdue':tm.daysLeft+'d'}</span>`; }).join('')}</button>
       <span class="num today ${td?'':'zero'}">${td?fmtHM(td):'—'}</span>
       <span class="num total">${fmtHM(sp)}${est?` / ${fmtHM(est*MIN)}`:''}</span>
       <span class="est ${es.cls}">${est?es.text:''}</span>
@@ -1523,6 +1567,7 @@ function questBlock(q, child){
       <span class="acts">
         ${q.jira?`<a class="ib" href="${esc(q.jira)}" target="_blank" rel="noopener" data-act="noop" title="Open in Jira">${IC.link}</a>`:''}
         ${(q.links||[]).length?`<button class="ib lk" data-act="q-links" data-id="${q.id}" title="${esc(q.links.map(l=>l.label).join(', '))}" aria-label="Linked files">📎${q.links.length>1?q.links.length:''}</button>`:''}
+        ${(()=>{ const bs=state.boards.filter(b=>b.link==='q:'+q.id); return bs.length?`<button class="ib lk" data-act="board-open" data-id="${bs[0].id}" title="Open board ${esc(bs[0].name)}" aria-label="Open board">🖼</button>`:''; })()}
         ${!child && kids(q).some(c=>!c.done && (c.links||[]).length)?`<button class="ib" data-act="q-continue" data-id="${q.id}" title="Continue: open the next unfinished objective" aria-label="Continue">${PX.play}</button>`:''}
         <button class="ib" data-act="q-copy" data-id="${q.id}" title="Copy today’s time (Shift: total)">${IC.copy}</button>
         <button class="ib" data-act="q-edit" data-id="${q.id}" aria-label="Edit quest" aria-expanded="${editing}">${IC.dots}</button>
@@ -2022,6 +2067,13 @@ const A_ = {
   'upd-open': ()=> openUpdate(),
   'upd-check': ()=> checkUpdate(true),
   'upd-go': async ()=>{ $('#dlgBody').innerHTML='<h2>Updating…</h2><p class="hint" style="margin-top:6px">Downloading and installing. Taskromancer will start again by itself.</p>'; await deskSave(true); tinvoke('install_update').catch(e=>{ toast('Update failed: '+e); $('#dlg').close(); }); },
+  'bd-new': ()=>{ snap(); newBoard(); BS.sel.clear(); BS.crop=null; $('#board').dataset.view=''; commit(); },
+  'bd-add': ()=> $('#bdFile').click(),
+  'bd-fit': ()=> fitAll(),
+  'bd-gray': ()=>{ const b=BB(); if(b){ b.gray=!b.gray; commit(); } },
+  'bd-help': ()=> boardHelp(),
+  'bd-del': (el)=>{ const b=BB(); if(!b) return; if(!arm(el,'Delete board?')) return; snap(); state.boards=state.boards.filter(x=>x!==b); state.ui.boardId=state.boards[0]?.id||null; BS.sel.clear(); $('#board').dataset.view=''; commit(); toast(`Board “${b.name}” deleted`, true); },
+  'board-open': (el,id)=>{ state.ui.boardId=id; state.ui.tab='boards'; BS.sel.clear(); $('#board').dataset.view=''; commit(); },
   'hide-done': ()=>{ state.ui.hideDone=!state.ui.hideDone; commit(); },
   crypt: ()=>{ state.ui.crypt=!state.ui.crypt; commit(); },
   'p-collapse': (el,id)=>{ const p=P(id); p.collapsed=!p.collapsed; commit(); },
@@ -2145,6 +2197,7 @@ document.addEventListener('input', e=>{
   if(d.ui==='q'||d.ui==='noteQ'||d.ui==='libQ'){ state.ui[d.ui]=el.value; save(); const pos=el.selectionStart; renderBoard(); const s=document.querySelector(`[data-ui="${d.ui}"]`); s.focus(); s.setSelectionRange(pos,pos); return; }
   if(d.calc!==undefined){ state.calc[+d.calc]=el.value; save(); updateCalc(); return; }
   if(d.sess){ return; }
+  if(d.bdname!==undefined){ const b=BB(); if(b){ b.name=el.value; save(); } return; }
   if(d.linkpaste!==undefined || d.lname!==undefined || d.stepedit!==undefined || d.rootname!==undefined || d.rootpath!==undefined) return;
   if(d.qname){ const l=state.quotes.lists.find(x=>x.id===d.qname); if(l){ l.name=el.value; save(); } return; }
   if(d.qitems){ const l=state.quotes.lists.find(x=>x.id===d.qitems); if(l){ l.items=el.value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean); save(); } return; }
@@ -2173,6 +2226,9 @@ document.addEventListener('change', e=>{
     softCommit(); toast(`Linked to “${P(pid).name}”${made?`, ${made} new quests`:''}`, true); return; }
   if(d.rootname!==undefined){ const r=state.roots.find(x=>x.id===d.rootname); if(r && el.value.trim()){ r.name=el.value.trim(); softCommit(); } return; }
   if(d.rootpath!==undefined){ const r=state.roots.find(x=>x.id===d.rootpath); if(r && isPathLike(el.value)){ r.path=normP(cleanPath(el.value)); existMap.clear(); softCommit(); toast(`“${r.name}” now points to ${r.path}`); } return; }
+  if(d.bdsel!==undefined){ state.ui.boardId=el.value; BS.sel.clear(); BS.crop=null; $('#board').dataset.view=''; softCommit(); return; }
+  if(d.bdname!==undefined){ const b=BB(); if(b && !el.value.trim()) b.name='Untitled board'; softCommit(); return; }
+  if(d.bdlink!==undefined){ const b=BB(); if(b){ b.link=el.value; softCommit(); toast(el.value?'Attached':'Detached'); } return; }
   if(d.qactive!==undefined){ state.quotes.active=el.value; save(); pickQuote(); return; }
   if(d.qitems||d.qname){ openQuotes(); pickQuote(); return; }
   if(d.rndf!==undefined){ const f=R().formulas.find(x=>x.id===el.value); if(f){ loadFormula(f); softCommit(); toast(`Formula “${f.name}” loaded, press Roll`); } else { R().curFormula=''; softCommit(); } return; }
@@ -2197,6 +2253,7 @@ document.addEventListener('pointerdown', ()=>{ pDown=true; }, true);
 document.addEventListener('pointerup', ()=>{ pDown=false; if(pendingCommit){ pendingCommit=false; setTimeout(commit,0); } }, true);
 document.addEventListener('keydown', e=>{
   if(e.key==='F11' && DESK){ e.preventDefault(); tinvoke('toggle_fullscreen'); return; }
+  if(boardKeys(e)) return;
   const ae=document.activeElement, typing=/^(INPUT|TEXTAREA|SELECT)$/.test(ae?.tagName) || !!ae?.isContentEditable;
   if(ae?.classList?.contains('rich')){
     if(e.key==='Enter' && (e.ctrlKey||e.metaKey) && ae.dataset.rich==='composer'){ e.preventDefault(); A_['note-add'](); return; }
@@ -2282,12 +2339,16 @@ async function insertImages(files, ed, range){
   }
   hideToast();
 }
+$('#bdFile').addEventListener('change', e=>{ const f=[...e.target.files]; e.target.value=''; if(f.length) addBoardImages(f); });
 $('#qFile').addEventListener('change', async e=>{ const f=e.target.files[0]; e.target.value=''; if(!f) return; const l=state.quotes.lists.find(x=>x.id===state.ui.qEdit); if(!l) return;
   const buf=await f.arrayBuffer(); let t; try{ t=new TextDecoder('utf-8',{fatal:true}).decode(buf); }catch{ t=new TextDecoder('windows-1251').decode(buf); }
   const items=t.replace(/^\uFEFF/,'').split(/\r?\n/).map(x=>x.trim()).filter(Boolean); l.items.push(...items); save(); openQuotes(); pickQuote(); toast(`${items.length} phrases added`); });
 $('#txtFile').addEventListener('change', e=>{ importTxt([...e.target.files]); e.target.value=''; });
 $('#imgFile').addEventListener('change', e=>{ const t=imgTarget; imgTarget=null; if(t) insertImages(e.target.files, t.ed, t.range); e.target.value=''; });
 document.addEventListener('paste', e=>{
+  if(state.ui.tab==='boards' && !e.target.closest?.('input,textarea,select,.rich,[contenteditable="true"]')){ const files=[...(e.clipboardData?.files||[])].filter(f=>f.type.startsWith('image/'));
+    if(files.length){ e.preventDefault(); const st=$('#bdStage')?.getBoundingClientRect(); const inside=st && BS.mouse.x>=st.left && BS.mouse.x<=st.right && BS.mouse.y>=st.top && BS.mouse.y<=st.bottom; addBoardImages(files, inside?bToWorld(BS.mouse.x,BS.mouse.y):null); }
+    else { const t=(e.clipboardData?.getData('text/plain')||'').trim(); if(/^(https?:\/\/\S+|data:image\/\S+)$/i.test(t)){ e.preventDefault(); addBoardUrl(t, inside?bToWorld(BS.mouse.x,BS.mouse.y):null); } else toast('Nothing to paste. Copy an image first (in a browser: right click → Copy image)'); } return; }
   const ed=e.target.closest?.('.rich'); if(!ed) return;
   const files=[...(e.clipboardData?.files||[])].filter(f=>f.type.startsWith('image/'));
   e.preventDefault();
@@ -2468,7 +2529,7 @@ function openSettings(){
     </div>
     ${desktopSettings()}
     <h3 class="dh">Keys</h3>
-    <div class="keys"><kbd>Space</kbd><span>Play / pause the timer on the open tab</span><kbd>C</kbd><span>Cut, the timer keeps going from zero</span><kbd>S</kbd><span>Stop, harvest and halt</span><kbd>A</kbd><span>Split all harvested time</span><kbd>R</kbd><span>Roll, on the Randomizer tab</span><kbd>Esc</kbd><span>Close the splitter or a menu</span><kbd>Ctrl Z</kbd><span>Undo, up to 5 steps</span></div>
+    <div class="keys"><kbd>Space</kbd><span>Play / pause the timer on the open tab</span><kbd>C</kbd><span>Cut, the timer keeps going from zero</span><kbd>S</kbd><span>Stop, harvest and halt</span><kbd>A</kbd><span>Split all harvested time</span><kbd>R</kbd><span>Roll, on the Randomizer tab</span><kbd>?</kbd><span>On Boards: the ? button lists canvas controls</span><kbd>Esc</kbd><span>Close the splitter or a menu</span><kbd>Ctrl Z</kbd><span>Undo, up to 5 steps</span></div>
     <div class="dlg-foot"><span class="sum">Taskromancer ${APP_VER}${DESK?', desktop':''}</span><button class="btn" data-act="dlg-close">Close</button></div>`;
   if(!$('#dlg').open) $('#dlg').showModal();
 }
@@ -2495,6 +2556,349 @@ function loadDemo(){
   state.notes.push(mkn('Reading list<ul><li>Readable pixel fonts</li><li><s>Colour theory basics</s></li></ul>','learn',3*DAY));
   RND_DEMO.forEach(([n,t],i)=>state.rnd.decks.push({ id:uid(), name:n, items:parseTokens(t), amount:i===0?2:1, active:i<3 }));
   state.focus=cd.id;
+}
+
+/* ================= boards: reference canvas (PureRef-style controls, Figma-style crop) ================= */
+const BB = () => state.boards.find(b=>b.id===state.ui.boardId) || state.boards[0] || null;
+const BS = { sel:new Set(), crop:null, drag:null, space:false, menu:null, mouse:{ x:0, y:0 }, cache:new Map() };
+let boardDir=null;
+const bitem = id => BB()?.items.find(i=>i.id===id);
+function newBoard(name){ const b={ id:uid(), name:name||`Board ${state.boards.length+1}`, items:[], view:{ x:0, y:0, z:1 }, gray:false, link:'' }; state.boards.push(b); state.ui.boardId=b.id; return b; }
+async function imgSrc(it){
+  if(it.src) return it.src;
+  if(it.file && DESK){ if(!boardDir) boardDir=await tinvoke('board_dir'); return window.__TAURI__.core.convertFileSrc(boardDir+'\\'+it.file); }
+  return '';
+}
+function bToWorld(sx,sy){ const b=BB(), st=$('#bdStage').getBoundingClientRect(); return { x:(sx-st.left-b.view.x)/b.view.z, y:(sy-st.top-b.view.y)/b.view.z }; }
+function itemAABB(it){ const r=(it.rot||0)*Math.PI/180, c=Math.abs(Math.cos(r)), s=Math.abs(Math.sin(r)), hw=(it.w*c+it.h*s)/2, hh=(it.w*s+it.h*c)/2; return { x1:it.cx-hw, y1:it.cy-hh, x2:it.cx+hw, y2:it.cy+hh }; }
+function selItems(){ const b=BB(); return b ? b.items.filter(i=>BS.sel.has(i.id)) : []; }
+function selAABB(list){ list=list||selItems(); if(!list.length) return null; const bs=list.map(itemAABB); return { x1:Math.min(...bs.map(a=>a.x1)), y1:Math.min(...bs.map(a=>a.y1)), x2:Math.max(...bs.map(a=>a.x2)), y2:Math.max(...bs.map(a=>a.y2)) }; }
+function selectWithGroups(ids, add){ const b=BB(); if(!add) BS.sel.clear(); ids.forEach(id=>{ const it=bitem(id); if(!it) return; if(it.group) b.items.filter(x=>x.group===it.group).forEach(x=>BS.sel.add(x.id)); else BS.sel.add(id); }); }
+
+/* ----- view shell ----- */
+function viewBoards(){
+  if(!state.boards.length) return `<div class="empty"><b>No boards yet</b>Boards are canvases for references: paste or drop images, crop, rotate, arrange and pack them.<div class="btns"><button class="btn soul" data-act="bd-new">${IC.plus}New board</button></div></div>`;
+  return `<div class="bd-wrap"><div class="bd-tools" id="bdTools">${boardTools()}</div>
+    <div class="bd-stage" id="bdStage" tabindex="0" aria-label="Board canvas"><div class="bd-world" id="bdWorld"></div><div class="bd-marq" id="bdMarq"></div>
+      <div class="bd-hint" id="bdHint">Paste (Ctrl+V) or drop images here, from folders or straight from a browser. Wheel zooms, middle mouse or Space + drag pans, right click opens every action.</div></div></div>`;
+}
+function boardTools(){
+  const b=BB(); if(!b) return '';
+  const opts=['<option value="">Not attached</option>'].concat(state.projects.filter(p=>!p.frozen).map(p=>`<option value="p:${p.id}" ${b.link==='p:'+p.id?'selected':''}>Project: ${esc(p.name)}</option>`))
+    .concat(state.quests.filter(q=>!q.parentId&&!q.frozen&&!q.done).map(q=>`<option value="q:${q.id}" ${b.link==='q:'+q.id?'selected':''}>Quest: ${esc(q.title)}</option>`)).join('');
+  return `<select class="field" data-bdsel aria-label="Board">${state.boards.map(x=>`<option value="${x.id}" ${x.id===b.id?'selected':''}>${esc(x.name)}</option>`).join('')}</select>
+    <input class="field bd-name" data-bdname value="${esc(b.name)}" aria-label="Board name">
+    <button class="btn sm" data-act="bd-new" title="New board">${IC.plus}</button>
+    <select class="field bd-link" data-bdlink aria-label="Attach to">${opts}</select>
+    <span style="flex:1"></span>
+    <button class="btn sm" data-act="bd-add" title="Add images from files">${IC.img}Add</button>
+    <button class="btn sm" data-act="bd-fit" title="Fit everything (F)">Fit</button>
+    <button class="btn sm" data-act="bd-gray" aria-pressed="${!!b.gray}" title="Grayscale view to check values (G)">B/W</button>
+    <button class="btn sm" data-act="bd-help" title="Shortcuts">?</button>
+    <button class="ib" data-act="bd-del" title="Delete this board" aria-label="Delete board">${IC.trash}</button>`;
+}
+function renderBoardsTab(){
+  const host=$('#board'), b=BB();
+  if(!b || !$('#bdStage') || host.dataset.view!=='boards'){ host.innerHTML=viewBoards(); host.dataset.view='boards'; if(!BB()) return; bindStage(); }
+  $('#bdTools').innerHTML=boardTools(); syncBoard();
+}
+async function syncBoard(){
+  const b=BB(), w=$('#bdWorld'); if(!b||!w) return;
+  w.style.transform=`translate(${b.view.x}px,${b.view.y}px) scale(${b.view.z})`; w.style.setProperty('--iz', 1/b.view.z);
+  $('#bdStage').classList.toggle('gray', !!b.gray); $('#bdHint').style.display = b.items.length ? 'none' : '';
+  const seen=new Set();
+  for(const it of b.items){
+    seen.add(it.id); let el=w.querySelector(`.bi[data-id="${it.id}"]`);
+    if(!el){ el=document.createElement('div'); el.className='bi'; el.dataset.id=it.id; el.innerHTML='<div class="bimg"><img draggable="false" alt=""></div>'; const src=await imgSrc(it); el.querySelector('img').src=src; }
+    w.appendChild(el); placeItem(el,it);
+  }
+  w.querySelectorAll('.bi').forEach(el=>{ if(!seen.has(el.dataset.id)) el.remove(); });
+  drawSel();
+}
+function placeItem(el,it){
+  const c=it.crop||{ x:0, y:0, w:it.nw, h:it.nh }, s=it.w/c.w;
+  Object.assign(el.style,{ left:(it.cx-it.w/2)+'px', top:(it.cy-it.h/2)+'px', width:it.w+'px', height:it.h+'px', transform:`rotate(${it.rot||0}deg)`, opacity:it.op??1 });
+  el.classList.toggle('locked',!!it.locked); el.classList.toggle('igray',!!it.gray); el.classList.toggle('cropping', BS.crop===it.id);
+  const bi=el.firstChild; bi.style.transform=`scale(${it.fx?-1:1},${it.fy?-1:1})`;
+  Object.assign(el.querySelector('img').style,{ width:it.nw*s+'px', height:it.nh*s+'px', left:-c.x*s+'px', top:-c.y*s+'px' });
+}
+function drawSel(){
+  const w=$('#bdWorld'); if(!w) return; w.querySelector('.bsel')?.remove();
+  const list=selItems(); if(!list.length) return;
+  const box=document.createElement('div'); box.className='bsel'+(BS.crop?' crop':'');
+  if(list.length===1){ const it=list[0]; Object.assign(box.style,{ left:(it.cx-it.w/2)+'px', top:(it.cy-it.h/2)+'px', width:it.w+'px', height:it.h+'px', transform:`rotate(${it.rot||0}deg)` }); }
+  else { const a=selAABB(list); Object.assign(box.style,{ left:a.x1+'px', top:a.y1+'px', width:(a.x2-a.x1)+'px', height:(a.y2-a.y1)+'px' }); }
+  const hs = BS.crop ? ['nw','n','ne','e','se','s','sw','w'] : ['nw','ne','se','sw'];
+  box.innerHTML=hs.map(h=>`<i class="bh ${h}" data-h="${h}"></i>`).join('')+(BS.crop?'':'<i class="brot" data-h="rot" title="Drag to rotate (Shift snaps 15°)"></i>');
+  w.appendChild(box);
+}
+
+/* ----- pointer & wheel ----- */
+function bindStage(){
+  const st=$('#bdStage');
+  st.addEventListener('wheel', e=>{ e.preventDefault(); const b=BB(); if(!b) return; const r=st.getBoundingClientRect(), mx=e.clientX-r.left, my=e.clientY-r.top;
+    const f=Math.exp(-e.deltaY*(e.ctrlKey?0.01:0.0015)), z=clamp(b.view.z*f,0.03,20); b.view.x=mx-(mx-b.view.x)*(z/b.view.z); b.view.y=my-(my-b.view.y)*(z/b.view.z); b.view.z=z; syncView(); }, { passive:false });
+  st.addEventListener('pointerdown', bPointerDown);
+  // pointer capture retargets dblclick to the stage, so look up what is under the cursor
+  st.addEventListener('dblclick', e=>{ const el=document.elementFromPoint(e.clientX,e.clientY)?.closest('.bi'); if(el && !el.classList.contains('locked')) toggleCrop(el.dataset.id); });
+  st.addEventListener('contextmenu', e=>{ e.preventDefault(); const el=e.target.closest('.bi'); if(el && !BS.sel.has(el.dataset.id) && !el.classList.contains('locked')){ selectWithGroups([el.dataset.id]); drawSel(); } openBoardMenu(e.clientX,e.clientY); });
+  st.addEventListener('pointermove', e=>{ BS.mouse={ x:e.clientX, y:e.clientY }; });
+  st.addEventListener('dragover', e=>{ const ty=e.dataTransfer?.types||[]; if(!dragging && (ty.includes('Files')||ty.includes('text/uri-list')||ty.includes('text/html'))){ e.preventDefault(); st.classList.add('dropping'); } });
+  st.addEventListener('dragleave', ()=>st.classList.remove('dropping'));
+  st.addEventListener('drop', e=>{ if(dragging) return; e.preventDefault(); e.stopPropagation(); st.classList.remove('dropping');
+    const files=[...(e.dataTransfer?.files||[])].filter(f=>f.type.startsWith('image/'));
+    const at=bToWorld(e.clientX,e.clientY); if(files.length) addBoardImages(files, at); else { const u=dropUrl(e.dataTransfer); if(u) addBoardUrl(u, at); else toast('That drop had no image in it'); } });
+}
+let viewSaveT=null;
+function syncView(){ const b=BB(), w=$('#bdWorld'); w.style.transform=`translate(${b.view.x}px,${b.view.y}px) scale(${b.view.z})`; w.style.setProperty('--iz',1/b.view.z); clearTimeout(viewSaveT); viewSaveT=setTimeout(save,600); }
+function bPointerDown(e){
+  closeBoardMenu(); const b=BB(); if(!b) return; const st=$('#bdStage'); st.focus({ preventScroll:true });
+  if(e.button===1 || (e.button===0 && BS.space)){ e.preventDefault(); BS.drag={ kind:'pan', sx:e.clientX, sy:e.clientY, vx:b.view.x, vy:b.view.y }; st.setPointerCapture(e.pointerId); st.classList.add('panning'); return; }
+  if(e.button!==0) return;
+  const p=bToWorld(e.clientX,e.clientY), h=e.target.closest('.bh,.brot');
+  if(h){ const list=selItems(); if(!list.length) return; snap();
+    if(BS.crop){ const it=bitem(BS.crop); BS.drag={ kind:'crop', h:h.dataset.h, it, start:p, orig:{ ...it, crop:{ ...(it.crop||{ x:0,y:0,w:it.nw,h:it.nh }) } } }; }
+    else if(h.dataset.h==='rot' || e.ctrlKey){ const a=list.length===1?{ x:list[0].cx, y:list[0].cy }:(()=>{ const q=selAABB(list); return { x:(q.x1+q.x2)/2, y:(q.y1+q.y2)/2 }; })();
+      BS.drag={ kind:'rot', c:a, a0:Math.atan2(p.y-a.y,p.x-a.x), orig:list.map(i=>({ id:i.id, cx:i.cx, cy:i.cy, rot:i.rot||0 })) }; }
+    else { const box=list.length===1?null:selAABB(list); BS.drag={ kind:'scale', h:h.dataset.h, start:p, box, orig:list.map(i=>({ id:i.id, cx:i.cx, cy:i.cy, w:i.w, h:i.h, rot:i.rot||0 })) }; }
+    st.setPointerCapture(e.pointerId); return; }
+  const el=e.target.closest('.bi');
+  if(el && !el.classList.contains('locked')){
+    const id=el.dataset.id;
+    if(BS.crop && BS.crop===id){ snap(); const it=bitem(id); BS.drag={ kind:'cropmove', it, start:p, orig:{ crop:{ ...(it.crop||{ x:0,y:0,w:it.nw,h:it.nh }) } } }; st.setPointerCapture(e.pointerId); return; }
+    if(BS.crop) toggleCrop(null);
+    if(e.shiftKey){ if(BS.sel.has(id)){ const it=bitem(id); (it.group?b.items.filter(x=>x.group===it.group):[it]).forEach(x=>BS.sel.delete(x.id)); drawSel(); return; } selectWithGroups([id],true); }
+    else if(!BS.sel.has(id)) selectWithGroups([id]);
+    drawSel(); snap(); BS.drag={ kind:'move', start:p, moved:false, orig:selItems().map(i=>({ id:i.id, cx:i.cx, cy:i.cy })) }; st.setPointerCapture(e.pointerId); return;
+  }
+  if(BS.crop){ toggleCrop(null); }
+  if(!e.shiftKey) BS.sel.clear(); drawSel();
+  BS.drag={ kind:'marq', start:p, sx:e.clientX, sy:e.clientY, add:e.shiftKey }; st.setPointerCapture(e.pointerId);
+}
+document.addEventListener('pointermove', e=>{
+  const d=BS.drag; if(!d) return; const b=BB(); if(!b) return;
+  if(d.kind==='pan'){ b.view.x=d.vx+(e.clientX-d.sx); b.view.y=d.vy+(e.clientY-d.sy); syncView(); return; }
+  const p=bToWorld(e.clientX,e.clientY);
+  if(d.kind==='move'){ const dx=p.x-d.start.x, dy=p.y-d.start.y; if(Math.abs(dx)+Math.abs(dy)>0.5) d.moved=true; d.orig.forEach(o=>{ const it=bitem(o.id); it.cx=o.cx+dx; it.cy=o.cy+dy; }); refreshItems(d.orig.map(o=>o.id)); return; }
+  if(d.kind==='marq'){ const m=$('#bdMarq'), r=$('#bdStage').getBoundingClientRect(); Object.assign(m.style,{ display:'block', left:Math.min(d.sx,e.clientX)-r.left+'px', top:Math.min(d.sy,e.clientY)-r.top+'px', width:Math.abs(e.clientX-d.sx)+'px', height:Math.abs(e.clientY-d.sy)+'px' });
+    const x1=Math.min(d.start.x,p.x), x2=Math.max(d.start.x,p.x), y1=Math.min(d.start.y,p.y), y2=Math.max(d.start.y,p.y);
+    if(!d.add) BS.sel.clear(); selectWithGroups(b.items.filter(i=>!i.locked).filter(i=>{ const a=itemAABB(i); return a.x2>x1 && a.x1<x2 && a.y2>y1 && a.y1<y2; }).map(i=>i.id), true); drawSel(); return; }
+  if(d.kind==='rot'){ let da=(Math.atan2(p.y-d.c.y,p.x-d.c.x)-d.a0)*180/Math.PI; if(e.shiftKey) da=Math.round(da/15)*15;
+    const rad=da*Math.PI/180, cs=Math.cos(rad), sn=Math.sin(rad);
+    d.orig.forEach(o=>{ const it=bitem(o.id), x=o.cx-d.c.x, y=o.cy-d.c.y; it.cx=d.c.x+x*cs-y*sn; it.cy=d.c.y+x*sn+y*cs; let r=o.rot+da; if(e.shiftKey && d.orig.length===1) r=Math.round(r/15)*15; it.rot=((r%360)+360)%360; });
+    refreshItems(d.orig.map(o=>o.id)); return; }
+  if(d.kind==='scale'){
+    if(!d.box){ const o=d.orig[0], it=bitem(o.id), r=o.rot*Math.PI/180, cs=Math.cos(r), sn=Math.sin(r);
+      const sx=d.h.includes('e')?1:-1, sy=d.h.includes('s')?1:-1; const ax=o.cx-sx*o.w/2*cs+sy*o.h/2*sn, ay=o.cy-sx*o.w/2*sn-sy*o.h/2*cs; // opposite corner, fixed
+      const vx=p.x-ax, vy=p.y-ay, lx=vx*cs+vy*sn, ly=-vx*sn+vy*cs; const k=Math.max(0.02, Math.max(sx*lx/o.w, sy*ly/o.h));
+      it.w=o.w*k; it.h=o.h*k; it.cx=ax+(sx*it.w/2)*cs-(sy*it.h/2)*sn; it.cy=ay+(sx*it.w/2)*sn+(sy*it.h/2)*cs; refreshItems([o.id]); return; }
+    const B=d.box, ax=d.h.includes('e')?B.x1:B.x2, ay=d.h.includes('s')?B.y1:B.y2, k=Math.max(0.02, Math.max(Math.abs(p.x-ax)/(B.x2-B.x1), Math.abs(p.y-ay)/(B.y2-B.y1)));
+    d.orig.forEach(o=>{ const it=bitem(o.id); it.cx=ax+(o.cx-ax)*k; it.cy=ay+(o.cy-ay)*k; it.w=o.w*k; it.h=o.h*k; }); refreshItems(d.orig.map(o=>o.id)); return; }
+  if(d.kind==='crop' || d.kind==='cropmove'){ cropDrag(d,p,e); }
+});
+document.addEventListener('pointerup', ()=>{
+  const d=BS.drag; if(!d) return; BS.drag=null; $('#bdStage')?.classList.remove('panning');
+  if(d.kind==='marq'){ $('#bdMarq').style.display='none'; return; }
+  if(d.kind==='pan') return;
+  if(d.kind==='move' && !d.moved){ undoStack.pop(); updUndo(); return; }
+  save(); drawSel();
+});
+function refreshItems(ids){ const w=$('#bdWorld'); ids.forEach(id=>{ const el=w.querySelector(`.bi[data-id="${id}"]`), it=bitem(id); if(el&&it) placeItem(el,it); }); drawSel(); }
+
+/* ----- crop, Figma style: drag edges to crop, drag inside to slide the image ----- */
+function toggleCrop(id){
+  if(BS.crop && BS.crop!==id){ const prev=BS.crop; BS.crop=null; refreshItems([prev]); }
+  if(!id || BS.crop===id){ BS.crop=null; drawSel(); save(); return; }
+  BS.crop=id; BS.sel.clear(); BS.sel.add(id); const it=bitem(id); if(!it.crop) it.crop={ x:0, y:0, w:it.nw, h:it.nh }; refreshItems([id]);
+  toast('Crop: drag the edges or slide the image. Enter finishes, Esc cancels');
+  BS.cropOrig={ crop:{ ...it.crop }, cx:it.cx, cy:it.cy, w:it.w, h:it.h };
+}
+function cancelCrop(){ const it=bitem(BS.crop); if(it && BS.cropOrig) Object.assign(it,{ crop:BS.cropOrig.crop, cx:BS.cropOrig.cx, cy:BS.cropOrig.cy, w:BS.cropOrig.w, h:BS.cropOrig.h }); const id=BS.crop; BS.crop=null; if(id) refreshItems([id]); }
+function cropDrag(d,p,e){
+  const it=d.it, o=d.orig, r=(it.rot||0)*Math.PI/180, cs=Math.cos(r), sn=Math.sin(r);
+  const vx=p.x-d.start.x, vy=p.y-d.start.y; let lx=vx*cs+vy*sn, ly=-vx*sn+vy*cs; // delta in the item's own axes
+  const s=o.w/o.crop.w, C={ ...o.crop };
+  if(d.kind==='cropmove'){ const dx=(it.fx?-1:1)*lx/s, dy=(it.fy?-1:1)*ly/s; C.x=clamp(o.crop.x-dx,0,it.nw-C.w); C.y=clamp(o.crop.y-dy,0,it.nh-C.h); it.crop=C; refreshItems([it.id]); return; }
+  const h=d.h; let L=0,Rt=0,T=0,Bm=0; // frame edge moves in screen-local px
+  if(h.includes('w')) L=lx; if(h.includes('e')) Rt=lx; if(h.includes('n')) T=ly; if(h.includes('s')) Bm=ly;
+  // natural-pixel edges, flip aware
+  let nl=(it.fx?-Rt:L)/s, nr=(it.fx?-L:Rt)/s, nt=(it.fy?-Bm:T)/s, nb=(it.fy?-T:Bm)/s;
+  let x1=clamp(o.crop.x+nl,0,o.crop.x+o.crop.w-8), x2=clamp(o.crop.x+o.crop.w+nr,x1+8,it.nw), y1=clamp(o.crop.y+nt,0,o.crop.y+o.crop.h-8), y2=clamp(o.crop.y+o.crop.h+nb,y1+8,it.nh);
+  C.x=x1; C.w=x2-x1; C.y=y1; C.h=y2-y1; it.crop=C;
+  // frame: keep the untouched edges where they were
+  const dl=((it.fx?-(x2-(o.crop.x+o.crop.w)):x1-o.crop.x))*s, dr=((it.fx?-(x1-o.crop.x):x2-(o.crop.x+o.crop.w)))*s, dt=((it.fy?-(y2-(o.crop.y+o.crop.h)):y1-o.crop.y))*s, db=((it.fy?-(y1-o.crop.y):y2-(o.crop.y+o.crop.h)))*s;
+  it.w=o.w-dl+dr; it.h=o.h-dt+db; const mx=(dl+dr)/2, my=(dt+db)/2; it.cx=o.cx+mx*cs-my*sn; it.cy=o.cy+mx*sn+my*cs; refreshItems([it.id]);
+}
+
+/* ----- adding images ----- */
+// images dragged from a browser arrive as a link, so we fetch the file (in the desktop app, without the browser's cross-site limits)
+function sniffType(u){ if(u[0]===0x89&&u[1]===0x50) return 'image/png'; if(u[0]===0xFF&&u[1]===0xD8) return 'image/jpeg'; if(u[0]===0x47&&u[1]===0x49&&u[2]===0x46) return 'image/gif';
+  if(u[0]===0x52&&u[1]===0x49&&u[8]===0x57&&u[9]===0x45) return 'image/webp'; if(u[0]===0x42&&u[1]===0x4D) return 'image/bmp'; if(u[4]===0x66&&u[5]===0x74&&u[6]===0x79&&u[7]===0x70) return 'image/avif'; return ''; }
+function dropUrl(dt){
+  const html=dt.getData('text/html')||'', m=html.match(/<img[^>]+src\s*=\s*["']([^"']+)["']/i), dec=x=>x.replace(/&amp;/g,'&');
+  const uri=(dt.getData('text/uri-list')||'').split(/\r?\n/).find(l=>l && !l.startsWith('#')), txt=(dt.getData('text/plain')||'').trim();
+  return [m&&dec(m[1]), uri, txt].filter(Boolean).find(u=>/^(https?:\/\/|data:image\/)/i.test(u)) || '';
+}
+async function addBoardUrl(url, at){
+  toast('Fetching the image…');
+  try{
+    if(/^data:/i.test(url)){ const bl=await (await fetch(url)).blob(); return addBoardImages([new File([bl],'dropped image',{ type:bl.type })], at); }
+    let buf; if(DESK) buf=await tinvoke('fetch_image',{ url }); else { const r=await fetch(url); if(!r.ok) throw new Error('HTTP '+r.status); buf=await r.arrayBuffer(); }
+    const u8=new Uint8Array(buf), type=sniffType(u8); if(!type) throw new Error('that link is not a picture');
+    let name='image'; try{ name=decodeURIComponent(url.split(/[?#]/)[0].split('/').pop())||'image'; }catch{}
+    await addBoardImages([new File([u8], name, { type })], at);
+  }catch(e){ hideToast(); toast(DESK ? `Could not download it (${e?.message||e}). Copy the image and paste it with Ctrl+V instead` : 'The browser blocked that download. Copy the image and paste it with Ctrl+V, or use the desktop app'); }
+}
+async function imageMeta(blob){
+  const bmp=await createImageBitmap(blob); const c=document.createElement('canvas'); c.width=c.height=24; const g=c.getContext('2d'); g.drawImage(bmp,0,0,24,24);
+  const px=g.getImageData(0,0,24,24).data; let r=0,gg=0,bl=0; for(let i=0;i<px.length;i+=4){ r+=px[i]; gg+=px[i+1]; bl+=px[i+2]; } const n=px.length/4; r/=n*255; gg/=n*255; bl/=n*255;
+  const mx=Math.max(r,gg,bl), mn=Math.min(r,gg,bl), l=(mx+mn)/2, sat=mx===mn?0:(mx-mn)/(1-Math.abs(2*l-1)); let hue=0;
+  if(mx!==mn){ hue = mx===r ? ((gg-bl)/(mx-mn))%6 : mx===gg ? (bl-r)/(mx-mn)+2 : (r-gg)/(mx-mn)+4; hue=(hue*60+360)%360; }
+  return { nw:bmp.width, nh:bmp.height, hue, sat, lum:l };
+}
+async function addBoardImages(files, at){
+  let b=BB(); if(!b) b=newBoard(); files=[...files].filter(f=>f.type.startsWith('image/')); if(!files.length) return;
+  if(!at){ const st=$('#bdStage')?.getBoundingClientRect(); at = st ? bToWorld(st.left+st.width/2, st.top+st.height/2) : { x:0, y:0 }; }
+  toast(files.length>1?`Adding ${files.length} images…`:'Adding image…'); snap(); let x=at.x; const added=[];
+  for(const f of files){
+    try{
+      const m=await imageMeta(f), it={ id:uid(), name:f.name||'pasted image', added:now(), ...m, rot:0, fx:false, fy:false, op:1 };
+      if(DESK){ const ext=(f.type.split('/')[1]||'png').replace('jpeg','jpg').replace(/[^a-z0-9]/g,''); it.file=await tinvoke('save_board_image', new Uint8Array(await f.arrayBuffer()), { headers:{ ext } }); }
+      else { const big=await compressImage(f,2400); let url=null; try{ const a=window.claude?.use?await claude.use('assets'):null; if(a) url=(await a.upload(big)).url; }catch{}
+        if(!url) url=await new Promise(r=>{ const fr=new FileReader(); fr.onload=()=>r(fr.result); fr.readAsDataURL(big); }); it.src=url; }
+      const sc=Math.min(1, 900/Math.max(it.nw,it.nh)); it.w=it.nw*sc; it.h=it.nh*sc; it.cx=x+it.w/2; it.cy=at.y; x+=it.w+12; b.items.push(it); added.push(it.id);
+    }catch(e){ toast(`Could not add ${f.name||'that image'}`); }
+  }
+  BS.sel=new Set(added); hideToast(); commit();
+}
+
+/* ----- arranging ----- */
+function arrange(kind, arg){
+  const b=BB(), L=selItems(); if(!b) return; const need=kind==='pack'?1:2; if(L.length<need){ toast(kind==='pack'?'Select images to pack':'Select at least two images'); return; }
+  snap(); const a=selAABB(L);
+  if(kind==='size'){ const tgt = arg==='h' ? L.reduce((s,i)=>s+i.h,0)/L.length : arg==='w' ? L.reduce((s,i)=>s+i.w,0)/L.length : L.reduce((s,i)=>s+i.w*i.h,0)/L.length;
+    L.forEach(i=>{ const k = arg==='h' ? tgt/i.h : arg==='w' ? tgt/i.w : Math.sqrt(tgt/(i.w*i.h)); i.w*=k; i.h*=k; }); }
+  if(kind==='align'){ L.forEach(i=>{ const q=itemAABB(i);
+    if(arg==='l') i.cx+=a.x1-q.x1; if(arg==='r') i.cx+=a.x2-q.x2; if(arg==='t') i.cy+=a.y1-q.y1; if(arg==='b') i.cy+=a.y2-q.y2;
+    if(arg==='ch') i.cx=(a.x1+a.x2)/2; if(arg==='cv') i.cy=(a.y1+a.y2)/2; }); }
+  if(kind==='dist'){ const ax=arg==='h'?'cx':'cy', sorted=[...L].sort((p,q)=>p[ax]-q[ax]), f=sorted[0][ax], l=sorted[sorted.length-1][ax]; sorted.forEach((i,k)=>{ i[ax]=f+(l-f)*k/(sorted.length-1); }); }
+  if(kind==='pack'){
+    const sorts={ keep:(p,q)=>b.items.indexOf(p)-b.items.indexOf(q), size:(p,q)=>q.w*q.h-p.w*p.h, name:(p,q)=>(p.name||'').localeCompare(q.name||'',undefined,{ numeric:true }),
+      date:(p,q)=>(p.added||0)-(q.added||0), color:(p,q)=>((p.sat<.12)-(q.sat<.12)) || ((p.sat<.12) ? p.lum-q.lum : (p.hue-q.hue) || p.lum-q.lum) };
+    const list=[...L].sort(sorts[arg]||sorts.keep), gap=8, area=list.reduce((s,i)=>{ const q=itemAABB(i); return s+(q.x2-q.x1+gap)*(q.y2-q.y1+gap); },0), maxW=Math.max(Math.sqrt(area)*1.25, Math.max(...list.map(i=>{ const q=itemAABB(i); return q.x2-q.x1; })));
+    let x=0,y=0,rowH=0;
+    list.forEach(i=>{ const q=itemAABB(i), w=q.x2-q.x1, h=q.y2-q.y1; if(x>0 && x+w>maxW){ x=0; y+=rowH+gap; rowH=0; } i.cx=a.x1+x+w/2; i.cy=a.y1+y+h/2; x+=w+gap; rowH=Math.max(rowH,h); });
+    if(arg && arg!=='keep'){ const rest=b.items.filter(i=>!BS.sel.has(i.id)); b.items=[...rest, ...list]; }
+  }
+  commit();
+}
+function selTransform(fn, msg){ const L=selItems(); if(!L.length) return; snap(); L.forEach(fn); commit(); if(msg) toast(msg); }
+function groupSel(on){ const L=selItems(); if(on && L.length<2){ toast('Select two or more images to group'); return; } snap(); const g=on?uid():null; L.forEach(i=>{ i.group=g; }); commit(); toast(on?'Grouped':'Ungrouped'); }
+function zOrder(front){ const b=BB(), L=selItems(); if(!L.length) return; snap(); const rest=b.items.filter(i=>!BS.sel.has(i.id)); b.items = front ? [...rest, ...L] : [...L, ...rest]; commit(); }
+function delSel(){ const b=BB(), n=BS.sel.size; if(!n) return; snap(); b.items=b.items.filter(i=>!BS.sel.has(i.id)); BS.sel.clear(); BS.crop=null; commit(); toast(`${n} removed`, true); }
+function dupSel(){ const b=BB(), L=selItems(); if(!L.length) return; snap(); const map={}; const copies=L.map(i=>{ const c=JSON.parse(JSON.stringify(i)); c.id=uid(); c.cx+=24; c.cy+=24; if(i.group) c.group=(map[i.group] ||= uid()); return c; }); b.items.push(...copies); BS.sel=new Set(copies.map(c=>c.id)); commit(); }
+function fitAll(){ const b=BB(), st=$('#bdStage'); if(!b||!st) return; const L=BS.sel.size?selItems():b.items; if(!L.length){ b.view={ x:st.clientWidth/2, y:st.clientHeight/2, z:1 }; syncView(); return; }
+  const a=selAABB(L), pad=40, z=clamp(Math.min((st.clientWidth-pad*2)/(a.x2-a.x1||1),(st.clientHeight-pad*2)/(a.y2-a.y1||1)),0.03,4); b.view.z=z; b.view.x=st.clientWidth/2-(a.x1+a.x2)/2*z; b.view.y=st.clientHeight/2-(a.y1+a.y2)/2*z; syncView(); }
+
+/* ----- export ----- */
+async function loadBitmap(it){
+  if(it.file && DESK){ const buf=await tinvoke('read_board_image',{ name:it.file }); return createImageBitmap(new Blob([buf])); }
+  const r=await fetch(it.src); return createImageBitmap(await r.blob());
+}
+async function renderItems(list, maxSide=8192){
+  const a=selAABB(list), res=Math.max(1, ...list.map(i=>(i.crop?.w||i.nw)/i.w)); let k=res; const W=(a.x2-a.x1)*k, H=(a.y2-a.y1)*k; if(Math.max(W,H)>maxSide) k*=maxSide/Math.max(W,H);
+  const cv=document.createElement('canvas'); cv.width=Math.max(1,Math.round((a.x2-a.x1)*k)); cv.height=Math.max(1,Math.round((a.y2-a.y1)*k)); const g=cv.getContext('2d');
+  const b=BB(), ordered=b.items.filter(i=>list.includes(i));
+  for(const it of ordered){ const bmp=await loadBitmap(it), c=it.crop||{ x:0,y:0,w:it.nw,h:it.nh };
+    g.save(); g.globalAlpha=it.op??1; g.translate((it.cx-a.x1)*k,(it.cy-a.y1)*k); g.rotate((it.rot||0)*Math.PI/180); g.scale(it.fx?-1:1,it.fy?-1:1);
+    if(it.gray||b.gray) g.filter='grayscale(1)'; g.drawImage(bmp,c.x,c.y,c.w,c.h,-it.w*k/2,-it.h*k/2,it.w*k,it.h*k); g.restore(); }
+  return await new Promise(r=>cv.toBlob(r,'image/png'));
+}
+async function saveBlobFile(name, blob){
+  if(DESK){ const ok=await tinvoke('save_bytes_dialog', new Uint8Array(await blob.arrayBuffer()), { headers:{ name:encodeURIComponent(name) } }).catch(e=>{ toast('Could not save: '+e); return false; }); if(ok) toast(`Saved ${name}`); return; }
+  try{ const dl=window.claude?.use?await claude.use('downloads'):null; if(dl){ await dl.save({ filename:name, data:blob }); return; } }catch(e){ if(e?.code==='declined') return; }
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+}
+async function exportSel(each){
+  const L=selItems(); if(!L.length){ toast('Select images to export'); return; } const bn=(BB().name||'board').replace(/[\\/:*?"<>|]+/g,'_');
+  toast('Exporting…');
+  try{
+    if(!each){ await saveBlobFile(`${bn}.png`, await renderItems(L)); return; }
+    if(DESK){ const dir=await tinvoke('pick_folder').catch(()=>null); if(!dir) return; let n=0;
+      for(const it of L){ const blob=await renderItems([it]); const nm=`${(it.name||'image').replace(/\.[^.]+$/,'').replace(/[\\/:*?"<>|]+/g,'_')}${L.length>1?'-'+(++n):''}.png`;
+        await tinvoke('write_bytes', new Uint8Array(await blob.arrayBuffer()), { headers:{ path:encodeURIComponent(normP(dir)+'\\'+nm) } }); }
+      toast(`${L.length} images saved to ${fileName(normP(dir))}`); return; }
+    let n=0; for(const it of L){ await saveBlobFile(`${bn}-${++n}.png`, await renderItems([it])); }
+  }catch(e){ toast('Export failed: '+(e?.message||e)); }
+}
+
+/* ----- context menu ----- */
+function closeBoardMenu(){ document.querySelector('.bmenu')?.remove(); }
+function openBoardMenu(x,y){
+  closeBoardMenu(); const n=BS.sel.size, one=n===1, b=BB();
+  const it=(a,label,key,dis)=>`<button data-bm="${a}" ${dis?'disabled':''}><span>${label}</span><kbd>${key||''}</kbd></button>`, sep='<hr>';
+  const m=document.createElement('div'); m.className='bmenu';
+  m.innerHTML=[ it('add','Add images…'), it('fit',n?'Fit selection':'Fit everything','F'), it('selall','Select all','Ctrl A'), it('gray',(b.gray?'✓ ':'')+'Grayscale view','G'), sep,
+    it('crop','Crop','Enter',!one), it('rotl','Rotate 90° left','',!n), it('rotr','Rotate 90° right','',!n), it('fliph','Flip horizontal','Alt Shift H',!n), it('flipv','Flip vertical','Alt Shift V',!n), it('reset','Reset crop, rotation and flip','',!n), sep,
+    it('size-h','Same height','',n<2), it('size-w','Same width','',n<2), it('size-a','Same area','',n<2), sep,
+    it('al-l','Align left','',n<2), it('al-t','Align top','',n<2), it('al-ch','Align centres vertically','',n<2), it('al-cv','Align centres horizontally','',n<2), it('di-h','Distribute horizontally','',n<3), it('di-v','Distribute vertically','',n<3), sep,
+    it('pk-keep','Pack, keep order','P',!n), it('pk-size','Pack by size','',!n), it('pk-color','Pack by colour','',!n), it('pk-name','Pack by name','',!n), it('pk-date','Pack by date added','',!n), sep,
+    it('group','Group','Ctrl G',n<2), it('ungroup','Ungroup','Ctrl Shift G',!n), it('front','Bring to front','Ctrl ]',!n), it('back','Send to back','Ctrl [',!n), it('dup','Duplicate','Ctrl D',!n), sep,
+    it('op-100','Opacity 100%','',!n), it('op-60','Opacity 60%','',!n), it('op-30','Opacity 30%','',!n), it('igray','Grayscale image on/off','',!n), it('lock','Lock (click-through)','',!n), it('unlock','Unlock all',''), sep,
+    it('exp1','Export selection as one PNG','',!n), it('expn','Export each image…','',!n), it('del','Delete','Del',!n) ].join('');
+  document.body.appendChild(m); const r=m.getBoundingClientRect(); m.style.left=Math.min(x, innerWidth-r.width-8)+'px'; m.style.top=Math.min(y, innerHeight-r.height-8)+'px';
+}
+function boardCmd(c){
+  closeBoardMenu(); const b=BB(); if(!b) return;
+  const map={ add:()=>$('#bdFile').click(), fit:fitAll, selall:()=>{ BS.sel=new Set(b.items.filter(i=>!i.locked).map(i=>i.id)); drawSel(); }, gray:()=>{ b.gray=!b.gray; commit(); },
+    crop:()=>{ const L=selItems(); if(L.length===1) toggleCrop(L[0].id); },
+    rotl:()=>selTransform(i=>{ i.rot=((i.rot||0)+270)%360; }), rotr:()=>selTransform(i=>{ i.rot=((i.rot||0)+90)%360; }),
+    fliph:()=>selTransform(i=>{ i.fx=!i.fx; }), flipv:()=>selTransform(i=>{ i.fy=!i.fy; }),
+    reset:()=>selTransform(i=>{ const s=i.w/(i.crop?.w||i.nw); i.crop=null; i.rot=0; i.fx=i.fy=false; i.w=i.nw*s; i.h=i.nh*s; },'Reset'),
+    'size-h':()=>arrange('size','h'), 'size-w':()=>arrange('size','w'), 'size-a':()=>arrange('size','a'),
+    'al-l':()=>arrange('align','l'), 'al-t':()=>arrange('align','t'), 'al-ch':()=>arrange('align','ch'), 'al-cv':()=>arrange('align','cv'), 'di-h':()=>arrange('dist','h'), 'di-v':()=>arrange('dist','v'),
+    'pk-keep':()=>arrange('pack','keep'), 'pk-size':()=>arrange('pack','size'), 'pk-color':()=>arrange('pack','color'), 'pk-name':()=>arrange('pack','name'), 'pk-date':()=>arrange('pack','date'),
+    group:()=>groupSel(true), ungroup:()=>groupSel(false), front:()=>zOrder(true), back:()=>zOrder(false), dup:dupSel,
+    'op-100':()=>selTransform(i=>{ i.op=1; }), 'op-60':()=>selTransform(i=>{ i.op=.6; }), 'op-30':()=>selTransform(i=>{ i.op=.3; }), igray:()=>selTransform(i=>{ i.gray=!i.gray; }),
+    lock:()=>{ selTransform(i=>{ i.locked=true; }); BS.sel.clear(); drawSel(); toast('Locked. Right click → Unlock all to free them'); }, unlock:()=>{ snap(); b.items.forEach(i=>{ i.locked=false; }); commit(); },
+    exp1:()=>exportSel(false), expn:()=>exportSel(true), del:delSel };
+  map[c]?.();
+}
+document.addEventListener('click', e=>{ const bm=e.target.closest?.('.bmenu [data-bm]'); if(bm){ e.preventDefault(); boardCmd(bm.dataset.bm); return; } if(!e.target.closest?.('.bmenu')) closeBoardMenu(); }, true);
+function boardKeys(e){
+  if(state.ui.tab!=='boards' || !BB()) return false; const ae=document.activeElement; if(/^(INPUT|TEXTAREA|SELECT)$/.test(ae?.tagName) || ae?.isContentEditable || $('#dlg').open) return false;
+  const k=e.key.toLowerCase(), c=e.ctrlKey||e.metaKey;
+  if(e.code==='Space'){ e.preventDefault(); if(!BS.space){ BS.space=true; $('#bdStage')?.classList.add('grab'); } return true; }
+  if(BS.crop){ if(e.key==='Enter'){ e.preventDefault(); toggleCrop(null); return true; } if(e.key==='Escape'){ e.preventDefault(); cancelCrop(); drawSel(); return true; } }
+  const go=(fn)=>{ e.preventDefault(); fn(); return true; };
+  if(e.key==='Delete'||e.key==='Backspace') return go(delSel);
+  if(c && k==='a') return go(()=>boardCmd('selall'));
+  if(c && e.shiftKey && k==='g') return go(()=>groupSel(false));
+  if(c && k==='g') return go(()=>groupSel(true));
+  if(c && k==='d') return go(dupSel);
+  if(c && e.key===']') return go(()=>zOrder(true));
+  if(c && e.key==='[') return go(()=>zOrder(false));
+  if(e.altKey && e.shiftKey && k==='h') return go(()=>boardCmd('fliph'));
+  if(e.altKey && e.shiftKey && k==='v') return go(()=>boardCmd('flipv'));
+  if(c||e.altKey) return false;
+  if(k==='f' || e.key==='Home') return go(fitAll);
+  if(k==='g') return go(()=>boardCmd('gray'));
+  if(k==='p') return go(()=>arrange('pack','keep'));
+  if(e.key==='Enter' && BS.sel.size===1) return go(()=>toggleCrop([...BS.sel][0]));
+  if(e.key==='1') return go(()=>{ const b=BB(), st=$('#bdStage'), cx=st.clientWidth/2, cy=st.clientHeight/2; b.view.x=cx-(cx-b.view.x)/b.view.z; b.view.y=cy-(cy-b.view.y)/b.view.z; b.view.z=1; syncView(); });
+  if(e.key==='Escape' && BS.sel.size){ BS.sel.clear(); drawSel(); return true; }
+  return false;
+}
+document.addEventListener('keyup', e=>{ if(e.code==='Space' && BS.space){ BS.space=false; $('#bdStage')?.classList.remove('grab'); } });
+function boardHelp(){
+  $('#dlg').dataset.mode='help';
+  $('#dlgBody').innerHTML=`<h2>Board controls</h2><div class="keys">
+    <kbd>Wheel</kbd><span>Zoom at the cursor</span><kbd>Middle drag</kbd><span>Pan, or hold Space and drag</span><kbd>Right click</kbd><span>Every action, for the selection or the board</span>
+    <kbd>Drag</kbd><span>Move; drag empty space to select with a frame, Shift adds</span><kbd>Corner</kbd><span>Resize, keeps proportions</span><kbd>Ctrl + corner</kbd><span>Rotate, or use the round knob; Shift snaps to 15°</span>
+    <kbd>Double click</kbd><span>Crop like in Figma: drag edges, drag inside to slide; Enter finishes, Esc cancels</span>
+    <kbd>F / Home</kbd><span>Fit everything or the selection</span><kbd>1</kbd><span>Zoom 100%</span><kbd>G</kbd><span>Grayscale view</span><kbd>P</kbd><span>Pack the selection</span>
+    <kbd>Alt Shift H / V</kbd><span>Flip</span><kbd>Ctrl G</kbd><span>Group, Ctrl Shift G ungroups</span><kbd>Ctrl ] / [</kbd><span>Front / back</span><kbd>Ctrl D</kbd><span>Duplicate</span><kbd>Del</kbd><span>Delete</span><kbd>Ctrl V</kbd><span>Paste images</span></div>`;
+  $('#dlg').showModal();
 }
 
 /* ================= local links: files and folders on disk ================= */
@@ -2671,9 +3075,9 @@ function openUpdate(){
 
 /* ================= desktop (Tauri) ================= */
 // Everything here is inert in the browser; in the desktop app it adds file storage, tray, mini timer and more.
-const APP_VER='1.1.1';
+const APP_VER='1.2.1';
 const DESK = !!(window.__TAURI__ && window.__TAURI__.core);
-const tinvoke = (cmd,args) => window.__TAURI__.core.invoke(cmd,args);
+const tinvoke = (cmd,args,opts) => window.__TAURI__.core.invoke(cmd,args,opts);
 const fileName = p => String(p||'').split(/[\\/]/).pop();
 let deskLoaded=false, deskT=null, closeRemember=false, curImg=null, lastMini='';
 function deskSave(immediate){
