@@ -27,16 +27,19 @@ jobs:
       - name: Install the Tauri CLI
         run: npm install
 
-      - name: Build and publish the installer
+      - name: Build, sign and publish the installer
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ''
         with:
           tagName: v__VERSION__
           releaseName: 'Taskromancer v__VERSION__'
-          releaseBody: 'Download Taskromancer_x.x.x_x64-setup.exe below and run it. If Windows shows “Windows protected your PC”, click More info, then Run anyway.'
+          releaseBody: 'Download Taskromancer_x.x.x_x64-setup.exe below and run it. Installed copies update themselves from here.'
           releaseDraft: false
           prerelease: false
+          includeUpdaterJson: true
 
       - name: Keep the installers as a build artifact too
         uses: actions/upload-artifact@v4
