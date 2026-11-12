@@ -277,6 +277,22 @@ dialog h2{font:500 20px var(--f-px);margin:0;color:var(--bone)}
 .toast.show{display:flex}
 .toast button{font:500 14px var(--f-px);color:var(--soul)}
 
+/* ---------- v16: time log, quest order ---------- */
+.tlog{display:flex;flex-direction:column;gap:4px;border:2px solid var(--abyss);box-shadow:inset 0 0 0 1px var(--edge);background:var(--well);padding:6px}
+.tl-row{display:grid;grid-template-columns:96px minmax(0,1fr) 84px 28px 28px;gap:6px;align-items:center;padding:2px 4px;border-left:3px solid var(--qc,transparent)}
+.tl-row .field{padding:4px 8px;font-size:13px}
+.tl-when{font:500 12.5px var(--f-num);color:var(--muted)}
+.tl-row.manual .tl-when{color:var(--arcane)}.tl-row.earlier .tl-when{color:var(--dim);font-style:italic}
+.tl-ms{font-family:var(--f-num);text-align:right}
+.tl-add{display:grid;grid-template-columns:minmax(0,1fr) 96px 110px auto;gap:6px;margin-top:8px}
+.tl-add .field{padding:5px 8px;font-size:13px}
+.tl-quick{display:grid;grid-template-columns:auto 110px 150px auto;gap:6px;align-items:center}
+.tl-quick .lbl{font-size:12px;color:var(--muted)}
+.tl-quick .field{padding:5px 8px;font-size:13px}
+.q-row.drop-above{box-shadow:inset 0 3px 0 var(--soul)!important}
+.q-row.drop-below{box-shadow:inset 0 -3px 0 var(--soul)!important}
+@media (max-width:640px){ .tl-row{grid-template-columns:70px minmax(0,1fr) 64px 28px 28px} .tl-add,.tl-quick{grid-template-columns:1fr 1fr} }
+
 /* ---------- v15: atlas adventure ---------- */
 .mp-img{image-rendering:pixelated;pointer-events:none}
 .mp-fill{stroke:#0a0b10;stroke-width:2}
@@ -998,7 +1014,7 @@ function fresh(){
     timer:{ state:'idle', acc:0, runStart:null, segStart:null },
     pending:[], projects:[], quests:[], goals:[], notes:[], focus:null,
     cats:[{id:'idea',emoji:'💡',name:'Ideas'},{id:'work',emoji:'📌',name:'Work'},{id:'learn',emoji:'🧠',name:'Learning'},{id:'life',emoji:'🏠',name:'Personal'}],
-    calc:['',''], dayTimed:{ day:'', ms:0 }, sess:sessDefaults(), rnd:rndDefaults(), quotes:{ active:'auto', lists:quoteDefaults() }, roots:[], boards:[], maps:[], tiles:{}, ach:{},
+    calc:['',''], dayTimed:{ day:'', ms:0 }, sess:sessDefaults(), rnd:rndDefaults(), quotes:{ active:'auto', lists:quoteDefaults() }, roots:[], boards:[], maps:[], tiles:{}, ach:{}, log:[],
     stats:{ cuts:0, allocs:0, questsDone:0, since:now() },
     ui:{ tab:'board', q:'', hideDone:false, crypt:false, edit:null, goalSort:'deadline', goalIcon:'', openGoal:null,
          reportDay:'', decimal:false, dayGoal:8, noteCat:'', noteSort:'manual', manageCats:false, noteCatNew:'idea', noteQ:'', draft:'', ritualTab:'tracker', sessOpen:false, tabOrder:null, catPick:null, newCatEmoji:'⭐', deckEdit:null, noteMenu:null, theme:'necro', hiddenTabs:[], qEdit:null } };
@@ -1014,6 +1030,7 @@ function normalize(s){
   if(!Array.isArray(o.roots)) o.roots=[];
   if(!Array.isArray(o.boards)) o.boards=[];
   if(!Array.isArray(o.maps)) o.maps=[]; o.maps.forEach(m=>{ if(!Array.isArray(m.hexes)) m.hexes=[]; m.view ||= { x:0, y:0, z:1 }; if(!Array.isArray(m.routes)) m.routes=[]; if(!Array.isArray(m.marks)) m.marks=[]; m.inv ||= {}; });
+  if(!Array.isArray(o.log)) o.log=[];
   if(!o.tiles || typeof o.tiles!=='object') o.tiles={}; if(!o.ach || typeof o.ach!=='object') o.ach={}; if(!Array.isArray(o.stats.days)) o.stats.days=[];
   o.boards.forEach(b=>{ if(!Array.isArray(b.items)) b.items=[]; b.view ||= { x:0, y:0, z:1 }; });
   if(!o.ui.compact || typeof o.ui.compact!=='object') o.ui.compact={};
@@ -1036,7 +1053,7 @@ try { state = normalize(JSON.parse(localStorage.getItem(LS))); } catch { state =
 let refs=null, saveT=null, saving=false, again=false, pushed={ core:'', notes:'', rnd:'', boards:'' };
 const setSync = t => { $('#sync').textContent = t; };
 function save(){ if(BOARDWIN){ boardWinPush(); return; } state.updatedAt=now(); try{ localStorage.setItem(LS, JSON.stringify(state)); }catch{} clearTimeout(saveT); saveT=setTimeout(push, 800); deskSave(); boardWinMainSync(); }
-function splitState(){ const { notes, cats, rnd, boards, ...core } = state; return { core:JSON.stringify(core), notes:JSON.stringify({ notes, cats }), rnd:JSON.stringify({ rnd }), boards:JSON.stringify({ boards }) }; }
+function splitState(){ const { notes, cats, rnd, boards, log, ...core } = state; return { core:JSON.stringify(core), notes:JSON.stringify({ notes, cats }), rnd:JSON.stringify({ rnd }), boards:JSON.stringify({ boards, log }) }; }
 async function push(){
   if(!refs) return; if(saving){ again=true; return; } saving=true; setSync('Saving…');
   try{ const p=splitState(), u=state.updatedAt;
@@ -1722,6 +1739,7 @@ function questBlock(q, child){
       ${lookRow('q',q)}
       ${linksBlock(q,'q:'+q.id,{ folderObj:!child })}
       <div class="qnote"><span class="lbl">Notes</span>${richBox('quest:'+q.id, q.note, 'Description, links, what’s next… also listed under Notes → Quest notes')}</div>
+      ${addTimeBlock(q)}
       <div class="foot">
         ${child?'':`<form data-form="obj-add" data-id="${q.id}"><input class="field" name="t" placeholder="Add objective (subtask)" autocomplete="off"><button class="btn sm">${IC.plus}Objective</button></form>`}
         ${child?'':`<button class="btn sm" data-act="freeze" data-id="${q.id}">${PX.snow}Freeze</button>`}
@@ -1874,7 +1892,7 @@ function applySplit(){
   const chunks = state.pending.filter(c=>A.ids.includes(c.id)), first=chunks.reduce((a,c)=>Math.min(a,c.start),Infinity);
   let count=0, ms=0;
   S.forEach((s,i)=>{ const q=A.assign[i]&&Q(A.assign[i]);
-    if(q){ q.days[A.day]=(q.days[A.day]||0)+s.ms; count++; ms+=s.ms; }
+    if(q){ addTime(q.id, A.day, s.ms, first+s.start, first+s.start+s.ms, 'timer'); count++; ms+=s.ms; }
     else state.pending.push({ id:uid(), ms:s.ms, start:first+s.start, end:first+s.start+s.ms, day:A.day }); });
   state.pending = state.pending.filter(c=>!A.ids.includes(c.id)).sort((a,b)=>a.start-b.start);
   state.stats.allocs++; A=null; selChunks.clear(); commit();
@@ -1882,7 +1900,7 @@ function applySplit(){
 }
 function giveChunk(cid, qid){
   const c=state.pending.find(x=>x.id===cid), q=Q(qid); if(!c||!liveQuest(q)) return;
-  snap(); q.days[c.day]=(q.days[c.day]||0)+c.ms; state.pending=state.pending.filter(x=>x!==c);
+  snap(); addTime(q.id, c.day, c.ms, c.start, c.end, 'timer'); state.pending=state.pending.filter(x=>x!==c);
   if(A && A.ids.includes(cid)) A=null; state.stats.allocs++; commit();
   toast(`${fmtHM(c.ms)} → ${q.title}`, true);
   const row=document.querySelector(`[data-qbox="${qid}"]`); if(row){ row.classList.add('flash'); setTimeout(()=>row.classList.remove('flash'),1300); }
@@ -1911,6 +1929,37 @@ document.addEventListener('dblclick', e=>{
   const st=e.target.closest('#strip'); if(!st || e.target.closest('.hd')) return;
   const r=st.getBoundingClientRect(); if(addCut((e.clientX-r.left)/r.width*A.total)) renderHarvest(); else toast('Parts can’t be shorter than a minute');
 });
+
+/* ================= time log: every allocation is an entry you can fix later ================= */
+// q.days[day] stays the running total; log entries explain it. Older time without entries shows as "earlier time".
+function addTime(qid, day, ms, s, e, src){ const q=Q(qid); if(!q || ms<=0) return null; q.days[day]=(q.days[day]||0)+ms; const en={ id:uid(), q:qid, d:day, ms, s:s||null, e:e||null, src:src||'timer' }; state.log.push(en); return en; }
+function bumpDays(qid, day, delta){ const q=Q(qid); if(!q) return; const v=Math.max(0,(q.days[day]||0)+delta); if(v) q.days[day]=v; else delete q.days[day]; }
+function dayEntries(d){
+  const out=state.log.filter(x=>x.d===d && Q(x.q)), sum={};
+  out.forEach(x=>{ sum[x.q]=(sum[x.q]||0)+x.ms; });
+  state.quests.forEach(q=>{ const rem=(q.days[d]||0)-(sum[q.id]||0); if(rem>=1000) out.push({ id:'rem:'+q.id, q:q.id, d, ms:rem, s:null, e:null, src:'earlier' }); });
+  return out.sort((a,b)=>(a.s||9e15)-(b.s||9e15) || (a.src>b.src?1:-1));
+}
+function logEntry(id, d){ if(id.startsWith('rem:')){ const qid=id.slice(4), en=dayEntries(d).find(x=>x.id===id); if(!en) return null; const real={ id:uid(), q:qid, d, ms:en.ms, s:null, e:null, src:'earlier' }; state.log.push(real); return real; } return state.log.find(x=>x.id===id); }
+function questOptsAll(sel){ let h=''; state.projects.forEach(p=>{ const qs=tops(p.id); if(!qs.length) return; h+=`<optgroup label="${esc(p.name)}${p.frozen?' (frozen)':''}">`;
+  qs.forEach(q=>{ h+=`<option value="${q.id}" ${sel===q.id?'selected':''}>${q.emoji?q.emoji+' ':''}${esc(q.title)}</option>`; kids(q).forEach(c=>{ h+=`<option value="${c.id}" ${sel===c.id?'selected':''}>\u00a0\u00a0› ${esc(c.title)}</option>`; }); }); h+='</optgroup>'; }); return h; }
+function viewLog(d){
+  const ens=dayEntries(d), isToday=d===today();
+  return `<h3 class="dh" style="margin-top:22px">Time log</h3>
+  <p class="hint">Every bit of time given to a quest on this day. Fix the minutes, move it to another quest, send it back to the harvest or remove it. Forgot the timer? Add time by hand below${isToday?'':`, it goes to ${fmtDate(d)}`}.</p>
+  ${ens.length?`<div class="tlog">${ens.map(x=>{ const q=Q(x.q); return `<div class="tl-row ${x.src}" style="${q?.color&&QCOL[q.color]?`--qc:${QCOL[q.color]}`:''}">
+      <span class="tl-when" title="${x.src==='earlier'?'Time recorded before the log existed':x.src==='manual'?'Added by hand':'From the timer'}">${x.s?`${fmtTime(x.s)}–${fmtTime(x.e||x.s+x.ms)}`:x.src==='manual'?'by hand':'earlier'}</span>
+      <select class="field" data-logq="${x.id}" aria-label="Quest">${questOptsAll(x.q)}</select>
+      <input class="field tl-ms" data-logms="${x.id}" value="${fmtEst(Math.round(x.ms/MIN))||'0m'}" aria-label="Duration" title="e.g. 45m, 1h20m, 1:20">
+      <button class="ib" data-act="log-back" data-id="${x.id}" title="Send back to the harvest to split again" aria-label="Back to harvest">${IC.reload}</button>
+      <button class="ib" data-act="log-del" data-id="${x.id}" title="Remove this time" aria-label="Remove">${IC.trash}</button></div>`; }).join('')}</div>`:`<p class="empty-note">Nothing logged on this day yet.</p>`}
+  <form class="tl-add" data-form="log-add"><select class="field" name="q" aria-label="Quest" required><option value="">Add time to…</option>${questOptsAll(state.ui.logLastQ)}</select>
+    <input class="field" name="ms" placeholder="1h 20m" autocomplete="off" aria-label="Duration" required>
+    <input class="field" type="time" name="at" aria-label="Started at (optional)" title="When it started (optional)">
+    <button class="btn sm soul">${IC.plus}Add time</button></form>`;
+}
+// quick "add time" from a quest's ⋯ panel, with any date
+function addTimeBlock(q){ return `<form class="tl-quick" data-form="log-quick" data-id="${q.id}"><span class="lbl">Add time by hand</span><input class="field" name="ms" placeholder="1h 20m" autocomplete="off" aria-label="Duration"><input class="field" type="date" name="d" value="${today()}" aria-label="Day"><button class="btn sm">${IC.plus}Add</button></form>`; }
 
 /* ================= report + calculator ================= */
 const qDay = (q,d) => (q.days[d]||0) + kids(q).reduce((a,c)=>a+qDay(c,d),0);
@@ -1958,6 +2007,7 @@ function viewReport(){
       <div class="rr total"><span class="rn">Total</span>${cell(R.total)}</div>
       ${R.un?`<div class="rr un"><span class="rn">Harvested, not allocated yet</span><span class="rt">${tv(R.un)}</span><span></span><span></span><span></span></div>`:''}</div>`
     : `<div class="empty"><b>No time on ${isToday?'today':'this day'}</b>Allocated time shows up here, grouped by project and quest.${R.un?` ${fmtHM(R.un)} is still waiting in the harvest.`:''}</div>`}
+  ${viewLog(d)}
   </section><section>${viewCalc()}</section></div>`;
 }
 let calcActive=0;
@@ -2064,6 +2114,7 @@ const G = id => state.goals.find(g=>g.id===id);
 // two-step button: the first click arms it, the second one acts (browser confirm dialogs are blocked here)
 function arm(el, label){ if(el.dataset.armed==='1') return true; el.dataset.armed='1'; const orig=el.innerHTML; el.classList.add('armed'); el.textContent=label;
   setTimeout(()=>{ if(el.isConnected && el.dataset.armed==='1'){ el.dataset.armed=''; el.innerHTML=orig; el.classList.remove('armed'); } },3500); return false; }
+function moveQuestToProject(q, pid){ q.projectId=pid; kids(q).forEach(c=>{ c.projectId=pid; }); }
 function freeze(id, on){ const q=Q(id); if(!q||q.parentId) return; snap(); q.frozen=on; if(on && (state.focus===id || kids(q).some(c=>c.id===state.focus))) state.focus=null; if(on) state.ui.edit=null; commit(); toast(on?`“${q.title}” sent to ${T.crypt}`:`“${q.title}” revived`); }
 function freezeProject(id, on){ const p=P(id); if(!p) return; snap(); p.frozen=on; if(on){ const f=state.focus&&Q(state.focus); if(f && f.projectId===id) state.focus=null; state.ui.edit=null; } commit(); toast(on?`Project “${p.name}” sent to ${T.crypt}`:`Project “${p.name}” revived`); }
 function shiftDay(n){ const d=new Date(startOfIso(state.ui.reportDay||today())); d.setDate(d.getDate()+n); const iso=isoDay(d); state.ui.reportDay = iso>=today() ? '' : iso; commit(); }
@@ -2244,6 +2295,9 @@ const A_ = {
   'mark-del': (el,id)=>{ const m=MP(); snap(); m.marks=m.marks.filter(k=>k.id!==id); commit(); },
   'hex-loot': (el,id,e)=>{ const m=MP(), h=m?.hexes.find(x=>x.id===id); if(!h) return; snap(); if(h.looted && h.loot){ m.inv[h.loot.e]=Math.max(0,(m.inv[h.loot.e]||0)-h.loot.n); h.looted=false; } h.loot = e ? { e, n:h.loot?.n||1 } : null; reconcileLoot(m,false); commit(); },
   'ach-open': ()=> openAch(),
+  'log-del': (el,id)=>{ const d=state.ui.reportDay||today(); snap(); const en=logEntry(id,d); if(!en) return; bumpDays(en.q,en.d,-en.ms); state.log=state.log.filter(x=>x!==en); commit(); toast(`${fmtHM(en.ms)} removed`, true); },
+  'log-back': (el,id)=>{ const d=state.ui.reportDay||today(); snap(); const en=logEntry(id,d); if(!en) return; bumpDays(en.q,en.d,-en.ms); state.log=state.log.filter(x=>x!==en);
+    const start=en.s||startOfIso(en.d)+9*3600e3; state.pending.push({ id:uid(), ms:en.ms, start, end:en.e||start+en.ms, day:en.d }); state.pending.sort((a,b)=>a.start-b.start); commit(); toast(`${fmtHM(en.ms)} is back in the harvest`, true); },
   'hide-done': ()=>{ state.ui.hideDone=!state.ui.hideDone; commit(); },
   crypt: ()=>{ state.ui.crypt=!state.ui.crypt; commit(); },
   'p-collapse': (el,id)=>{ const p=P(id); p.collapsed=!p.collapsed; commit(); },
@@ -2258,8 +2312,8 @@ const A_ = {
   'q-edit': (el,id)=>{ state.ui.edit = state.ui.edit===id ? null : id; commit(); },
   'q-copy': async (el,id,sub,e)=>{ const q=Q(id), ms = e.shiftKey ? qTotal(q) : qToday(q); if(await copyText(fmtHM(ms))) toast(`Copied ${fmtHM(ms)} ${e.shiftKey?'total':'today'}`); else toast('Copy failed'); },
   'q-del': (el,id)=>{ const q=Q(id); snap();
-    const ids=new Set([id,...kids(q).map(c=>c.id)]); state.quests=state.quests.filter(x=>!ids.has(x.id)); if(ids.has(state.focus)) state.focus=null; commit(); toast(`Deleted “${q.title}”`, true); },
-  'q-reset': (el,id)=>{ const q=Q(id); snap(); q.days={}; commit(); toast('Time cleared', true); },
+    const ids=new Set([id,...kids(q).map(c=>c.id)]); state.quests=state.quests.filter(x=>!ids.has(x.id)); state.log=state.log.filter(x=>!ids.has(x.q)); if(ids.has(state.focus)) state.focus=null; commit(); toast(`Deleted “${q.title}”`, true); },
+  'q-reset': (el,id)=>{ state.log=state.log.filter(x=>x.q!==id); const q=Q(id); snap(); q.days={}; commit(); toast('Time cleared', true); },
   freeze: (el,id)=> freeze(id, true),
   thaw: (el,id)=> freeze(id, false),
   'open-quest': (el,id)=>{ const q=Q(id); const top=q.parentId?Q(q.parentId):q; const p=P(q.projectId);
@@ -2338,6 +2392,11 @@ const FORMS = {
     let pid=m.projectId && P(m.projectId) && !P(m.projectId).frozen ? m.projectId : '';
     if(!pid){ const p={ id:uid(), name:m.name, collapsed:false, frozen:false }; state.projects.push(p); pid=p.id; m.projectId=pid; toast(`New quests from this map go to project “${p.name}”`); }
     const {title,est}=parseQuestInput(v); const q=newQuest(pid,null,title,est); state.quests.push(q); (h.quests ||= []).push(q.id); commit(); document.querySelector(`[data-form="hex-quest"][data-id="${h.id}"] input`)?.focus(); },
+  'log-add': f=>{ const qid=f.q.value, min=parseDur(f.ms.value); if(!qid){ toast('Pick a quest'); return; } if(!min){ toast('Write a duration, e.g. 45m or 1h20m'); f.ms.focus(); return; }
+    const d=state.ui.reportDay||today(); let s0=null; if(f.at.value){ const [h,mm]=f.at.value.split(':').map(Number); s0=startOfIso(d)+(h*60+mm)*MIN; }
+    snap(); addTime(qid, d, min*MIN, s0, s0?s0+min*MIN:null, 'manual'); state.ui.logLastQ=qid; commit(); toast(`${fmtHM(min*MIN)} added to “${Q(qid).title}”`, true); },
+  'log-quick': f=>{ const q=Q(f.dataset.id), min=parseDur(f.ms.value), d=f.d.value||today(); if(!q) return; if(!min){ toast('Write a duration, e.g. 45m or 1h20m'); f.ms.focus(); return; }
+    snap(); addTime(q.id, d, min*MIN, null, null, 'manual'); commit(); toast(`${fmtHM(min*MIN)} added to “${q.title}”${d!==today()?` on ${fmtDate(d)}`:''}`, true); },
   'note-add': f=>{ const t=f.t.value.trim(); if(!t) return; const n={ id:uid(), text:t, cat:f.c.value, createdAt:now(), updatedAt:now() };
     state.notes.push(n); state.ui.noteCatNew=f.c.value; if(state.ui.noteCat && state.ui.noteCat!==n.cat) state.ui.noteCat=''; commit(); document.querySelector('[data-form="note-add"] textarea')?.focus(); },
   'cat-add': f=>{ const n=f.n.value.trim(); if(!n) return; state.cats.push({ id:uid(), emoji:f.e.value, name:n }); commit(); document.querySelector('[data-form="cat-add"] input')?.focus(); }
@@ -2371,6 +2430,7 @@ document.addEventListener('input', e=>{
   if(d.ui==='q'||d.ui==='noteQ'||d.ui==='libQ'){ state.ui[d.ui]=el.value; save(); const pos=el.selectionStart; renderBoard(); const s=document.querySelector(`[data-ui="${d.ui}"]`); s.focus(); s.setSelectionRange(pos,pos); return; }
   if(d.calc!==undefined){ state.calc[+d.calc]=el.value; save(); updateCalc(); return; }
   if(d.sess){ return; }
+  if(d.logms!==undefined) return;
   if(d.bdname!==undefined){ const b=BB(); if(b){ b.name=el.value; save(); } return; }
   if(d.mpname!==undefined){ const m=MP(); if(m){ m.name=el.value; save(); } return; }
   if(d.marknote!==undefined){ const k=MP()?.marks.find(x=>x.id===d.marknote); if(k){ k.note=el.value; save(); } return; }
@@ -2417,6 +2477,9 @@ document.addEventListener('change', e=>{
   if(d.bdsel!==undefined){ state.ui.boardId=el.value; BS.sel.clear(); BS.crop=null; $('#board').dataset.view=''; softCommit(); return; }
   if(d.bdname!==undefined){ const b=BB(); if(b && !el.value.trim()) b.name='Untitled board'; softCommit(); return; }
   if(d.bdlink!==undefined){ const b=BB(); if(b){ b.link=el.value; softCommit(); toast(el.value?'Attached':'Detached'); } return; }
+  if(d.logq!==undefined){ const day=state.ui.reportDay||today(); snap(); const en=logEntry(d.logq,day); if(!en || !Q(el.value)) return; bumpDays(en.q,en.d,-en.ms); en.q=el.value; bumpDays(en.q,en.d,en.ms); if(en.src==='earlier') en.src='manual'; softCommit(); toast(`Moved to “${Q(en.q).title}”`, true); return; }
+  if(d.logms!==undefined){ const day=state.ui.reportDay||today(), min=parseDur(el.value); if(min==null){ toast('Write a duration, e.g. 45m or 1h20m'); return; } snap(); const en=logEntry(d.logms,day); if(!en) return;
+    const ms=min*MIN, delta=ms-en.ms; bumpDays(en.q,en.d,delta); en.ms=ms; if(en.s && en.e) en.e=en.s+ms; if(ms<=0) state.log=state.log.filter(x=>x!==en); softCommit(); return; }
   if(d.qactive!==undefined){ state.quotes.active=el.value; save(); pickQuote(); return; }
   if(d.qitems||d.qname){ openQuotes(); pickQuote(); return; }
   if(d.rndf!==undefined){ const f=R().formulas.find(x=>x.id===el.value); if(f){ loadFormula(f); softCommit(); toast(`Formula “${f.name}” loaded, press Roll`); } else { R().curFormula=''; softCommit(); } return; }
@@ -2459,6 +2522,7 @@ document.addEventListener('keydown', e=>{
   if(e.key==='Enter' && ae?.dataset?.linkpaste!==undefined){ e.preventDefault(); ae.blur(); return; }
   if(e.key==='Enter' && (ae?.dataset?.lname!==undefined || ae?.dataset?.stepedit!==undefined || ae?.dataset?.rootpath!==undefined || ae?.dataset?.rootname!==undefined)){ e.preventDefault(); ae.blur(); return; }
   if(e.key==='Escape' && ae?.dataset?.stepedit!==undefined){ e.preventDefault(); state.ui.stepEdit=null; ae.value=''; commit(); return; }
+  if(e.key==='Enter' && ae?.dataset?.logms!==undefined){ e.preventDefault(); ae.blur(); return; }
   if(e.key==='Enter' && ae?.id==='chipPath'){ e.preventDefault(); A_['chip-insert'](); return; }
   if(e.key==='Enter' && (ae?.id==='rootPath'||ae?.id==='rootName')){ e.preventDefault(); A_['root-add'](); return; }
   if(e.key==='Enter' && ae?.id==='mqNew'){ e.preventDefault(); makeQuests(); return; }
@@ -2652,6 +2716,10 @@ function dropTarget(node){
   if(kind==='c'){ const r=node.closest('.q-row[data-qid]'); return r && liveQuest(Q(r.dataset.qid)) ? { el:r, type:'give', id:r.dataset.qid } : null; }
   if(kind==='q'){ const q=Q(id); if(!q) return null;
     if(liveQuest(q)){
+      const row=node.closest('.q-row[data-qid]'); if(row){ const t=Q(row.dataset.qid);
+        if(t && t.id!==q.id && (t.parentId||null)===(q.parentId||null) && (q.parentId || t.projectId===q.projectId)) return { el:row, type:'qsort', id:t.id };
+        if(t && !q.parentId && !t.parentId && t.projectId!==q.projectId) return { el:row, type:'qsort', id:t.id }; }
+      const ph=node.closest('.p-head'); if(ph && !q.parentId){ const pid=ph.dataset.drag?.slice(2); if(pid && pid!==q.projectId) return { el:ph, type:'qmove', id:pid }; }
       const st=node.closest('#strip'); if(st) return { el:st, type:'strip' };
       const ch=node.closest('.chunk[data-cid]'); if(ch) return { el:ch, type:'chunk', id:ch.dataset.cid };
       const cr=node.closest('#crypt'); if(cr && !q.parentId) return { el:cr, type:'freeze' };
@@ -2677,9 +2745,7 @@ document.addEventListener('dragstart', e=>{
 });
 document.addEventListener('dragend', ()=>{ dragging=null; clearHi(); document.querySelectorAll('.dragging').forEach(x=>x.classList.remove('dragging')); document.body.classList.remove('is-dragging','drag-c','drag-q','drag-p','drag-n','drag-t','drag-d','drag-l','drag-s'); });
 document.addEventListener('dragover', e=>{ const t=dropTarget(e.target); clearHi(); if(t){ e.preventDefault(); e.dataTransfer.dropEffect = t.type==='give'||t.type==='strip'||t.type==='chunk' ? 'copy' : 'move'; if(t.type==='note'||t.type==='tab'){ const r=t.el.getBoundingClientRect(); t.el.classList.add(e.clientX<r.left+r.width/2?'drop-before':'drop-after'); }
-  else if(t.type==='step'){ const g=G(t.gid), r=t.el.getBoundingClientRect(), it=g.items.find(i=>i.id===id); g.items.splice(g.items.indexOf(it),1); g.items.splice(g.items.indexOf(g.items.find(i=>i.id===t.id))+(e.clientY<r.top+r.height/2?0:1),0,it); commit(); }
-  else if(t.type==='panel'){ const o=state.ui.leftOrder||['ritual','harvest']; state.ui.leftOrder=[...o].reverse(); commit(); }
-  else if(t.type==='deck'||t.type==='step'){ const r=t.el.getBoundingClientRect(); t.el.classList.add(e.clientY<r.top+r.height/2?'drop-above':'drop-below'); } else t.el.classList.add('drop-hi'); }
+  else if(t.type==='deck'||t.type==='step'||t.type==='qsort'){ const r=t.el.getBoundingClientRect(); t.el.classList.add(e.clientY<r.top+r.height/2?'drop-above':'drop-below'); } else t.el.classList.add('drop-hi'); }
   else if(!dragging && e.dataTransfer?.types?.includes('Files') && e.target.closest?.('.rich')) e.preventDefault(); });
 document.addEventListener('drop', e=>{
   if(!dragging){ const ed=e.target.closest?.('.rich'); const files=[...(e.dataTransfer?.files||[])].filter(f=>f.type.startsWith('image/'));
@@ -2695,6 +2761,13 @@ document.addEventListener('drop', e=>{
   else if(t.type==='note'){ const r=t.el.getBoundingClientRect(); reorderNote(id, t.id, e.clientX<r.left+r.width/2); }
   else if(t.type==='deck'){ const r=t.el.getBoundingClientRect(), ds=R().decks, dd=D(id); ds.splice(ds.indexOf(dd),1); ds.splice(ds.indexOf(D(t.id))+(e.clientY<r.top+r.height/2?0:1),0,dd); R().curFormula=''; commit(); }
   else if(t.type==='tab'){ const r=t.el.getBoundingClientRect(), o=tabOrder(true).filter(k=>k!==id); o.splice(o.indexOf(t.id)+(e.clientX<r.left+r.width/2?0:1),0,id); state.ui.tabOrder=o; commit(); }
+  else if(t.type==='qsort'){ const r=t.el.getBoundingClientRect(), before=e.clientY<r.top+r.height/2, q=Q(id), tg=Q(t.id); snap();
+    if(!q.parentId && tg.projectId!==q.projectId){ moveQuestToProject(q, tg.projectId); }
+    const sib=state.quests.filter(x=>x.id!==q.id && (x.parentId||null)===(q.parentId||null) && (q.parentId || x.projectId===q.projectId)).sort((a,b)=>(a.done-b.done)||(a.order||0)-(b.order||0));
+    sib.splice(sib.indexOf(tg)+(before?0:1),0,q); sib.forEach((x,i)=>x.order=i+1); commit(); }
+  else if(t.type==='qmove'){ snap(); const q=Q(id); moveQuestToProject(q, t.id); const sib=tops(t.id).filter(x=>x!==q); q.order=sib.reduce((a,x)=>Math.max(a,x.order||0),0)+1; P(t.id).collapsed=false; commit(); toast(`Moved to “${P(t.id).name}”`, true); }
+  else if(t.type==='step'){ const g=G(t.gid), r=t.el.getBoundingClientRect(), it=g.items.find(i=>i.id===id); g.items.splice(g.items.indexOf(it),1); g.items.splice(g.items.indexOf(g.items.find(i=>i.id===t.id))+(e.clientY<r.top+r.height/2?0:1),0,it); commit(); }
+  else if(t.type==='panel'){ const o=state.ui.leftOrder||['ritual','harvest']; state.ui.leftOrder=[...o].reverse(); commit(); }
   dragging=null;
 });
 
@@ -3602,7 +3675,7 @@ function openUpdate(){
 
 /* ================= desktop (Tauri) ================= */
 // Everything here is inert in the browser; in the desktop app it adds file storage, tray, mini timer and more.
-const APP_VER='1.4.0';
+const APP_VER='1.5.0';
 const DESK = !!(window.__TAURI__ && window.__TAURI__.core);
 const tinvoke = (cmd,args,opts) => window.__TAURI__.core.invoke(cmd,args,opts);
 const fileName = p => String(p||'').split(/[\\/]/).pop();
