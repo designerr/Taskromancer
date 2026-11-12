@@ -1,7 +1,11 @@
 {
   "identifier": "default",
-  "description": "Permissions for the main window and the mini timer",
-  "windows": ["main", "mini"],
+  "description": "Permissions for the main window, the mini timer and the board window",
+  "windows": [
+    "main",
+    "mini",
+    "board"
+  ],
   "permissions": [
     "core:default",
     "core:window:allow-start-dragging"

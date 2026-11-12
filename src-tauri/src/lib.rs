@@ -473,6 +473,55 @@ async fn close_mini(app: AppHandle) {
 }
 
 #[tauri::command]
+async fn set_fullscreen(app: AppHandle, on: bool) {
+    if let Some(w) = app.get_webview_window("main") {
+        let _ = w.set_fullscreen(on);
+    }
+}
+
+/// A board in its own borderless window that can stay on top of other programs, like PureRef.
+#[tauri::command]
+async fn open_board_window(app: AppHandle, id: String) -> Result<(), String> {
+    if let Some(w) = app.get_webview_window("board") {
+        let _ = app.emit_to("board", "board-switch", id);
+        let _ = w.show();
+        let _ = w.unminimize();
+        let _ = w.set_focus();
+        return Ok(());
+    }
+    let script = format!("window.__BOARDWIN__ = {};", serde_json::to_string(&id).map_err(err)?);
+    let w = WebviewWindowBuilder::new(&app, "board", WebviewUrl::App("index.html".into()))
+        .title("Taskromancer board")
+        .initialization_script(&script)
+        .inner_size(720.0, 540.0)
+        .min_inner_size(260.0, 200.0)
+        .decorations(false)
+        .transparent(true)
+        .shadow(true)
+        .always_on_top(true)
+        .disable_drag_drop_handler()
+        .build()
+        .map_err(err)?;
+    let _ = w.restore_state(state_flags());
+    Ok(())
+}
+
+#[tauri::command]
+async fn close_board_window(app: AppHandle) {
+    let _ = app.save_window_state(state_flags());
+    if let Some(w) = app.get_webview_window("board") {
+        let _ = w.close();
+    }
+}
+
+#[tauri::command]
+async fn set_board_on_top(app: AppHandle, on: bool) {
+    if let Some(w) = app.get_webview_window("board") {
+        let _ = w.set_always_on_top(on);
+    }
+}
+
+#[tauri::command]
 async fn set_mini_on_top(app: AppHandle, on: bool) {
     if let Some(w) = app.get_webview_window("mini") {
         let _ = w.set_always_on_top(on);
@@ -575,7 +624,11 @@ pub fn run() {
             read_board_image,
             save_bytes_dialog,
             write_bytes,
-            fetch_image
+            fetch_image,
+            set_fullscreen,
+            open_board_window,
+            close_board_window,
+            set_board_on_top
         ])
         .run(tauri::generate_context!())
         .expect("error while running Taskromancer");
