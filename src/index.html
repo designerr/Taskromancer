@@ -277,6 +277,64 @@ dialog h2{font:500 20px var(--f-px);margin:0;color:var(--bone)}
 .toast.show{display:flex}
 .toast button{font:500 14px var(--f-px);color:var(--soul)}
 
+/* ---------- v15: atlas adventure ---------- */
+.mp-img{image-rendering:pixelated;pointer-events:none}
+.mp-fill{stroke:#0a0b10;stroke-width:2}
+.mp-hit{fill:transparent;stroke:none;pointer-events:all}
+.mp-hex:hover .mp-fill{stroke:var(--edge-hi);stroke-width:3}
+.mp-hex.fog .mp-img,.mp-hex.fog .mp-fill,.mp-hex.fog g{filter:grayscale(1) brightness(.6)}
+.mp-hex.won .mp-fill{stroke:var(--near);stroke-width:3}
+.mp-selring{fill:none;stroke:var(--soul);stroke-width:4}
+.mp-ov{pointer-events:none}
+.mp-loot{font-size:15px;text-anchor:middle;dominant-baseline:middle;opacity:.9}
+.mp-mark{font-size:18px;text-anchor:middle;dominant-baseline:middle;pointer-events:none;filter:drop-shadow(0 2px 2px #000a)}
+.mp-x path{stroke:#ff4b3e;stroke-width:5;stroke-linecap:round;filter:drop-shadow(0 2px 2px #000a)}
+.mp-route{cursor:pointer}
+.mp-route .rt-hit{fill:none;stroke:transparent;stroke-width:18;pointer-events:stroke}
+.mp-route .rt-line{fill:none;stroke:var(--rc);stroke-width:4;stroke-dasharray:12 9;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 2px 1px #000a);pointer-events:none}
+.mp-route.sel .rt-line{stroke-width:6}
+.mp-route.draft .rt-line{animation:dashmove 1s linear infinite}
+@keyframes dashmove{to{stroke-dashoffset:-21}}
+.mp-route .rt-dot{fill:var(--rc);stroke:#000;stroke-width:1.5;pointer-events:none}
+.mp-route .rt-dot.has{fill:#fff;stroke:var(--rc);stroke-width:3}
+.mp-route .rt-xm{stroke:var(--rc);stroke-width:5;stroke-linecap:round;fill:none;filter:drop-shadow(0 2px 1px #000a);pointer-events:none}
+.mp-route .rt-end{font-size:22px;text-anchor:middle;pointer-events:none}
+.mp-inv{position:absolute;left:12px;top:12px;display:flex;gap:6px;flex-wrap:wrap;z-index:7;pointer-events:none}
+.invi{padding:3px 9px;background:#e9dcbcee;color:#3a2a1a;border:2px solid #5a4024;font-size:13px}
+.invi b{font-family:var(--f-num)}
+.mp-plan{position:absolute;left:12px;bottom:12px;right:360px;display:none;flex-wrap:wrap;align-items:center;gap:8px;padding:8px 10px;z-index:7;background:var(--stone2);border:2px solid var(--abyss);box-shadow:inset 0 0 0 1px var(--edge)}
+.mp-plan .sub{font-size:12px;color:var(--muted)}
+.mp-plan .swatches button{width:20px;height:20px}
+.nb-loot{display:flex;flex-direction:column;gap:4px;font-size:12.5px;color:#6a5034}
+.nb-loot label{display:flex;align-items:center;gap:6px}
+.nb-loot input{width:80px}
+.nb-marks{display:flex;flex-direction:column;gap:4px}
+.nb-mark{display:flex;align-items:center;gap:6px}
+.nb-mark .field{flex:1;padding:4px 8px}
+.nb-stops{display:flex;flex-direction:column;gap:6px}
+.nb-stop{display:flex;flex-direction:column;gap:3px;font-size:12.5px}
+.nb-stop .field{padding:5px 8px}
+.mp-panel .seg{border-color:#5a4024;box-shadow:none}
+.mp-panel .seg button{color:#5a4024}
+.mp-panel .seg button[aria-pressed="true"]{background:#d9c79e;color:#3a2a1a}
+.nb-ter img{width:100%;height:100%;object-fit:contain;image-rendering:pixelated}
+.tilegrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.tilecard{display:flex;flex-direction:column;gap:4px;padding:8px;background:var(--card);border:1px solid var(--edge)}
+.tilecard small{color:var(--dim);font-family:var(--f-num)}
+.tvars{display:flex;flex-wrap:wrap;gap:4px}
+.tvar{position:relative;display:inline-block;background:var(--well);border:1px solid var(--edge)}
+.tvar img{display:block;width:42px;height:66px;object-fit:contain;image-rendering:pixelated}
+.tvar .ib{position:absolute;top:-6px;right:-6px;width:20px;height:20px;background:var(--stone2)}
+.achgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px}
+.ach{display:flex;gap:10px;align-items:flex-start;padding:10px;background:var(--card);border:1px solid var(--edge);opacity:.55}
+.ach.got{opacity:1;box-shadow:inset 0 0 0 1px var(--near)}
+.ach .aic{font-size:24px;line-height:1}
+.ach b{display:block;font:500 14px var(--f-px);color:var(--bone)}
+.ach small{display:block;font-size:12px;color:var(--muted)}
+.ach em{display:block;font-style:normal;font-size:11px;color:var(--near);margin-top:3px}
+#sceneSvg.party .sk .bob{animation:party .25s steps(2) infinite!important}
+@keyframes party{50%{transform:translateY(-4px)}}
+
 /* ---------- v14: atlas, full view, board window ---------- */
 .fv-exit,.bw-bar{display:none}
 body.canvas-full .top,body.canvas-full .tabs,body.canvas-full .left,body.canvas-full .colsplit,body.canvas-full #bdTools .bd-name{display:none!important}
@@ -814,6 +872,7 @@ select.field option,select.catsel option{background:var(--card);color:var(--text
 <div class="toast" id="toast" role="status"><span id="toastMsg"></span><button id="toastUndo" data-act="undo">Undo</button></div>
 <input type="file" id="importFile" accept="application/json,.json" hidden>
 <input type="file" id="imgFile" accept="image/*" multiple hidden>
+<input type="file" id="tileFile" accept="image/png,image/gif,image/webp" multiple hidden>
 <input type="file" id="bdFile" accept="image/*" multiple hidden>
 <input type="file" id="qFile" accept=".txt,text/plain" hidden>
 <input type="file" id="txtFile" accept=".txt,text/plain" multiple hidden>
@@ -939,7 +998,7 @@ function fresh(){
     timer:{ state:'idle', acc:0, runStart:null, segStart:null },
     pending:[], projects:[], quests:[], goals:[], notes:[], focus:null,
     cats:[{id:'idea',emoji:'💡',name:'Ideas'},{id:'work',emoji:'📌',name:'Work'},{id:'learn',emoji:'🧠',name:'Learning'},{id:'life',emoji:'🏠',name:'Personal'}],
-    calc:['',''], dayTimed:{ day:'', ms:0 }, sess:sessDefaults(), rnd:rndDefaults(), quotes:{ active:'auto', lists:quoteDefaults() }, roots:[], boards:[], maps:[],
+    calc:['',''], dayTimed:{ day:'', ms:0 }, sess:sessDefaults(), rnd:rndDefaults(), quotes:{ active:'auto', lists:quoteDefaults() }, roots:[], boards:[], maps:[], tiles:{}, ach:{},
     stats:{ cuts:0, allocs:0, questsDone:0, since:now() },
     ui:{ tab:'board', q:'', hideDone:false, crypt:false, edit:null, goalSort:'deadline', goalIcon:'', openGoal:null,
          reportDay:'', decimal:false, dayGoal:8, noteCat:'', noteSort:'manual', manageCats:false, noteCatNew:'idea', noteQ:'', draft:'', ritualTab:'tracker', sessOpen:false, tabOrder:null, catPick:null, newCatEmoji:'⭐', deckEdit:null, noteMenu:null, theme:'necro', hiddenTabs:[], qEdit:null } };
@@ -954,7 +1013,8 @@ function normalize(s){
   if(!Array.isArray(o.ui.hiddenTabs)) o.ui.hiddenTabs=[];
   if(!Array.isArray(o.roots)) o.roots=[];
   if(!Array.isArray(o.boards)) o.boards=[];
-  if(!Array.isArray(o.maps)) o.maps=[]; o.maps.forEach(m=>{ if(!Array.isArray(m.hexes)) m.hexes=[]; m.view ||= { x:0, y:0, z:1 }; });
+  if(!Array.isArray(o.maps)) o.maps=[]; o.maps.forEach(m=>{ if(!Array.isArray(m.hexes)) m.hexes=[]; m.view ||= { x:0, y:0, z:1 }; if(!Array.isArray(m.routes)) m.routes=[]; if(!Array.isArray(m.marks)) m.marks=[]; m.inv ||= {}; });
+  if(!o.tiles || typeof o.tiles!=='object') o.tiles={}; if(!o.ach || typeof o.ach!=='object') o.ach={}; if(!Array.isArray(o.stats.days)) o.stats.days=[];
   o.boards.forEach(b=>{ if(!Array.isArray(b.items)) b.items=[]; b.view ||= { x:0, y:0, z:1 }; });
   if(!o.ui.compact || typeof o.ui.compact!=='object') o.ui.compact={};
   if(!o.quotes || !Array.isArray(o.quotes.lists)) o.quotes={ active:'auto', lists:quoteDefaults() };
@@ -1048,6 +1108,7 @@ function cut(stopAfter){
     state.pending.push({ id:uid(), ms, start:t.segStart||end-ms, end, day:isoDay(t.segStart||end-ms) });
     if(state.dayTimed.day!==today()) state.dayTimed={ day:today(), ms:0 };
     state.dayTimed.ms += ms;
+    if(ms>=3600e3) state.stats.deep=true;
     state.stats.cuts++; floaty(`+${ms<MIN?Math.round(ms/1000)+'s':fmtHM(ms)} harvested`);
   } else if(!stopAfter){ toast('Nothing to cut yet'); return; }
   t.acc=0;
@@ -1218,7 +1279,7 @@ function sessToggle(){ const r=state.sess.run;
 function sessAdvance(skipped){
   const r=state.sess.run, c=state.sess.cfg; if(!skipped) sessSound();
   if(r.phase==='work'){ linkOff(true); if(c.ask && !skipped){ r.ask=true; state.ui.ritualTab='sessions'; }
-    if(r.round>=c.rounds){ r.phase='done'; r.state='idle'; r.endsAt=null; r.remaining=0; toast(`All ${c.rounds} rounds done. The ritual is complete.`); deskNotify(T.ritual, `All ${c.rounds} rounds done. Nice work.`); commit(); return; }
+    if(r.round>=c.rounds){ state.stats.cycles=(state.stats.cycles||0)+1; r.phase='done'; r.state='idle'; r.endsAt=null; r.remaining=0; toast(`All ${c.rounds} rounds done. The ritual is complete.`); deskNotify(T.ritual, `All ${c.rounds} rounds done. Nice work.`); commit(); return; }
     r.phase = c.longEvery && c.longBrk && r.round%c.longEvery===0 ? 'long' : (c.brk ? 'break' : 'work');
     if(r.phase==='work') r.round++; }
   else { r.phase='work'; r.round++; }
@@ -1519,7 +1580,8 @@ function applyLayout(){
   document.body.classList.toggle('compact', isCompact()); if(!isCompact()) document.body.classList.remove('harvest-pop'); renderPill();
 }
 function renderAll(){ applyLayout(); renderTimer(); renderHarvest(); renderTabs(); renderBoard(); updateScene(); $('#today').textContent = new Date().toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'}); }
-function commit(){ save(); renderAll(); }
+function commit(){ save(); renderAll(); checkAch(); }
+function markDay(){ const d=today(); state.stats.days ||= []; if(!state.stats.days.includes(d)){ state.stats.days.push(d); state.stats.days=state.stats.days.slice(-400); save(); } }
 
 function renderTimer(){
   const t=state.timer, st=t.state, f=state.focus && Q(state.focus), r=state.sess.run, dawn=timedToday()>=dayGoalH()*3.6e6;
@@ -2155,7 +2217,8 @@ const A_ = {
   'full-view': ()=> setFullView(!state.ui.fullView),
   'bd-pop': ()=>{ const b=BB(); if(!b) return; save(); boardWinId=b.id; lastWinBoard=''; tinvoke('open_board_window',{ id:b.id }).catch(e=>toast('Could not open the window: '+e)); },
   'mp-new': ()=>{ snap(); newMap(); $('#board').dataset.view=''; commit(); },
-  'mp-mode': (el,m)=>{ state.ui.mapEdit = m==='edit'; commit(); if(m==='edit') toast('Build mode: click a + to add a region, drag regions to move or swap them'); },
+  'mp-mode': (el,m)=>{ const was=mapMode(); state.ui.mapMode=m; state.ui.mapEdit=(m==='build'); if(m!=='plan' && state.ui.routeDraft){ const mp=MP(), rt=mp?.routes.find(r=>r.id===state.ui.routeDraft); if(rt && rt.pts.length<2) mp.routes=mp.routes.filter(r=>r!==rt); state.ui.routeDraft=null; }
+    commit(); if(m!==was){ if(m==='build') toast('Build: click a + to add a region, drag regions to move or swap them'); if(m==='plan') toast('Plan: draw routes between regions and drop markers'); } },
   'mp-fog': ()=>{ const m=MP(); m.fog=!m.fog; commit(); },
   'mp-fit': ()=> atlasFit(),
   'mp-del': (el)=>{ const m=MP(); if(!m || !arm(el,'Delete map?')) return; snap(); state.maps=state.maps.filter(x=>x!==m); state.ui.mapId=state.maps[0]?.id||null; $('#board').dataset.view=''; commit(); toast(`Map “${m.name}” deleted`, true); },
@@ -2165,6 +2228,22 @@ const A_ = {
   'hex-emo': (el,id,e)=>{ const h=MP()?.hexes.find(x=>x.id===id); if(h){ h.emoji=e; commit(); } },
   'hex-unpin': (el,hid,qid)=>{ const h=MP()?.hexes.find(x=>x.id===hid); if(h){ snap(); h.quests=h.quests.filter(x=>x!==qid); commit(); } },
   'hex-del': (el,id)=>{ const m=MP(); if(!m) return; if(m.hexes.length<=1){ toast('A map needs at least one region'); return; } snap(); m.hexes=m.hexes.filter(x=>x.id!==id); state.ui.mapHex=null; commit(); toast('Region removed, its quests stay on the board', true); },
+  'mp-tiles': ()=>{ ensureTileUrls().then(openTiles); },
+  'tiles-add': ()=> $('#tileFile').click(),
+  'tile-del': (el,k,i)=>{ snap(); const vs=state.tiles[k]; if(!vs) return; vs.splice(+i,1); if(!vs.length) delete state.tiles[k]; commit(); openTiles(); },
+  'plan-tool': (el,t)=>{ state.ui.planTool=t; if(t!=='route' && state.ui.routeDraft) finishRoute(); else drawPlanBar(); save(); },
+  'plan-col': (el,_,c)=>{ state.ui.planColor=c; const rt=MP()?.routes.find(r=>r.id===state.ui.routeDraft); if(rt) rt.color=c; drawAtlas(); save(); },
+  'plan-end': (el,k)=>{ state.ui.planEnd=k; const rt=MP()?.routes.find(r=>r.id===state.ui.routeDraft); if(rt) rt.end=k; drawAtlas(); save(); },
+  'plan-mark': (el,k)=>{ state.ui.markKind=k; drawPlanBar(); save(); },
+  'route-done': ()=> finishRoute(),
+  'route-col': (el,id,c)=>{ const rt=MP()?.routes.find(r=>r.id===id); if(rt){ rt.color=c; commit(); } },
+  'route-end': (el,id,k)=>{ const rt=MP()?.routes.find(r=>r.id===id); if(rt){ rt.end=k; commit(); } },
+  'route-rev': (el,id)=>{ const rt=MP()?.routes.find(r=>r.id===id); if(rt){ snap(); rt.pts.reverse(); commit(); } },
+  'route-extend': (el,id)=>{ state.ui.mapMode='plan'; state.ui.planTool='route'; state.ui.routeDraft=id; state.ui.mapRoute=id; commit(); toast('Click regions to extend the route, Enter finishes'); },
+  'route-del': (el,id)=>{ const m=MP(); snap(); m.routes=m.routes.filter(r=>r.id!==id); state.ui.mapRoute=null; commit(); toast('Route deleted', true); },
+  'mark-del': (el,id)=>{ const m=MP(); snap(); m.marks=m.marks.filter(k=>k.id!==id); commit(); },
+  'hex-loot': (el,id,e)=>{ const m=MP(), h=m?.hexes.find(x=>x.id===id); if(!h) return; snap(); if(h.looted && h.loot){ m.inv[h.loot.e]=Math.max(0,(m.inv[h.loot.e]||0)-h.loot.n); h.looted=false; } h.loot = e ? { e, n:h.loot?.n||1 } : null; reconcileLoot(m,false); commit(); },
+  'ach-open': ()=> openAch(),
   'hide-done': ()=>{ state.ui.hideDone=!state.ui.hideDone; commit(); },
   crypt: ()=>{ state.ui.crypt=!state.ui.crypt; commit(); },
   'p-collapse': (el,id)=>{ const p=P(id); p.collapsed=!p.collapsed; commit(); },
@@ -2294,6 +2373,9 @@ document.addEventListener('input', e=>{
   if(d.sess){ return; }
   if(d.bdname!==undefined){ const b=BB(); if(b){ b.name=el.value; save(); } return; }
   if(d.mpname!==undefined){ const m=MP(); if(m){ m.name=el.value; save(); } return; }
+  if(d.marknote!==undefined){ const k=MP()?.marks.find(x=>x.id===d.marknote); if(k){ k.note=el.value; save(); } return; }
+  if(d.routenote!==undefined){ const [rid,hid]=d.routenote.split('|'), rt=MP()?.routes.find(r=>r.id===rid); if(rt){ (rt.notes ||= {})[hid]=el.value; save(); } return; }
+  if(d.routename!==undefined){ const rt=MP()?.routes.find(r=>r.id===d.routename); if(rt){ rt.name=el.value; save(); } return; }
   if(d.hexname!==undefined){ const h=MP()?.hexes.find(x=>x.id===d.hexname); if(h){ h.name=el.value; save(); } return; }
   if(d.linkpaste!==undefined || d.lname!==undefined || d.stepedit!==undefined || d.rootname!==undefined || d.rootpath!==undefined) return;
   if(d.qname){ const l=state.quotes.lists.find(x=>x.id===d.qname); if(l){ l.name=el.value; save(); } return; }
@@ -2327,6 +2409,9 @@ document.addEventListener('change', e=>{
   if(d.mpname!==undefined){ const m=MP(); if(m && !el.value.trim()) m.name='Untitled map'; softCommit(); return; }
   if(d.mpproj!==undefined){ const m=MP(); if(m){ m.projectId=el.value; softCommit(); } return; }
   if(d.hexname!==undefined){ softCommit(); return; }
+  if(d.marknote!==undefined || d.routename!==undefined){ return; }
+  if(d.routenote!==undefined){ softCommit(); return; }
+  if(d.hexlootn!==undefined){ const m=MP(), h=m?.hexes.find(x=>x.id===d.hexlootn); if(h && h.loot){ snap(); const n=clamp(Math.round(+el.value)||1,1,999); if(h.looted){ m.inv[h.loot.e]=Math.max(0,(m.inv[h.loot.e]||0)-h.loot.n)+n; } h.loot.n=n; softCommit(); } return; }
   if(d.hexattach!==undefined){ const m=MP(), h=m?.hexes.find(x=>x.id===d.hexattach), qid=el.value; if(h && qid){ snap(); m.hexes.forEach(x=>{ x.quests=(x.quests||[]).filter(i=>i!==qid); }); (h.quests ||= []).push(qid); softCommit(); } return; }
   if(d.hexemo!==undefined){ const h=MP()?.hexes.find(x=>x.id===d.hexemo); if(h){ h.emoji=firstGrapheme(el.value); softCommit(); } return; }
   if(d.bdsel!==undefined){ state.ui.boardId=el.value; BS.sel.clear(); BS.crop=null; $('#board').dataset.view=''; softCommit(); return; }
@@ -2445,6 +2530,7 @@ async function insertImages(files, ed, range){
   }
   hideToast();
 }
+$('#tileFile').addEventListener('change', e=>{ const f=[...e.target.files]; e.target.value=''; if(f.length) addTiles(f); });
 $('#bdFile').addEventListener('change', e=>{ const f=[...e.target.files]; e.target.value=''; if(f.length) addBoardImages(f); });
 $('#qFile').addEventListener('change', async e=>{ const f=e.target.files[0]; e.target.value=''; if(!f) return; const l=state.quotes.lists.find(x=>x.id===state.ui.qEdit); if(!l) return;
   const buf=await f.arrayBuffer(); let t; try{ t=new TextDecoder('utf-8',{fatal:true}).decode(buf); }catch{ t=new TextDecoder('windows-1251').decode(buf); }
@@ -2630,6 +2716,7 @@ function openSettings(){
     <div class="dlg-row">
       <button class="btn sm" data-act="export">Save backup (JSON)</button>
       <button class="btn sm" data-act="import">Load backup…</button>
+      <button class="btn sm" data-act="ach-open">🏆 Achievements</button>
       <button class="btn sm" data-act="demo">Load demo data</button>
       <button class="btn sm danger" data-act="wipe">${IC.trash}Erase everything</button>
     </div>
@@ -3009,15 +3096,17 @@ function boardHelp(){
 }
 
 /* ================= atlas: hex map of regions with their quests ================= */
-const HEX=48, SQ3=Math.sqrt(3);
+// Pixel tile spec (see the hex kit): footprint 56×64, 2:1 edges, rows 50 px apart, drawn at 1.5× on the map.
+const TS=1.5, TPW=56, TPH=64, TCAP=14, TUNDER=8;
+const HW=TPW*TS, HH=TPH*TS, HCAP=TCAP*TS, STEPY=(TPH-TCAP)*TS, HEX=HH/2;
 const TERRAIN = {
   plains:{ n:'Plains', c:'#6f9a4a', s:["..........","..g...g...",".ggg.ggg..","..........","....g...g.","...ggg.ggg","..........","..g.......",".ggg......",".........."], p:{ g:'#a6d26f' } },
   forest:{ n:'Forest', c:'#2f5d34', s:["....g.....","...ggg....","..ggGgg...",".gggGggg..","...ggg....","..ggGgg...",".ggggggg..","....b.....","....b.....",".........."], p:{ g:'#4caf50', G:'#7fd36b', b:'#6b4423' } },
   mountain:{ n:'Mountains', c:'#5f636c', s:["....w.....","...www....","..wsssw...",".ssssSss..","sssSssSsss",".........."], p:{ w:'#f2f4f7', s:'#9aa0aa', S:'#7c828c' } },
   water:{ n:'Sea', c:'#2a6f9e', s:["..........","bb...bb...",".bbbbb.bbb","..........","....bb...b","...bbbbbbb",".........."], p:{ b:'#9fd8f0' } },
   desert:{ n:'Desert', c:'#c9a25c', s:["......c...",".....ccc..","......c...","..........",".ddd......","ddddd..ddd",".........."], p:{ d:'#e8c98a', c:'#4f8a3c' } },
-  swamp:{ n:'Swamp', c:'#4c5a3a', s:["..r....r..","..r....r..",".........","bbb..bbbb.",".bbbbb....","..........","...r......","..bbb.....",], p:{ r:'#8fae5a', b:'#3b6b6a' } },
-  snow:{ n:'Snow', c:'#c9d6e3', s:["....w.....","...www....","..wwwww...",".........","t......t..","tt....ttt.",".........."], p:{ w:'#ffffff', t:'#7f97ad' } },
+  swamp:{ n:'Swamp', c:'#4c5a3a', s:["..r....r..","..r....r..","..........","bbb..bbbb.",".bbbbb....","..........","...r......","..bbb....."], p:{ r:'#8fae5a', b:'#3b6b6a' } },
+  snow:{ n:'Snow', c:'#c9d6e3', s:["....w.....","...www....","..wwwww...","..........","t......t..","tt....ttt.",".........."], p:{ w:'#ffffff', t:'#7f97ad' } },
   village:{ n:'Village', c:'#8a7350', s:["...rrr....","..rrrrr...",".rrrrrrr..","..wwyww...","..wwyww...","..wwdww...",".........."], p:{ r:'#b5482f', w:'#e6d7b8', y:'#ffd56a', d:'#5a3a22' } },
   castle:{ n:'Castle', c:'#5d5a6e', s:["s.s...s.s.","sss...sss.","sssssssss.","ssssdssss.","ssssdssss.","sssddddss.",".........."], p:{ s:'#b8b6c4', d:'#3a3746' } },
   crystal:{ n:'Crystals', c:'#3f356b', s:["....c.....","...cCc..c.","...cCc.cCc","..ccCc.cCc","..cccc.ccc",".........."], p:{ c:'#a98bff', C:'#e4d9ff' } },
@@ -3026,70 +3115,148 @@ const TERRAIN = {
 };
 const HERO = pix(["..kkk..",".kSSSk.",".kSkSk.",".kSSSk.","..kAk..",".kAAAk.","kAAAAAk",".kA.Ak.",".kk.kk."],{ k:'#05060b', S:'#f2d0a4', A:'currentColor' });
 const FLAG = pix(["fff..","fffff","fff..","p....","p....","p...."],{ f:'currentColor', p:'#ddd' });
+const LOOT = ['💎','🪙','🪵','⛏️','🍎','📜','🗝️','⭐','🧪','🦴'];
+const MARKS = { pin:'📍', x:'✖', flag:'🚩', star:'⭐', skull:'💀', chest:'🧰' };
+const ROUTE_COLS = ['#ff6b5b','#ffd23f','#6ee7a8','#5bc0ff','#c38bff','#ffffff'];
 const MP = () => state.maps.find(m=>m.id===state.ui.mapId) || state.maps[0] || null;
 const MS = { drag:null, space:false };
-const hexXY = (q,r) => ({ x:HEX*SQ3*(q+r/2), y:HEX*1.5*r });
-function xyHex(x,y){ let q=(SQ3/3*x-y/3)/HEX, r=(2/3*y)/HEX, s=-q-r; let rq=Math.round(q), rr=Math.round(r), rs=Math.round(s);
+const hexXY = (q,r) => ({ x:HW*(q+r/2), y:STEPY*r });
+function xyHex(x,y){ const r=y/STEPY, q=x/HW-r/2, s=-q-r; let rq=Math.round(q), rr=Math.round(r), rs=Math.round(s);
   const dq=Math.abs(rq-q), dr=Math.abs(rr-r), ds=Math.abs(rs-s); if(dq>dr&&dq>ds) rq=-rr-rs; else if(dr>ds) rr=-rq-rs; return { q:rq, r:rr }; }
-const hexPts = (cx,cy,R=HEX-1) => Array.from({ length:6 },(_,k)=>{ const a=Math.PI/180*(60*k-30); return `${(cx+R*Math.cos(a)).toFixed(1)},${(cy+R*Math.sin(a)).toFixed(1)}`; }).join(' ');
+function hexPts(cx,cy,inset=0){ const w=HW/2-inset, h=HH/2-inset, c=HCAP*(w/(HW/2)); return [[0,-h],[w,-h+c],[w,h-c],[0,h],[-w,h-c],[-w,-h+c]].map(([x,y])=>`${(cx+x).toFixed(1)},${(cy+y).toFixed(1)}`).join(' '); }
 const NB=[[1,0],[1,-1],[0,-1],[-1,0],[-1,1],[0,1]];
-function newMap(name){ const m={ id:uid(), name:name||`Map ${state.maps.length+1}`, fog:true, projectId:'', hexes:[{ id:uid(), q:0, r:0, terrain:'village', color:'', emoji:'🏠', name:'Home', quests:[] }], view:{ x:0, y:0, z:1 } }; state.maps.push(m); state.ui.mapId=m.id; return m; }
+const hashStr = s => { let h=0; for(const ch of String(s)) h=(h*31+ch.charCodeAt(0))|0; return Math.abs(h); };
+function terrainKeys(){ return [...new Set([...Object.keys(TERRAIN), ...Object.keys(state.tiles||{})])]; }
+function terrainInfo(k){ return TERRAIN[k] || { n:k.charAt(0).toUpperCase()+k.slice(1), c:'#55606f', s:null }; }
+function newMap(name){ const m={ id:uid(), name:name||`Map ${state.maps.length+1}`, fog:true, projectId:'', hexes:[{ id:uid(), q:0, r:0, terrain:'village', color:'', emoji:'🏠', name:'Home', quests:[] }], routes:[], marks:[], inv:{}, view:{ x:0, y:0, z:1 } }; state.maps.push(m); state.ui.mapId=m.id; return m; }
 function hexQuests(h){ return (h.quests||[]).map(Q).filter(Boolean); }
 function hexState(h){ const qs=hexQuests(h), done=qs.filter(q=>q.done).length, started=qs.some(q=>q.done || qTotal(q)>0 || state.focus===q.id || kids(q).some(c=>state.focus===c.id));
   return { qs, done, total:qs.length, started, conquered:qs.length>0 && done===qs.length }; }
+const hexName = h => h.name || terrainInfo(h.terrain).n;
+
+/* ----- custom pixel tiles ----- */
+const tileUrl=new Map();
+async function ensureTileUrls(){ let added=false;
+  for(const [k,vs] of Object.entries(state.tiles||{})) for(const v of vs){ const key=v.file||v.src; if(tileUrl.has(key)) continue;
+    if(v.src) tileUrl.set(key,v.src); else if(v.file && DESK){ if(!boardDir) boardDir=await tinvoke('board_dir'); tileUrl.set(key, window.__TAURI__.core.convertFileSrc(boardDir+'\\'+v.file)); } added=true; }
+  return added; }
+function tileFor(h){ const vs=(state.tiles||{})[h.terrain]; if(!vs||!vs.length) return null; const v=vs[hashStr(h.id)%vs.length]; const url=tileUrl.get(v.file||v.src); return url ? { ...v, url } : null; }
+async function addTiles(files){
+  files=[...files].filter(f=>/png|gif|webp/i.test(f.type)); if(!files.length){ toast('Pick PNG tiles'); return; } snap(); let n=0; state.tiles ||= {};
+  for(const f of files){ try{
+    const key=f.name.toLowerCase().replace(/\.[^.]+$/,'').replace(/[_\- ]\d+$/,'').replace(/[^a-z0-9_-]/g,'') || 'tile'; const bmp=await createImageBitmap(f); const t={ w:bmp.width, h:bmp.height, name:f.name };
+    if(DESK) t.file=await tinvoke('save_board_image', new Uint8Array(await f.arrayBuffer()), { headers:{ ext:'png' } });
+    else t.src=await new Promise(r=>{ const fr=new FileReader(); fr.onload=()=>r(fr.result); fr.readAsDataURL(f); });
+    (state.tiles[key] ||= []).push(t); n++; }catch{ toast(`Could not read ${f.name}`); } }
+  await ensureTileUrls(); commit(); toast(`${n} tile${n>1?'s':''} added`); openTiles();
+}
+function openTiles(){
+  $('#dlg').dataset.mode='tiles'; const T_=state.tiles||{};
+  $('#dlgBody').innerHTML=`<h2>Map tiles</h2><p class="hint" style="margin-top:6px">Add your own pixel tiles (PNG, footprint 56×64, canvas 56×88 or taller, see the hex kit). The file name picks the terrain: <b>forest.png</b> replaces Forest, <b>forest_2.png</b> adds a variant, <b>volcano.png</b> makes a new terrain.</p>
+    <div class="dlg-row" style="margin-bottom:12px"><button class="btn soul" data-act="tiles-add">${IC.plus}Add PNG tiles…</button></div>
+    <div class="tilegrid">${terrainKeys().map(k=>{ const vs=T_[k]||[], ti=terrainInfo(k); return `<div class="tilecard"><b>${esc(ti.n)}</b><small>${k}</small><div class="tvars">${vs.map((v,i)=>`<span class="tvar"><img src="${esc(tileUrl.get(v.file||v.src)||'')}" alt="">${''}<button class="ib" data-act="tile-del" data-id="${k}" data-sub="${i}" aria-label="Remove variant">${IC.x}</button></span>`).join('') || `<span class="sub">built-in look</span>`}</div></div>`; }).join('')}</div>`;
+  if(!$('#dlg').open) $('#dlg').showModal();
+}
+
+/* ----- loot and inventory ----- */
+function reconcileLoot(m, announce){
+  let changed=false; m.inv ||= {};
+  m.hexes.forEach(h=>{ const st=hexState(h), L=h.loot; if(!L||!L.e||!L.n) return;
+    if(st.conquered && !h.looted){ m.inv[L.e]=(m.inv[L.e]||0)+L.n; h.looted=true; changed=true; if(announce) setTimeout(()=>toast(`+${L.n} ${L.e} from ${hexName(h)}`),900); }
+    else if(!st.conquered && h.looted){ m.inv[L.e]=Math.max(0,(m.inv[L.e]||0)-L.n); h.looted=false; changed=true; } });
+  return changed;
+}
+
+/* ----- view ----- */
 function viewAtlas(){
   if(!state.maps.length) return `<div class="empty"><b>No maps yet</b>Build a map of regions. Each hex holds quests from your board, fog lifts as you start them, and a region is conquered when they’re all done.<div class="btns"><button class="btn soul" data-act="mp-new">${IC.plus}New map</button></div></div>`;
   return `<div class="bd-wrap"><div class="bd-tools" id="mpTools">${atlasTools()}</div>
-    <div class="bd-stage mp-stage" id="mpStage" tabindex="0" aria-label="Map"><svg class="mp-world" id="mpWorld" overflow="visible"></svg><div class="mp-panel" id="mpPanel"></div></div></div>`;
+    <div class="bd-stage mp-stage" id="mpStage" tabindex="0" aria-label="Map"><svg class="mp-world" id="mpWorld" overflow="visible"></svg><div class="mp-inv" id="mpInv"></div><div class="mp-plan" id="mpPlan"></div><div class="mp-panel" id="mpPanel"></div></div></div>`;
 }
+const mapMode = () => state.ui.mapMode || (state.ui.mapEdit?'build':'play');
 function atlasTools(){
-  const m=MP(); if(!m) return ''; const ed=!!state.ui.mapEdit;
+  const m=MP(); if(!m) return ''; const md=mapMode();
   return `<select class="field" data-mpsel aria-label="Map">${state.maps.map(x=>`<option value="${x.id}" ${x.id===m.id?'selected':''}>${esc(x.name)}</option>`).join('')}</select>
     <input class="field bd-name" data-mpname value="${esc(m.name)}" aria-label="Map name">
     <button class="btn sm" data-act="mp-new" title="New map">${IC.plus}</button>
     <select class="field bd-link" data-mpproj aria-label="Project for new quests"><option value="">New quests go to…</option>${state.projects.filter(p=>!p.frozen).map(p=>`<option value="${p.id}" ${m.projectId===p.id?'selected':''}>${esc(p.name)}</option>`).join('')}</select>
     <span style="flex:1"></span>
-    <div class="seg" role="group" aria-label="Mode"><button data-act="mp-mode" data-id="play" aria-pressed="${!ed}">Play</button><button data-act="mp-mode" data-id="edit" aria-pressed="${ed}">Build</button></div>
+    <div class="seg" role="group" aria-label="Mode">${[['play','Play'],['build','Build'],['plan','Plan']].map(([k,l])=>`<button data-act="mp-mode" data-id="${k}" aria-pressed="${md===k}">${l}</button>`).join('')}</div>
     <button class="btn sm" data-act="mp-fog" aria-pressed="${!!m.fog}" title="Fog of war over regions you haven’t started">Fog</button>
+    <button class="btn sm" data-act="mp-tiles" title="Your own pixel tiles">Tiles</button>
+    <button class="btn sm" data-act="ach-open" title="Achievements">🏆</button>
     <button class="btn sm" data-act="mp-fit" title="Fit the map (F)">Fit</button>
     <button class="btn sm" data-act="full-view" title="Full view (Ctrl+Shift+F), Esc returns">⛶</button>
     <button class="ib" data-act="mp-del" title="Delete this map" aria-label="Delete map">${IC.trash}</button>`;
 }
 function renderAtlasTab(){
   const host=$('#board'), m=MP();
-  if(!m || !$('#mpStage') || host.dataset.view!=='atlas'){ host.innerHTML=viewAtlas(); host.dataset.view='atlas'; if(!MP()) return; bindAtlas(); if(!m.view.placed){ requestAnimationFrame(()=>{ atlasFit(); m.view.placed=true; }); } }
+  if(!m || !$('#mpStage') || host.dataset.view!=='atlas'){ host.innerHTML=viewAtlas(); host.dataset.view='atlas'; if(!MP()) return; bindAtlas(); if(!m.view.placed) requestAnimationFrame(()=>{ atlasFit(); m.view.placed=true; }); }
   $('#mpTools').innerHTML=atlasTools(); drawAtlas(); drawMapPanel();
+  ensureTileUrls().then(added=>{ if(added) drawAtlas(); });
 }
 function drawAtlas(){
-  const m=MP(), svg=$('#mpWorld'); if(!m||!svg) return; const ed=!!state.ui.mapEdit, occ=new Set(m.hexes.map(h=>h.q+','+h.r));
+  const m=MP(), svg=$('#mpWorld'); if(!m||!svg) return; m.routes ||= []; m.marks ||= [];
+  if(reconcileLoot(m,false)) save();
+  const md=mapMode(), occ=new Set(m.hexes.map(h=>h.q+','+h.r)), byId=Object.fromEntries(m.hexes.map(h=>[h.id,h]));
   svg.style.transform=`translate(${m.view.x}px,${m.view.y}px) scale(${m.view.z})`;
-  let out='', slots='';
-  if(ed){ const seen=new Set(); m.hexes.forEach(h=>NB.forEach(([dq,dr])=>{ const k=(h.q+dq)+','+(h.r+dr); if(occ.has(k)||seen.has(k)) return; seen.add(k); const {x,y}=hexXY(h.q+dq,h.r+dr);
-      slots+=`<g class="mp-slot" data-slot="${h.q+dq},${h.r+dr}"><polygon points="${hexPts(x,y)}"/><text x="${x}" y="${y+6}">+</text></g>`; })); }
-  const focusHex = m.hexes.find(h=>(h.quests||[]).some(id=>id===state.focus || (Q(state.focus)?.parentId===id)));
-  m.hexes.forEach(h=>{
-    const {x,y}=hexXY(h.q,h.r), t=TERRAIN[h.terrain]||TERRAIN.plains, st=hexState(h), fog=m.fog && st.total>0 && !st.started, sel=state.ui.mapHex===h.id;
-    const sp=t.s, sw=Math.max(...sp.map(r=>r.length)), sh=sp.length, k=3.2;
-    out+=`<g class="mp-hex ${st.conquered?'won':''} ${fog?'fog':''} ${sel?'sel':''}" data-hex="${h.id}">
-      <polygon class="mp-base" points="${hexPts(x,y)}" fill="${h.color||t.c}"/>
-      <g transform="translate(${(x-sw*k/2).toFixed(1)} ${(y-sh*k/2-4).toFixed(1)}) scale(${k})" shape-rendering="crispEdges" class="mp-spr">${pix(sp,t.p)}</g>
-      ${h.emoji?`<text class="mp-emo" x="${x}" y="${y-HEX*0.48}">${esc(h.emoji)}</text>`:''}
-      ${h.name?`<text class="mp-name" x="${x}" y="${y+HEX*0.62}">${esc(h.name.length>16?h.name.slice(0,15)+'…':h.name)}</text>`:''}
-      ${st.total?`<polygon class="mp-ring-bg" points="${hexPts(x,y,HEX-4)}"/><polygon class="mp-ring" points="${hexPts(x,y,HEX-4)}" pathLength="100" stroke-dasharray="${(st.done/st.total*100).toFixed(1)} 100"/>`:''}
-      ${fog?`<polygon class="mp-fog" points="${hexPts(x,y)}"/><text class="mp-q" x="${x}" y="${y+8}">?</text>`:''}
-      ${st.conquered?`<g class="mp-flag" transform="translate(${x+HEX*0.28} ${y-HEX*0.62}) scale(3)" shape-rendering="crispEdges">${FLAG}</g>`:''}
-      ${st.total&&!fog?`<text class="mp-count" x="${x}" y="${y+HEX*0.36}">${st.done}/${st.total}</text>`:''}
+  let slots='', tiles='', over='', routes='';
+  if(md==='build'){ const seen=new Set(); m.hexes.forEach(h=>NB.forEach(([dq,dr])=>{ const k=(h.q+dq)+','+(h.r+dr); if(occ.has(k)||seen.has(k)) return; seen.add(k); const {x,y}=hexXY(h.q+dq,h.r+dr);
+      slots+=`<g class="mp-slot" data-slot="${h.q+dq},${h.r+dr}"><polygon points="${hexPts(x,y,2)}"/><text x="${x}" y="${y+7}">+</text></g>`; })); }
+  const focusHex=m.hexes.find(h=>(h.quests||[]).some(id=>id===state.focus || Q(state.focus)?.parentId===id));
+  [...m.hexes].sort((a,b)=>a.r-b.r || a.q-b.q).forEach(h=>{
+    const {x,y}=hexXY(h.q,h.r), ti=terrainInfo(h.terrain), st=hexState(h), fog=m.fog && st.total>0 && !st.started, sel=state.ui.mapHex===h.id, tile=tileFor(h);
+    let art;
+    if(tile){ const w=tile.w*TS, ht=tile.h*TS, bottom=y+HH/2+TUNDER*TS; art=`<image href="${esc(tile.url)}" x="${(x-w/2).toFixed(1)}" y="${(bottom-ht).toFixed(1)}" width="${w}" height="${ht}" class="mp-img" preserveAspectRatio="none"/>`; }
+    else { const sp=ti.s, k=3.2; art=sp?`<polygon class="mp-fill" points="${hexPts(x,y)}" fill="${h.color||ti.c}"/><g transform="translate(${(x-Math.max(...sp.map(r=>r.length))*k/2).toFixed(1)} ${(y-sp.length*k/2-4).toFixed(1)}) scale(${k})" shape-rendering="crispEdges">${pix(sp,ti.p)}</g>`:`<polygon class="mp-fill" points="${hexPts(x,y)}" fill="${h.color||ti.c}"/>`; }
+    tiles+=`<g class="mp-hex ${st.conquered?'won':''} ${fog?'fog':''} ${sel?'sel':''}" data-hex="${h.id}">${art}${tile&&h.color?`<polygon points="${hexPts(x,y)}" fill="${h.color}" fill-opacity=".28" style="pointer-events:none"/>`:''}<polygon class="mp-hit" points="${hexPts(x,y)}"/></g>`;
+    over+=`<g class="mp-ov">
+      ${st.total?`<polygon class="mp-ring-bg" points="${hexPts(x,y,4)}"/><polygon class="mp-ring" points="${hexPts(x,y,4)}" pathLength="100" stroke-dasharray="${(st.done/st.total*100).toFixed(1)} 100"/>`:''}
+      ${sel?`<polygon class="mp-selring" points="${hexPts(x,y,1)}"/>`:''}
+      ${fog?`<polygon class="mp-fog" points="${hexPts(x,y)}"/><text class="mp-q" x="${x}" y="${y+9}">?</text>`:''}
+      ${h.emoji&&!fog?`<text class="mp-emo" x="${x}" y="${y-HEX*0.5}">${esc(h.emoji)}</text>`:''}
+      ${h.name?`<text class="mp-name" x="${x}" y="${y+HEX*0.66}">${esc(h.name.length>16?h.name.slice(0,15)+'…':h.name)}</text>`:''}
+      ${st.total&&!fog?`<text class="mp-count" x="${x}" y="${y+HEX*0.38}">${st.done}/${st.total}</text>`:''}
+      ${st.conquered?`<g class="mp-flag" transform="translate(${x+HEX*0.3} ${y-HEX*0.66}) scale(3)" shape-rendering="crispEdges">${FLAG}</g>`:''}
+      ${h.loot&&h.loot.e&&!st.conquered&&!fog?`<text class="mp-loot" x="${x-HEX*0.62}" y="${y-HEX*0.38}">${esc(h.loot.e)}</text>`:''}
     </g>`;
   });
-  if(focusHex){ const {x,y}=hexXY(focusHex.q,focusHex.r); out+=`<g class="mp-hero"><g transform="translate(${x-HEX*0.62} ${y-HEX*0.95}) scale(3.2)" shape-rendering="crispEdges">${HERO}</g></g>`; }
-  svg.innerHTML=slots+out;
+  m.marks.forEach(mk=>{ const h=byId[mk.hexId]; if(!h) return; const {x,y}=hexXY(h.q,h.r), sameHex=m.marks.filter(z=>z.hexId===mk.hexId), i=sameHex.indexOf(mk);
+    over+=mk.kind==='x' ? `<g class="mp-x" transform="translate(${x+HEX*0.42-i*14} ${y+HEX*0.06})"><path d="M-7 -7 L7 7 M7 -7 L-7 7"/></g>`
+      : `<text class="mp-mark" x="${x+HEX*0.42-i*16}" y="${y+HEX*0.12}">${MARKS[mk.kind]||'📍'}</text>`; });
+  m.routes.forEach(rt=>{ const pts=rt.pts.map(id=>byId[id]).filter(Boolean).map(h=>hexXY(h.q,h.r)); if(!pts.length) return; const d=pts.map((p,i)=>(i?'L':'M')+p.x.toFixed(1)+' '+p.y.toFixed(1)).join(' ');
+    const sel=state.ui.mapRoute===rt.id, draft=state.ui.routeDraft===rt.id, last=pts[pts.length-1];
+    routes+=`<g class="mp-route ${sel?'sel':''} ${draft?'draft':''}" data-route="${rt.id}" style="--rc:${rt.color||ROUTE_COLS[0]}">
+      <path class="rt-hit" d="${d}"/><path class="rt-line" d="${d}"/>
+      ${pts.slice(0,-1).map((p,i)=>`<circle class="rt-dot ${rt.notes?.[rt.pts[i]]?'has':''}" cx="${p.x}" cy="${p.y}" r="${rt.notes?.[rt.pts[i]]?6:4}"/>`).join('')}
+      ${pts.length>1||!draft ? (rt.end==='pin'?`<text class="rt-end" x="${last.x}" y="${last.y-6}">📍</text>`:rt.end==='flag'?`<text class="rt-end" x="${last.x}" y="${last.y-6}">🚩</text>`:`<path class="rt-xm" d="M${last.x-9} ${last.y-9} L${last.x+9} ${last.y+9} M${last.x+9} ${last.y-9} L${last.x-9} ${last.y+9}"/>`) : ''}
+    </g>`; });
+  if(focusHex){ const {x,y}=hexXY(focusHex.q,focusHex.r); over+=`<g class="mp-hero"><g transform="translate(${x-HEX*0.66} ${y-HEX*1.0}) scale(3.2)" shape-rendering="crispEdges">${HERO}</g></g>`; }
+  svg.innerHTML=slots+tiles+routes+over;
+  const inv=Object.entries(m.inv||{}).filter(([,n])=>n>0);
+  $('#mpInv').innerHTML = inv.length ? inv.map(([e,n])=>`<span class="invi">${esc(e)} <b>${n}</b></span>`).join('') : '';
+  $('#mpInv').style.display = inv.length ? '' : 'none';
+  drawPlanBar();
+}
+function drawPlanBar(){
+  const el=$('#mpPlan'); if(!el) return; if(mapMode()!=='plan'){ el.innerHTML=''; el.style.display='none'; return; }
+  const ui=state.ui, tool=ui.planTool||'route'; el.style.display='flex';
+  el.innerHTML=`<div class="seg" role="group" aria-label="Plan tool"><button data-act="plan-tool" data-id="route" aria-pressed="${tool==='route'}">Route</button><button data-act="plan-tool" data-id="mark" aria-pressed="${tool==='mark'}">Marker</button></div>
+    ${tool==='route' ? `<div class="swatches">${ROUTE_COLS.map(c=>`<button data-act="plan-col" data-sub="${c}" style="background:${c}" aria-pressed="${(ui.planColor||ROUTE_COLS[0])===c}" aria-label="Route colour"></button>`).join('')}</div>
+      <div class="seg" role="group" aria-label="Route end">${[['x','✖'],['pin','📍'],['flag','🚩']].map(([k,l])=>`<button data-act="plan-end" data-id="${k}" aria-pressed="${(ui.planEnd||'x')===k}">${l}</button>`).join('')}</div>
+      <span class="sub">${ui.routeDraft?'Click regions to extend the route. Click the last one again or press Enter to finish':'Click a region to start a route'}</span>
+      ${ui.routeDraft?`<button class="btn sm soul" data-act="route-done">Finish</button>`:''}`
+    : `<div class="seg" role="group" aria-label="Marker">${Object.entries(MARKS).map(([k,v])=>`<button data-act="plan-mark" data-id="${k}" aria-pressed="${(ui.markKind||'pin')===k}">${v}</button>`).join('')}</div><span class="sub">Click a region to place or remove this marker</span>`}`;
 }
 function drawMapPanel(){
-  const m=MP(), el=$('#mpPanel'); if(!el) return; const h=m && m.hexes.find(x=>x.id===state.ui.mapHex); if(!h){ el.innerHTML=''; el.classList.remove('open'); return; }
-  const st=hexState(h), t=TERRAIN[h.terrain]||TERRAIN.plains, ed=!!state.ui.mapEdit, others=new Set(m.hexes.flatMap(x=>x.quests||[]));
+  const m=MP(), el=$('#mpPanel'); if(!el) return;
+  const rt=m && m.routes?.find(r=>r.id===state.ui.mapRoute);
+  if(rt && !state.ui.routeDraft){ el.classList.add('open'); el.innerHTML=routePanel(m,rt); return; }
+  const h=m && m.hexes.find(x=>x.id===state.ui.mapHex); if(!h){ el.innerHTML=''; el.classList.remove('open'); return; }
+  const st=hexState(h), ti=terrainInfo(h.terrain), others=new Set(m.hexes.flatMap(x=>x.quests||[])), marks=(m.marks||[]).filter(k=>k.hexId===h.id);
   const cand=state.quests.filter(q=>!q.parentId && !q.done && !q.frozen && !others.has(q.id) && !P(q.projectId)?.frozen);
   el.classList.add('open');
-  el.innerHTML=`<div class="nb-pin"></div><div class="nb-head"><input class="nb-title" data-hexname="${h.id}" value="${esc(h.name||'')}" placeholder="${t.n}" aria-label="Region name"><button class="ib" data-act="mp-close" aria-label="Close">${IC.x}</button></div>
+  el.innerHTML=`<div class="nb-pin"></div><div class="nb-head"><input class="nb-title" data-hexname="${h.id}" value="${esc(h.name||'')}" placeholder="${esc(ti.n)}" aria-label="Region name"><button class="ib" data-act="mp-close" aria-label="Close">${IC.x}</button></div>
     <p class="nb-sub">${st.total?`${st.done} of ${st.total} quests done${st.conquered?', conquered':''}`:'No quests here yet'}${m.fog&&st.total&&!st.started?'. Start one to lift the fog':''}</p>
     <div class="nb-quests">${st.qs.map(q=>`<div class="nb-q ${q.done?'done':''} ${state.focus===q.id?'focus':''}">
         <button class="box ${q.done?'on':''}" data-act="q-done" data-id="${q.id}" aria-label="Complete">${PX.check}</button>
@@ -3098,54 +3265,123 @@ function drawMapPanel(){
         <button class="ib" data-act="hex-unpin" data-id="${h.id}" data-sub="${q.id}" title="Take it off this region" aria-label="Remove from region">${IC.x}</button></div>`).join('')}</div>
     <form class="inline" data-form="hex-quest" data-id="${h.id}"><input class="field" name="t" placeholder="New quest here…" autocomplete="off"><button class="btn sm">${IC.plus}</button></form>
     ${cand.length?`<select class="field" data-hexattach="${h.id}" aria-label="Pin an existing quest"><option value="">Pin an existing quest…</option>${cand.map(q=>`<option value="${q.id}">${esc(questLabel(q))}</option>`).join('')}</select>`:''}
-    <details class="nb-look" ${ed?'open':''}><summary>Terrain, colour and icon</summary>
-      <div class="nb-ter">${Object.entries(TERRAIN).map(([k,v])=>`<button data-act="hex-ter" data-id="${h.id}" data-sub="${k}" aria-pressed="${h.terrain===k}" title="${v.n}" style="background:${v.c}"><svg viewBox="0 0 10 10" shape-rendering="crispEdges">${pix(v.s,v.p)}</svg></button>`).join('')}</div>
+    <div class="nb-loot"><span>Reward when conquered</span><div class="emos">${['',...LOOT].map(e=>`<button data-act="hex-loot" data-id="${h.id}" data-sub="${e}" aria-pressed="${(h.loot?.e||'')===e}">${e||'·'}</button>`).join('')}</div>
+      ${h.loot?.e?`<label>× <input class="field" type="number" min="1" max="999" data-hexlootn="${h.id}" value="${h.loot.n||1}" aria-label="How many"></label>`:''}</div>
+    ${marks.length?`<div class="nb-marks">${marks.map(k=>`<div class="nb-mark"><span>${MARKS[k.kind]||'📍'}</span><input class="field" data-marknote="${k.id}" value="${esc(k.note||'')}" placeholder="Note" aria-label="Marker note"><button class="ib" data-act="mark-del" data-id="${k.id}" aria-label="Remove marker">${IC.x}</button></div>`).join('')}</div>`:''}
+    <details class="nb-look" ${mapMode()==='build'?'open':''}><summary>Terrain, colour and icon</summary>
+      <div class="nb-ter">${terrainKeys().map(k=>{ const v=terrainInfo(k), tv=(state.tiles||{})[k]?.[0], url=tv&&tileUrl.get(tv.file||tv.src);
+        return `<button data-act="hex-ter" data-id="${h.id}" data-sub="${k}" aria-pressed="${h.terrain===k}" title="${esc(v.n)}" style="background:${v.c}">${url?`<img src="${esc(url)}" alt="">`:v.s?`<svg viewBox="0 0 10 10" shape-rendering="crispEdges">${pix(v.s,v.p)}</svg>`:esc(v.n.slice(0,2))}</button>`; }).join('')}</div>
       <div class="swatches">${['',...Object.values(QCOL)].map(c=>`<button class="${c?'':'nocol'}" data-act="hex-col" data-id="${h.id}" data-sub="${c}" style="${c?`background:${c}`:''}" aria-pressed="${(h.color||'')===c}" aria-label="${c||'Terrain colour'}"></button>`).join('')}</div>
       <div class="emos">${['','🏠','🏰','⛏️','💎','🪙','🪵','📚','🎨','⚔️','🛡️','🔥','🌙','⭐','💀','🐉','🗝️','🍄','⚓','🚀'].map(e=>`<button data-act="hex-emo" data-id="${h.id}" data-sub="${e}" aria-pressed="${(h.emoji||'')===e}">${e||'·'}</button>`).join('')}<input class="field emo-in" data-hexemo="${h.id}" value="${esc(h.emoji||'')}" placeholder="any" aria-label="Any emoji"></div>
     </details>
     <div class="nb-foot"><button class="btn sm danger" data-act="hex-del" data-id="${h.id}">${IC.trash}Remove region</button></div>`;
+}
+function routePanel(m,rt){
+  const byId=Object.fromEntries(m.hexes.map(h=>[h.id,h]));
+  return `<div class="nb-pin"></div><div class="nb-head"><input class="nb-title" data-routename="${rt.id}" value="${esc(rt.name||'')}" placeholder="Route" aria-label="Route name"><button class="ib" data-act="mp-close" aria-label="Close">${IC.x}</button></div>
+    <div class="swatches">${ROUTE_COLS.map(c=>`<button data-act="route-col" data-id="${rt.id}" data-sub="${c}" style="background:${c}" aria-pressed="${rt.color===c}" aria-label="Route colour"></button>`).join('')}</div>
+    <div class="seg" role="group" aria-label="Route end">${[['x','✖ cross'],['pin','📍 pin'],['flag','🚩 flag']].map(([k,l])=>`<button data-act="route-end" data-id="${rt.id}" data-sub="${k}" aria-pressed="${(rt.end||'x')===k}">${l}</button>`).join('')}</div>
+    <p class="nb-sub">Stops along the way. Notes show as bigger dots on the map.</p>
+    <div class="nb-stops">${rt.pts.map((id,i)=>{ const h=byId[id]; if(!h) return ''; return `<div class="nb-stop"><b>${i+1}. ${esc(hexName(h))}</b><input class="field" data-routenote="${rt.id}|${id}" value="${esc(rt.notes?.[id]||'')}" placeholder="Note for this stop" aria-label="Stop note"></div>`; }).join('')}</div>
+    <div class="nb-foot" style="gap:6px"><button class="btn sm" data-act="route-rev" data-id="${rt.id}">Reverse</button><button class="btn sm" data-act="route-extend" data-id="${rt.id}">Extend</button><span style="flex:1"></span><button class="btn sm danger" data-act="route-del" data-id="${rt.id}">${IC.trash}Delete route</button></div>`;
 }
 function bindAtlas(){
   const st=$('#mpStage');
   st.addEventListener('wheel', e=>{ e.preventDefault(); const m=MP(); if(!m) return; const r=st.getBoundingClientRect(), mx=e.clientX-r.left, my=e.clientY-r.top, f=Math.exp(-e.deltaY*(e.ctrlKey?0.01:0.0015)), z=clamp(m.view.z*f,0.15,4);
     m.view.x=mx-(mx-m.view.x)*(z/m.view.z); m.view.y=my-(my-m.view.y)*(z/m.view.z); m.view.z=z; $('#mpWorld').style.transform=`translate(${m.view.x}px,${m.view.y}px) scale(${z})`; clearTimeout(viewSaveT); viewSaveT=setTimeout(save,600); }, { passive:false });
   st.addEventListener('pointerdown', e=>{
-    const m=MP(); if(!m || e.target.closest('.mp-panel')) return; st.focus({ preventScroll:true });
+    const m=MP(); if(!m || e.target.closest('.mp-panel,.mp-plan,.mp-inv')) return; st.focus({ preventScroll:true });
     if(e.button===1 || (e.button===0 && (MS.space||BS.space))){ e.preventDefault(); MS.drag={ kind:'pan', sx:e.clientX, sy:e.clientY, vx:m.view.x, vy:m.view.y }; st.setPointerCapture(e.pointerId); st.classList.add('panning'); return; }
     if(e.button!==0) return;
-    const slot=e.target.closest('[data-slot]'); if(slot){ const [q,r]=slot.dataset.slot.split(',').map(Number); snap(); const h={ id:uid(), q, r, terrain:state.ui.mapBrush||'plains', color:'', emoji:'', name:'', quests:[] }; m.hexes.push(h); state.ui.mapHex=h.id; commit(); ensureHexVisible(h.id); return; }
+    const slot=e.target.closest('[data-slot]'); if(slot){ const [q,r]=slot.dataset.slot.split(',').map(Number); snap(); const h={ id:uid(), q, r, terrain:state.ui.mapBrush||'plains', color:'', emoji:'', name:'', quests:[] }; m.hexes.push(h); state.ui.mapHex=h.id; state.ui.mapRoute=null; commit(); ensureHexVisible(h.id); checkAch(); return; }
+    const ro=e.target.closest('[data-route]'); if(ro && mapMode()!=='build' && !state.ui.routeDraft){ state.ui.mapRoute=ro.dataset.route; state.ui.mapHex=null; drawAtlas(); drawMapPanel(); return; }
     const hx=e.target.closest('[data-hex]');
     if(hx){ MS.drag={ kind:'hex', id:hx.dataset.hex, sx:e.clientX, sy:e.clientY, moved:false }; st.setPointerCapture(e.pointerId); return; }
     MS.drag={ kind:'pan', sx:e.clientX, sy:e.clientY, vx:m.view.x, vy:m.view.y, click:true }; st.setPointerCapture(e.pointerId);
   });
   st.addEventListener('pointermove', e=>{ const d=MS.drag, m=MP(); if(!d||!m) return;
     if(d.kind==='pan'){ m.view.x=d.vx+(e.clientX-d.sx); m.view.y=d.vy+(e.clientY-d.sy); if(Math.abs(e.clientX-d.sx)+Math.abs(e.clientY-d.sy)>3) d.click=false; $('#mpWorld').style.transform=`translate(${m.view.x}px,${m.view.y}px) scale(${m.view.z})`; return; }
-    if(d.kind==='hex' && state.ui.mapEdit){ if(Math.abs(e.clientX-d.sx)+Math.abs(e.clientY-d.sy)>6) d.moved=true; if(!d.moved) return;
+    if(d.kind==='hex' && mapMode()==='build'){ if(Math.abs(e.clientX-d.sx)+Math.abs(e.clientY-d.sy)>6) d.moved=true; if(!d.moved) return;
       const g=$('#mpWorld').querySelector(`[data-hex="${d.id}"]`); if(g){ g.classList.add('lift'); g.setAttribute('transform',`translate(${(e.clientX-d.sx)/m.view.z} ${(e.clientY-d.sy)/m.view.z})`); } } });
   st.addEventListener('pointerup', e=>{ const d=MS.drag, m=MP(); MS.drag=null; st.classList.remove('panning'); if(!d||!m) return;
-    if(d.kind==='pan'){ if(d.click && state.ui.mapHex){ state.ui.mapHex=null; drawAtlas(); drawMapPanel(); } save(); return; }
-    if(d.kind==='hex'){
-      if(d.moved && state.ui.mapEdit){ const r=st.getBoundingClientRect(), wx=(e.clientX-r.left-m.view.x)/m.view.z, wy=(e.clientY-r.top-m.view.y)/m.view.z, to=xyHex(wx,wy), h=m.hexes.find(x=>x.id===d.id);
-        const other=m.hexes.find(x=>x.q===to.q && x.r===to.r && x!==h); snap(); if(other){ other.q=h.q; other.r=h.r; } h.q=to.q; h.r=to.r; commit(); return; }
-      state.ui.mapHex = state.ui.mapHex===d.id && !state.ui.mapEdit ? null : d.id; if(state.ui.mapHex) ensureHexVisible(d.id); drawAtlas(); drawMapPanel(); save(); } });
+    if(d.kind==='pan'){ if(d.click && (state.ui.mapHex||state.ui.mapRoute) && !state.ui.routeDraft){ state.ui.mapHex=null; state.ui.mapRoute=null; drawAtlas(); drawMapPanel(); } save(); return; }
+    if(d.kind!=='hex') return;
+    const md=mapMode();
+    if(d.moved && md==='build'){ const r=st.getBoundingClientRect(), wx=(e.clientX-r.left-m.view.x)/m.view.z, wy=(e.clientY-r.top-m.view.y)/m.view.z, to=xyHex(wx,wy), h=m.hexes.find(x=>x.id===d.id);
+      const other=m.hexes.find(x=>x.q===to.q && x.r===to.r && x!==h); snap(); if(other){ other.q=h.q; other.r=h.r; } h.q=to.q; h.r=to.r; commit(); return; }
+    if(md==='plan'){ planClick(m,d.id); return; }
+    state.ui.mapRoute=null; state.ui.mapHex = state.ui.mapHex===d.id && md==='play' ? null : d.id; if(state.ui.mapHex) ensureHexVisible(d.id); drawAtlas(); drawMapPanel(); save(); });
 }
-// keep the chosen region clear of the notice board on the right
-function ensureHexVisible(id){ const m=MP(), st=$('#mpStage'), h=m?.hexes.find(x=>x.id===id); if(!h||!st) return; const {x,y}=hexXY(h.q,h.r), sx=x*m.view.z+m.view.x, sy=y*m.view.z+m.view.y, free=st.clientWidth-360;
-  if(sx>free-HEX*m.view.z || sx<HEX*m.view.z){ m.view.x+= (Math.max(HEX*m.view.z*1.2, Math.min(free-HEX*m.view.z*1.2, sx)) - sx) || (free/2 - sx); }
-  if(sy<HEX*m.view.z || sy>st.clientHeight-HEX*m.view.z){ m.view.y+=st.clientHeight/2-sy; } $('#mpWorld').style.transform=`translate(${m.view.x}px,${m.view.y}px) scale(${m.view.z})`; }
-function atlasFit(){ const m=MP(), st=$('#mpStage'); if(!m||!st||!m.hexes.length) return; const xs=m.hexes.map(h=>hexXY(h.q,h.r)), x1=Math.min(...xs.map(p=>p.x))-HEX*1.5, x2=Math.max(...xs.map(p=>p.x))+HEX*1.5, y1=Math.min(...xs.map(p=>p.y))-HEX*1.5, y2=Math.max(...xs.map(p=>p.y))+HEX*1.5;
+function planClick(m,hid){
+  const ui=state.ui; m.routes ||= []; m.marks ||= [];
+  if((ui.planTool||'route')==='mark'){ const kind=ui.markKind||'pin', ex=m.marks.find(k=>k.hexId===hid && k.kind===kind); snap();
+    if(ex) m.marks=m.marks.filter(k=>k!==ex); else m.marks.push({ id:uid(), hexId:hid, kind, note:'' }); commit(); return; }
+  let rt=m.routes.find(r=>r.id===ui.routeDraft);
+  if(!rt){ snap(); rt={ id:uid(), name:'', color:ui.planColor||ROUTE_COLS[0], end:ui.planEnd||'x', pts:[hid], notes:{} }; m.routes.push(rt); ui.routeDraft=rt.id; ui.mapRoute=rt.id; ui.mapHex=null; commit(); return; }
+  if(rt.pts[rt.pts.length-1]===hid){ finishRoute(); return; }
+  rt.pts.push(hid); commit();
+}
+function finishRoute(){ const m=MP(), rt=m?.routes.find(r=>r.id===state.ui.routeDraft); state.ui.routeDraft=null;
+  if(rt && rt.pts.length<2){ m.routes=m.routes.filter(r=>r!==rt); state.ui.mapRoute=null; toast('A route needs at least two regions'); } else if(rt){ state.ui.mapRoute=rt.id; toast('Route drawn. Add notes to its stops in the panel'); }
+  commit(); checkAch(); }
+function ensureHexVisible(id){ const m=MP(), st=$('#mpStage'), h=m?.hexes.find(x=>x.id===id); if(!h||!st) return; const {x,y}=hexXY(h.q,h.r), sx=x*m.view.z+m.view.x, sy=y*m.view.z+m.view.y, free=st.clientWidth-360, pad=HW*m.view.z*0.7;
+  if(sx>free-pad) m.view.x-=sx-(free-pad); if(sx<pad) m.view.x+=pad-sx; if(sy<pad) m.view.y+=pad-sy; if(sy>st.clientHeight-pad) m.view.y-=sy-(st.clientHeight-pad);
+  $('#mpWorld').style.transform=`translate(${m.view.x}px,${m.view.y}px) scale(${m.view.z})`; }
+function atlasFit(){ const m=MP(), st=$('#mpStage'); if(!m||!st||!m.hexes.length) return; const xs=m.hexes.map(h=>hexXY(h.q,h.r)), x1=Math.min(...xs.map(p=>p.x))-HW, x2=Math.max(...xs.map(p=>p.x))+HW, y1=Math.min(...xs.map(p=>p.y))-HH, y2=Math.max(...xs.map(p=>p.y))+HH;
   const z=clamp(Math.min(st.clientWidth/(x2-x1), st.clientHeight/(y2-y1)),0.15,1.6); m.view={ x:st.clientWidth/2-(x1+x2)/2*z, y:st.clientHeight/2-(y1+y2)/2*z, z, placed:true }; drawAtlas(); save(); }
-function atlasConquest(q){ if(!q.done) return; const top=q.parentId?Q(q.parentId):q; state.maps.forEach(m=>m.hexes.forEach(h=>{ if((h.quests||[]).includes(top.id)){ const st=hexState(h); if(st.conquered) setTimeout(()=>toast(`${h.name||TERRAIN[h.terrain]?.n||'Region'} conquered! 🏳`),400); } })); }
+function atlasConquest(q){ if(!q.done) return; const top=q.parentId?Q(q.parentId):q;
+  state.maps.forEach(m=>{ m.hexes.forEach(h=>{ if((h.quests||[]).includes(top.id) && hexState(h).conquered) setTimeout(()=>toast(`${hexName(h)} conquered! 🏳`),400); }); reconcileLoot(m,true); }); }
 function atlasKeys(e){
   if(state.ui.tab!=='atlas' || !MP()) return false; const ae=document.activeElement; if(/^(INPUT|TEXTAREA|SELECT)$/.test(ae?.tagName) || ae?.isContentEditable || $('#dlg').open) return false;
   if(e.code==='Space'){ e.preventDefault(); MS.space=true; $('#mpStage')?.classList.add('grab'); return true; }
-  if(e.ctrlKey||e.metaKey||e.altKey) return false;
-  if(e.key.toLowerCase()==='f'){ e.preventDefault(); atlasFit(); return true; }
-  if(e.key.toLowerCase()==='b'){ e.preventDefault(); state.ui.mapEdit=!state.ui.mapEdit; commit(); return true; }
-  if(e.key==='Escape' && state.ui.mapHex){ state.ui.mapHex=null; drawAtlas(); drawMapPanel(); return true; }
+  if(e.ctrlKey||e.metaKey||e.altKey) return false; const k=e.key.toLowerCase();
+  if(e.key==='Enter' && state.ui.routeDraft){ e.preventDefault(); finishRoute(); return true; }
+  if(e.key==='Escape' && state.ui.routeDraft){ e.preventDefault(); finishRoute(); return true; }
+  if(k==='f'){ e.preventDefault(); atlasFit(); return true; }
+  if(k==='b'){ e.preventDefault(); A_['mp-mode'](null, mapMode()==='build'?'play':'build'); return true; }
+  if(k==='r'){ e.preventDefault(); A_['mp-mode'](null, mapMode()==='plan'?'play':'plan'); return true; }
+  if(e.key==='Escape' && (state.ui.mapHex||state.ui.mapRoute)){ state.ui.mapHex=null; state.ui.mapRoute=null; drawAtlas(); drawMapPanel(); return true; }
   return false;
 }
 document.addEventListener('keyup', e=>{ if(e.code==='Space' && MS.space){ MS.space=false; $('#mpStage')?.classList.remove('grab'); } });
+
+/* ================= achievements & a secret ================= */
+const ACH = [
+  ['first','🗡️','First blood','Complete your first quest', s=>s.stats.questsDone>=1],
+  ['q10','⚔️','Quest hunter','Complete 10 quests', s=>s.stats.questsDone>=10],
+  ['q50','🛡️','Quest master','Complete 50 quests', s=>s.stats.questsDone>=50],
+  ['q200','👑','Living legend','Complete 200 quests', s=>s.stats.questsDone>=200],
+  ['conq1','🏳️','Conqueror','Conquer your first region', s=>s.maps.some(m=>m.hexes.some(h=>hexState(h).conquered))],
+  ['conq10','🏰','Warlord','Hold 10 conquered regions', s=>s.maps.reduce((a,m)=>a+m.hexes.filter(h=>hexState(h).conquered).length,0)>=10],
+  ['fog5','🌫️','Explorer','Lift the fog in 5 regions', s=>s.maps.reduce((a,m)=>a+m.hexes.filter(h=>{ const t=hexState(h); return t.total && t.started; }).length,0)>=5],
+  ['carto','🗺️','Cartographer','Build a map with 12 regions', s=>s.maps.some(m=>m.hexes.length>=12)],
+  ['route','🧭','Pathfinder','Draw your first route', s=>s.maps.some(m=>(m.routes||[]).some(r=>r.pts.length>1))],
+  ['loot50','💰','Hoarder','Collect 50 loot on one map', s=>s.maps.some(m=>Object.values(m.inv||{}).reduce((a,n)=>a+n,0)>=50)],
+  ['deep','🌊','Deep dive','Cut a single stretch of an hour or more', s=>!!s.stats.deep],
+  ['ritual','🕯️','Ritualist','Finish every round of a session cycle', s=>(s.stats.cycles||0)>=1],
+  ['notes25','📜','Archivist','Keep 25 notes', s=>s.notes.length>=25],
+  ['links20','🔗','Librarian','Link 20 files or folders', s=>s.quests.reduce((a,q)=>a+(q.links||[]).length,0)>=20],
+  ['refs50','🖼️','Collector','Gather 50 references on boards', s=>s.boards.reduce((a,b)=>a+b.items.length,0)>=50],
+  ['days7','📅','Regular','Open Taskromancer on 7 different days', s=>(s.stats.days||[]).length>=7],
+  ['camp','🎯','Strategist','Complete every step of a campaign', s=>s.goals.some(g=>g.items.length && g.items.every(i=>i.done))],
+  ['secret','🕹️','Old school','Find the secret code', s=>!!s.stats.konami]
+];
+function checkAch(){
+  if(BOARDWIN) return; state.ach ||= {}; const got=[];
+  ACH.forEach(([id,ic,t,,cond])=>{ if(state.ach[id]) return; let ok=false; try{ ok=cond(state); }catch{} if(ok){ state.ach[id]=now(); got.push(`${ic} ${t}`); } });
+  if(got.length){ save(); got.forEach((g,i)=>setTimeout(()=>toast(`Achievement unlocked: ${g}`), 1200+i*2600)); }
+}
+function openAch(){
+  $('#dlg').dataset.mode='ach'; const A=state.ach||{}, n=ACH.filter(a=>A[a[0]]).length;
+  $('#dlgBody').innerHTML=`<h2>Achievements</h2><p class="hint" style="margin-top:6px">${n} of ${ACH.length} unlocked. Nothing here punishes you, they only celebrate.</p>
+    <div class="achgrid">${ACH.map(([id,ic,t,d])=>{ const at=A[id], hidden=id==='secret'&&!at; return `<div class="ach ${at?'got':''}"><span class="aic">${at?ic:'🔒'}</span><div><b>${hidden?'???':t}</b><small>${hidden?'Some codes never get old':d}</small>${at?`<em>${new Date(at).toLocaleDateString('en-GB',{ day:'numeric', month:'short', year:'numeric' })}</em>`:''}</div></div>`; }).join('')}</div>`;
+  if(!$('#dlg').open) $('#dlg').showModal();
+}
+const KONAMI=['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a']; let konamiPos=0;
+document.addEventListener('keydown', e=>{
+  const k=e.key.length===1?e.key.toLowerCase():e.key; konamiPos = k===KONAMI[konamiPos] ? konamiPos+1 : (k===KONAMI[0]?1:0);
+  if(konamiPos===KONAMI.length){ konamiPos=0; state.stats.konami=true; const svg=$('#sceneSvg'); svg?.classList.add('party'); setTimeout(()=>svg?.classList.remove('party'),7000); toast('The minions dance for the old ones. ↑↑↓↓←→←→BA'); checkAch(); }
+});
 
 /* ================= full view for canvases ================= */
 function setFullView(on){
@@ -3366,7 +3602,7 @@ function openUpdate(){
 
 /* ================= desktop (Tauri) ================= */
 // Everything here is inert in the browser; in the desktop app it adds file storage, tray, mini timer and more.
-const APP_VER='1.3.0';
+const APP_VER='1.4.0';
 const DESK = !!(window.__TAURI__ && window.__TAURI__.core);
 const tinvoke = (cmd,args,opts) => window.__TAURI__.core.invoke(cmd,args,opts);
 const fileName = p => String(p||'').split(/[\\/]/).pop();
@@ -3383,7 +3619,7 @@ async function deskInit(){
   let first=false;
   try{ const j=await tinvoke('load_state'); if(j) state=normalize(JSON.parse(j)); else if(!state.projects.length){ loadDemo(); first=true; } }
   catch(e){ toast('Could not read saved data: '+e); }
-  deskLoaded=true;
+  deskLoaded=true; markDay();
   state.ui.autostart = await tinvoke('get_autostart').catch(()=>false);
   applyTheme(); pickQuote(); renderAll(); updUndo(); deskSave(true);
   setTimeout(()=>checkUpdate(false), 5000);
@@ -3490,7 +3726,7 @@ function tick(){
   if(ticks%240===0 && state.ui.tab==='campaigns' && !/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName) && !document.activeElement?.isContentEditable && !$('#dlg').open) renderBoard();
 }
 $('#quoteEdit').innerHTML=IC.dots; $('#compactBtn').innerHTML=IC.compress; $('#miniBtn').innerHTML=IC.mini; applyTheme(); pickQuote(); renderAll(); updUndo(); setInterval(tick, 250);
-if(BOARDWIN) boardWinInit(); else if(DESK) deskInit();
+if(BOARDWIN) boardWinInit(); else { markDay(); if(DESK) deskInit(); }
 </script>
 </body>
 </html>
