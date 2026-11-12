@@ -1,7 +1,7 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "Taskromancer",
-  "version": "1.0.1",
+  "version": "1.1.1",
   "identifier": "com.taskromancer.app",
   "build": {
     "frontendDist": "../src"
@@ -44,6 +44,18 @@
     "windows": {
       "nsis": {
         "installMode": "currentUser"
+      }
+    },
+    "createUpdaterArtifacts": true
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDBGMzVFNkU1MzFBOTc0NzMKUldSemRLa3g1ZVkxRC9tL2VLVUR6dzVsSzRQc1gzZmt0QW1SUlJqUXRpaDJHRW9jT0g4QTdtc3oK",
+      "endpoints": [
+        "https://github.com/designerr/Taskromancer/releases/latest/download/latest.json"
+      ],
+      "windows": {
+        "installMode": "passive"
       }
     }
   }

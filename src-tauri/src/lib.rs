@@ -12,6 +12,7 @@ use tauri_plugin_autostart::{MacosLauncher, ManagerExt};
 use tauri_plugin_dialog::DialogExt;
 use tauri_plugin_notification::NotificationExt;
 use tauri_plugin_opener::OpenerExt;
+use tauri_plugin_updater::UpdaterExt;
 use tauri_plugin_window_state::{AppHandleExt, StateFlags, WindowExt};
 
 const BACKUPS_KEPT: usize = 14;
@@ -180,6 +181,70 @@ fn random_image(folder: String, avoid: Option<String>) -> Result<Option<(String,
 }
 
 #[tauri::command]
+async fn pick_any_files(app: AppHandle) -> Vec<String> {
+    app.dialog()
+        .file()
+        .blocking_pick_files()
+        .unwrap_or_default()
+        .into_iter()
+        .map(|f| f.to_string())
+        .collect()
+}
+
+/// Which of these paths exist right now (used to grey out moved or deleted links).
+#[tauri::command]
+fn paths_exist(paths: Vec<String>) -> Vec<bool> {
+    paths.iter().map(|p| Path::new(p).exists()).collect()
+}
+
+/// Names in a folder with a flag for sub-folders, used to turn a course folder into a checklist.
+#[tauri::command]
+fn list_dir(path: String) -> Result<Vec<(String, bool)>, String> {
+    let mut out: Vec<(String, bool)> = fs::read_dir(&path)
+        .map_err(err)?
+        .filter_map(|e| e.ok())
+        .map(|e| (e.file_name().to_string_lossy().to_string(), e.path().is_dir()))
+        .collect();
+    out.sort();
+    Ok(out)
+}
+
+#[tauri::command]
+fn reveal_path(app: AppHandle, path: String) -> Result<(), String> {
+    app.opener().reveal_item_in_dir(path).map_err(err)
+}
+
+/// Returns (version, notes) when a newer signed release is published.
+#[tauri::command]
+async fn check_update(app: AppHandle) -> Result<Option<(String, String)>, String> {
+    let updater = app.updater().map_err(err)?;
+    match updater.check().await.map_err(err)? {
+        Some(u) => Ok(Some((u.version.clone(), u.body.clone().unwrap_or_default()))),
+        None => Ok(None),
+    }
+}
+
+#[tauri::command]
+async fn install_update(app: AppHandle) -> Result<(), String> {
+    let updater = app.updater().map_err(err)?;
+    if let Some(update) = updater.check().await.map_err(err)? {
+        let _ = app.save_window_state(state_flags());
+        update.download_and_install(|_, _| {}, || {}).await.map_err(err)?;
+        app.restart();
+    }
+    Ok(())
+}
+
+/// Opens a web link (Jira etc.) in the default browser.
+#[tauri::command]
+fn open_url(app: AppHandle, url: String) -> Result<(), String> {
+    if !(url.starts_with("http://") || url.starts_with("https://")) {
+        return Err("only web links can be opened".into());
+    }
+    app.opener().open_url(url, None::<&str>).map_err(err)
+}
+
+#[tauri::command]
 fn open_path(app: AppHandle, path: String) -> Result<(), String> {
     app.opener().open_path(path, None::<&str>).map_err(err)
 }
@@ -313,6 +378,7 @@ pub fn run() {
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_notification::init())
         .plugin(tauri_plugin_opener::init())
+        .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_window_state::Builder::default().with_state_flags(state_flags()).build())
         .setup(|app| {
             let show = MenuItem::with_id(app, "show", "Show Taskromancer", true, None::<&str>)?;
@@ -385,7 +451,14 @@ pub fn run() {
             toggle_fullscreen,
             open_mini,
             close_mini,
-            set_mini_on_top
+            set_mini_on_top,
+            pick_any_files,
+            paths_exist,
+            list_dir,
+            reveal_path,
+            check_update,
+            install_update,
+            open_url
         ])
         .run(tauri::generate_context!())
         .expect("error while running Taskromancer");

@@ -137,10 +137,10 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 /* ---------- board ---------- */
 .toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
 .toolbar .search{flex:1;min-width:160px}
-.cols{display:grid;grid-template-columns:22px minmax(0,1fr) 64px 132px 96px 92px;gap:10px;padding:0 10px 6px 12px;font-size:12px;color:var(--dim)}
+.cols{display:grid;grid-template-columns:22px minmax(0,1fr) 64px 132px 96px 150px;gap:10px;padding:0 10px 6px 12px;font-size:12px;color:var(--dim)}
 .cols span:nth-child(n+3){text-align:right}
 .project{margin-bottom:14px;border:2px solid var(--abyss);box-shadow:inset 0 0 0 1px var(--edge);background:var(--card)}
-.p-head{display:grid;grid-template-columns:22px minmax(0,1fr) 64px 132px 96px 92px;gap:10px;align-items:center;padding:10px 10px 10px 12px;background:linear-gradient(180deg,var(--head1),var(--card2));border-bottom:2px solid var(--abyss)}
+.p-head{display:grid;grid-template-columns:22px minmax(0,1fr) 64px 132px 96px 150px;gap:10px;align-items:center;padding:10px 10px 10px 12px;background:linear-gradient(180deg,var(--head1),var(--card2));border-bottom:2px solid var(--abyss)}
 .p-name{font:500 16px var(--f-px);color:var(--bone);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left}
 .p-head .chev svg{width:16px;height:16px;transition:transform .15s}
 .project.collapsed .p-head .chev svg{transform:rotate(-90deg)}
@@ -151,9 +151,9 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .est.ok{color:var(--ok)}.est.near{color:var(--near)}.est.over{color:var(--over)}.est.none{color:var(--dim)}
 .acts{display:flex;justify-content:flex-end;gap:2px}
 .q{position:relative}
-.q-row{display:grid;grid-template-columns:22px minmax(0,1fr) 64px 132px 96px 92px;gap:10px;align-items:center;padding:6px 10px 6px 12px;border-bottom:1px solid #ffffff08;cursor:pointer;position:relative}
+.q-row{display:grid;grid-template-columns:22px minmax(0,1fr) 64px 132px 96px 150px;gap:10px;align-items:center;padding:6px 10px 6px 12px;border-bottom:1px solid #ffffff08;cursor:pointer;position:relative}
 .q-row:hover{background:#ffffff06}
-.q.child>.q-row{padding-left:40px;grid-template-columns:22px minmax(0,1fr) 64px 132px 96px 92px}
+.q.child>.q-row{padding-left:40px;grid-template-columns:22px minmax(0,1fr) 64px 132px 96px 150px}
 .q.child>.q-row .t{font-size:13.5px}
 .q.child>.q-row::before{content:"";position:absolute;left:22px;top:0;bottom:50%;width:10px;border-left:1px solid var(--edge);border-bottom:1px solid var(--edge)}
 .t{display:flex;align-items:center;gap:8px;min-width:0}
@@ -276,6 +276,73 @@ dialog h2{font:500 20px var(--f-px);margin:0;color:var(--bone)}
 .toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);display:none;align-items:center;gap:14px;background:var(--stone2);border:2px solid var(--abyss);box-shadow:inset 0 0 0 1px var(--soul),0 10px 30px #000a;padding:10px 14px;z-index:60;font-size:14px}
 .toast.show{display:flex}
 .toast button{font:500 14px var(--f-px);color:var(--soul)}
+
+/* ---------- v12: links, library, campaign projects, compact timer ---------- */
+.links{display:flex;flex-direction:column;gap:4px}
+.links .lbl{font-size:12px;color:var(--muted)}
+.lrow{display:flex;align-items:center;gap:2px;background:var(--field);border:1px solid var(--edge);padding:2px 4px}
+.lopen{flex:1;min-width:0;display:flex;align-items:center;gap:8px;padding:4px 6px;text-align:left;color:var(--text)}
+.lopen:hover{color:var(--soul)}
+.lic{flex:none}
+.lname-t{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lp{color:var(--dim);font-size:11.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-left:auto;max-width:45%}
+.rootb{font-size:11px;color:var(--arcane);border:1px solid var(--edge);padding:0 5px;flex:none}
+.lrow .miss{display:none;font-style:normal;font-size:11px;color:var(--over);border:1px solid var(--over);padding:0 5px;flex:none}
+.lrow.missing .miss{display:inline}
+.lrow.missing .lname-t{color:var(--dim);text-decoration:line-through}
+.lrow .relink{display:none}.lrow.missing .relink{display:inline-grid;color:var(--near)}
+.lname{flex:1;padding:4px 8px}
+.link-add{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.link-add .field{flex:1;min-width:180px;padding:5px 8px;font-size:13px}
+.ib.lk{width:auto;padding:0 5px;font-size:12px;gap:2px}
+.rich a.loc{display:inline-flex;align-items:center;gap:4px;padding:0 6px;margin:0 1px;border:1px solid var(--edge-hi);background:var(--card2);color:var(--arcane);text-decoration:none;cursor:pointer;font-size:13px;line-height:1.5;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis;vertical-align:baseline}
+.rich a.loc::before{content:attr(data-icon)}
+.rich a.loc:hover{border-color:var(--arcane)}
+.rich a.loc.missing{color:var(--dim);text-decoration:line-through}
+.pathline{font:12.5px var(--f-num);color:var(--muted);background:var(--well);border:1px solid var(--edge);padding:8px;word-break:break-all;margin:0 0 4px}
+.lib{display:flex;flex-direction:column;gap:14px}
+.libg{display:flex;flex-direction:column;gap:4px}
+.libsrc{align-self:flex-start;font:500 13.5px var(--f-px);color:var(--bone);text-align:left}
+.libsrc:hover{color:var(--soul)}
+.roots{display:flex;flex-direction:column;gap:6px}
+.rootrow{display:grid;grid-template-columns:180px minmax(0,1fr) auto auto;gap:6px;align-items:center}
+.rootrow .rp{font-family:var(--f-num);font-size:12.5px}
+.rootrow.missing .rp{color:var(--over)}
+.cbadge{display:inline-flex;align-items:center;gap:4px;margin-left:10px;padding:0 6px;font:500 11.5px var(--f-ui);color:var(--muted);border:1px solid var(--edge);vertical-align:middle;cursor:pointer}
+.cbadge:hover{color:var(--text);border-color:var(--edge-hi)}
+.gproj{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 10px;background:var(--well);border:1px solid var(--edge);font-size:13px}
+.gproj .sub{font-size:12px;color:var(--muted)}
+.gproj select{max-width:240px;padding:5px 8px;font-size:13px}
+.plink{font-weight:500;color:var(--soul)}
+.steps .step{gap:6px}
+.ci .grip,.ci .lic{flex:none}
+.step .st{flex:1;cursor:text;padding:2px 0}
+.step .st:hover{color:var(--soul)}
+.step .stepin{flex:1;padding:4px 8px}
+.step .sdate{width:132px;padding:3px 6px;font-size:12px;opacity:.55}
+.step:hover .sdate,.step .sdate:focus,.step .sdate:not([value=""]){opacity:1}
+.step .qlink{font-size:10.5px;color:var(--arcane);border:1px solid var(--edge);padding:0 4px;margin-left:4px}
+.step.drop-above{box-shadow:0 -3px 0 var(--soul)}.step.drop-below{box-shadow:0 3px 0 var(--soul)}
+.steplinks{margin:0 0 8px 50px}
+.mile{position:absolute;top:0;bottom:0;width:3px;margin-left:-1px;background:var(--bone);opacity:.75;box-shadow:0 0 0 1px #0007;z-index:1}
+.mile.ok{background:var(--ok)}.mile.late{background:var(--over)}
+.pill{display:none;align-items:center;gap:2px;padding:2px 4px 2px 8px;border:2px solid var(--abyss);box-shadow:inset 0 0 0 1px var(--edge);background:var(--stone)}
+body.compact .pill{display:flex}
+.pill .pd{font:700 16px var(--f-num);padding:0 6px 0 0;color:var(--bone)}
+.pill.run .pd{color:var(--soul)}
+.pill .ib{width:26px;height:26px}
+.pill .ib svg{width:13px;height:13px;shape-rendering:crispEdges}
+.ps{font-size:12px;color:var(--muted);padding:0 8px;border-left:1px solid var(--edge);white-space:nowrap}
+.ps b{font:600 12.5px var(--f-num);color:var(--text)}
+.hbadge{padding:2px 8px;font-size:12.5px;color:var(--muted);border:1px solid var(--edge);white-space:nowrap}
+.hbadge.has{color:var(--soul);border-color:var(--soul-dim)}
+body.compact .layout{grid-template-columns:minmax(0,1fr)!important}
+body.compact .left{display:contents}
+body.compact #ritual,body.compact .colsplit{display:none!important}
+body.compact #harvest{display:none;position:fixed;top:64px;left:50%;transform:translateX(-50%);width:min(420px,92vw);max-height:76vh;overflow:auto;z-index:40;box-shadow:inset 0 0 0 2px var(--edge),0 16px 40px #000c}
+body.compact.harvest-pop #harvest{display:block}
+#compactBtn{margin-left:4px}
+@media (max-width:640px){ .rootrow{grid-template-columns:1fr} .pill .ps{display:none} }
 
 /* ---------- v11: layout, dialogs, note images ---------- */
 .layout.swap{grid-template-columns:minmax(0,1fr) 22px var(--lw,400px)}
@@ -604,8 +671,10 @@ select.field option,select.catsel option{background:var(--card);color:var(--text
 <header class="top">
   <div class="brand" id="brand"></div>
   <span class="today" id="today"></span>
+  <div class="pill" id="pill" aria-label="Timer"></div>
   <button class="quote" id="quote" data-act="quote-next" title="Click for another phrase"></button><button class="ib" id="quoteEdit" data-act="quote-edit" aria-label="Edit phrases" title="Edit phrases"></button>
   <span class="sync" id="sync">Saved on this device</span>
+  <button class="btn sm soul" id="updBtn" data-act="upd-open" style="display:none">Update</button>
   <button class="ib desk-only" data-act="mini-open" id="miniBtn" aria-label="Mini timer" title="Mini timer, always on top"></button>
   <button class="btn sm" data-act="undo" id="undoBtn" disabled title="Undo (Ctrl+Z)">Undo</button>
   <button class="ib" data-act="settings" aria-label="Settings" title="Settings" id="gear"></button>
@@ -614,7 +683,7 @@ select.field option,select.catsel option{background:var(--card);color:var(--text
 <div class="layout" id="layout">
   <section class="left" id="leftCol">
     <div class="panel" id="ritual">
-      <div class="plate"><h2 id="ritualTitle" class="drag-h" draggable="true" data-drag="l:ritual" title="Drag to swap with the panel below">The Ritual</h2><div class="rtabs" id="rtabs" role="tablist" aria-label="Timer"></div></div>
+      <div class="plate"><h2 id="ritualTitle" class="drag-h" draggable="true" data-drag="l:ritual" title="Drag to swap with the panel below">The Ritual</h2><div class="rtabs" id="rtabs" role="tablist" aria-label="Timer"></div><button class="ib" id="compactBtn" data-act="compact" title="Compact timer for this tab (\)" aria-label="Compact timer"></button></div>
       <div class="scene" id="scene"></div>
       <div id="timer"></div>
     </div>
@@ -676,6 +745,10 @@ const IC = {
   todo:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="square"><rect x="3" y="4" width="7" height="7"/><path d="m4.5 7.5 1.5 1.5 3-3M13 7.5h8M3 14h7v7H3zM13 17.5h8"/></svg>',
   dup:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><rect x="8" y="8" width="12" height="12"/><path d="M16 8V4H4v12h4M14 11v6M11 14h6"/></svg>',
   mini:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><rect x="3" y="5" width="18" height="14"/><rect x="12" y="12" width="7" height="5" fill="currentColor"/></svg>',
+  folder:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M3 6h7l2 2h9v11H3z"/></svg>',
+  pen:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M4 20h4L19 9l-4-4L4 16zM13 7l4 4"/></svg>',
+  expand:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="square"><path d="M4 9V4h5M20 15v5h-5M4 4l6 6M20 20l-6-6"/></svg>',
+  compress:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="square"><path d="M10 4v6H4M14 20v-6h6M4 4l6 6M20 20l-6-6"/></svg>',
   trash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>'
 };
 document.getElementById('gear').innerHTML = IC.gear;
@@ -718,11 +791,12 @@ function sanitize(html){
     if(!RICH_OK[tag] || (tag==='SPAN' && ch.getAttribute('class')!=='cb')){ ch.replaceWith(...ch.childNodes); return; }
     [...ch.attributes].forEach(a=>{ const n=a.name.toLowerCase();
       if(tag==='IMG' && n==='src' && /^(\/_blob\/|data:image\/(png|jpe?g|gif|webp);|https:)/i.test(a.value)) return;
-      if(tag==='A' && n==='href' && /^https?:/i.test(a.value)) return;
+      if(tag==='A' && n==='href' && /^https?:/i.test(a.value) && ch.getAttribute('class')!=='loc') return;
+      if(tag==='A' && ch.getAttribute('class')==='loc' && /^(class|data-kind|data-path|data-root|data-rel)$/.test(n)) return;
       if(tag==='SPAN' && (n==='class' || (n==='data-on' && /^[01]$/.test(a.value)))) return;
       if(tag==='DIV' && n==='class' && a.value==='todo') return;
       ch.removeAttribute(a.name); });
-    if(tag==='A'){ ch.setAttribute('target','_blank'); ch.setAttribute('rel','noopener'); }
+    if(tag==='A'){ if(ch.getAttribute('class')==='loc') ch.setAttribute('contenteditable','false'); else { ch.setAttribute('target','_blank'); ch.setAttribute('rel','noopener'); } }
     if(tag==='SPAN'){ ch.setAttribute('contenteditable','false'); if(!ch.hasAttribute('data-on')) ch.setAttribute('data-on','0'); ch.textContent=''; }
     if(tag==='IMG' && !ch.getAttribute('src')) ch.remove(); }); };
   walk(doc.body); return doc.body.innerHTML;
@@ -750,7 +824,7 @@ function fresh(){
     timer:{ state:'idle', acc:0, runStart:null, segStart:null },
     pending:[], projects:[], quests:[], goals:[], notes:[], focus:null,
     cats:[{id:'idea',emoji:'💡',name:'Ideas'},{id:'work',emoji:'📌',name:'Work'},{id:'learn',emoji:'🧠',name:'Learning'},{id:'life',emoji:'🏠',name:'Personal'}],
-    calc:['',''], dayTimed:{ day:'', ms:0 }, sess:sessDefaults(), rnd:rndDefaults(), quotes:{ active:'auto', lists:quoteDefaults() },
+    calc:['',''], dayTimed:{ day:'', ms:0 }, sess:sessDefaults(), rnd:rndDefaults(), quotes:{ active:'auto', lists:quoteDefaults() }, roots:[],
     stats:{ cuts:0, allocs:0, questsDone:0, since:now() },
     ui:{ tab:'board', q:'', hideDone:false, crypt:false, edit:null, goalSort:'deadline', goalIcon:'', openGoal:null,
          reportDay:'', decimal:false, dayGoal:8, noteCat:'', noteSort:'manual', manageCats:false, noteCatNew:'idea', noteQ:'', draft:'', ritualTab:'tracker', sessOpen:false, tabOrder:null, catPick:null, newCatEmoji:'⭐', deckEdit:null, noteMenu:null, theme:'necro', hiddenTabs:[], qEdit:null } };
@@ -763,6 +837,8 @@ function normalize(s){
   if(!o.calc.length) o.calc=[''];
   if(!o.dayTimed || typeof o.dayTimed!=='object') o.dayTimed={ day:'', ms:0 };
   if(!Array.isArray(o.ui.hiddenTabs)) o.ui.hiddenTabs=[];
+  if(!Array.isArray(o.roots)) o.roots=[];
+  if(!o.ui.compact || typeof o.ui.compact!=='object') o.ui.compact={};
   if(!o.quotes || !Array.isArray(o.quotes.lists)) o.quotes={ active:'auto', lists:quoteDefaults() };
   { const d=sessDefaults(), x=s.sess||{}; o.sess=Object.assign(d,x); o.sess.cfg=Object.assign(sessDefaults().cfg,x.cfg||{}); o.sess.run=Object.assign(sessDefaults().run,x.run||{});
     if(!Array.isArray(o.sess.presets)) o.sess.presets=[]; if(!Array.isArray(o.sess.log)) o.sess.log=[]; }
@@ -837,7 +913,15 @@ function questLabel(q){ const p=P(q.projectId); const par=q.parentId?Q(q.parentI
 const elapsed = () => state.timer.acc + (state.timer.state==='running' ? now()-state.timer.runStart : 0);
 function play(){ const t=state.timer; if(t.state==='running') return; t.runStart=now(); if(!t.segStart) t.segStart=now(); t.state='running'; commit(); }
 function pause(){ const t=state.timer; if(t.state!=='running') return; t.acc+=now()-t.runStart; t.runStart=null; t.state='paused'; commit(); }
-const timedToday = () => (state.dayTimed.day===today() ? state.dayTimed.ms : 0) + (state.timer.state!=='idle' ? elapsed() : 0);
+// Today's time = what the Report shows (allocated today) + harvested chunks from today + the running segment's part after midnight.
+// One source of truth, so the scene, the "hours done" note and the Report always agree.
+function timedToday(){
+  const d=today(), ds=dayStart(); let ms=0;
+  state.quests.forEach(q=>{ ms+=q.days[d]||0; });
+  state.pending.forEach(c=>{ if(c.day===d) ms+=c.ms; });
+  if(state.timer.state!=='idle'){ const e=elapsed(), s0=state.timer.segStart; ms += s0 && s0<ds ? Math.min(e, now()-ds) : e; }
+  return ms;
+}
 const dayGoalH = () => Math.max(1, +state.ui.dayGoal || 8);
 function cut(stopAfter){
   const t=state.timer, ms=elapsed(), end=now();
@@ -1312,6 +1396,7 @@ function applyLayout(){
   L.classList.toggle('swap', !!ui.swap); L.style.setProperty('--lw', (ui.leftW||400)+'px');
   const order=ui.leftOrder||['ritual','harvest']; order.forEach((id,i)=>{ const el=$('#'+id); if(el) el.style.order=i; });
   $('#scene').style.display = ui.hideScene ? 'none' : '';
+  document.body.classList.toggle('compact', isCompact()); if(!isCompact()) document.body.classList.remove('harvest-pop'); renderPill();
 }
 function renderAll(){ applyLayout(); renderTimer(); renderHarvest(); renderTabs(); renderBoard(); updateScene(); $('#today').textContent = new Date().toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'}); }
 function commit(){ save(); renderAll(); }
@@ -1357,7 +1442,7 @@ function renderHarvest(){
   if(A) updateSum();
 }
 
-const TABS = [['board','Quest Board'],['campaigns','Campaigns'],['report','Report'],['notes','Notes'],['rnd','Randomizer']];
+const TABS = [['board','Quest Board'],['campaigns','Campaigns'],['report','Report'],['notes','Notes'],['rnd','Randomizer'],['lib','Library']];
 function closeMenu(){ state.ui.noteMenu=null; document.querySelector('.nmenu')?.remove(); }
 function tabOrder(all){ const keys=TABS.map(t=>t[0]), o=(state.ui.tabOrder||[]).filter(k=>keys.includes(k)), full=[...o, ...keys.filter(k=>!o.includes(k))]; return all ? full : full.filter(k=>!state.ui.hiddenTabs.includes(k)); }
 function renderTabs(){
@@ -1367,9 +1452,9 @@ function renderTabs(){
 }
 function renderBoard(){
   const t=state.ui.tab;
-  $('#board').innerHTML = t==='campaigns' ? viewCampaigns() : t==='report' ? viewReport() : t==='notes' ? viewNotes() : t==='rnd' ? viewRnd() : viewBoard();
+  $('#board').innerHTML = t==='campaigns' ? viewCampaigns() : t==='report' ? viewReport() : t==='notes' ? viewNotes() : t==='rnd' ? viewRnd() : t==='lib' ? viewLibrary() : viewBoard();
   document.querySelectorAll('textarea.note-text').forEach(autosize);
-  layoutNotes();
+  layoutNotes(); decorateChips();
 }
 // masonry: every card spans as many 6px grid rows as its height needs, so cards of any size pack without holes
 const masonryRO = typeof ResizeObserver!=='undefined' ? new ResizeObserver(es=>es.forEach(en=>layoutCard(en.target))) : null;
@@ -1412,7 +1497,7 @@ function projectBlock(p){
   return `<div class="project ${p.collapsed?'collapsed':''}">
     <div class="p-head${tint(p)}" draggable="true" data-drag="p:${p.id}" title="Drag to ${T.crypt} to freeze the whole project">
       <button class="ib chev" data-act="p-collapse" data-id="${p.id}" aria-label="Collapse" aria-expanded="${!p.collapsed}">${IC.chev}</button>
-      <button class="p-name" data-act="p-collapse" data-id="${p.id}">${emo(p)}${esc(p.name)}</button>
+      <button class="p-name" data-act="p-collapse" data-id="${p.id}">${emo(p)}${esc(p.name)}${state.goals.filter(g=>g.projectId===p.id).map(g=>{ const tm=goalTimes(g); return `<span class="cbadge" data-act="goal-goto" data-id="${g.id}" title="Campaign: ${esc(g.title)}, due ${fmtDate(g.deadline)}">${g.icon} ${tm.over?'overdue':tm.daysLeft+'d'}</span>`; }).join('')}</button>
       <span class="num today ${td?'':'zero'}">${td?fmtHM(td):'—'}</span>
       <span class="num total">${fmtHM(sp)}${est?` / ${fmtHM(est*MIN)}`:''}</span>
       <span class="est ${es.cls}">${est?es.text:''}</span>
@@ -1437,6 +1522,8 @@ function questBlock(q, child){
       <span class="est ${es.cls}">${q.est?es.text:''}</span>
       <span class="acts">
         ${q.jira?`<a class="ib" href="${esc(q.jira)}" target="_blank" rel="noopener" data-act="noop" title="Open in Jira">${IC.link}</a>`:''}
+        ${(q.links||[]).length?`<button class="ib lk" data-act="q-links" data-id="${q.id}" title="${esc(q.links.map(l=>l.label).join(', '))}" aria-label="Linked files">📎${q.links.length>1?q.links.length:''}</button>`:''}
+        ${!child && kids(q).some(c=>!c.done && (c.links||[]).length)?`<button class="ib" data-act="q-continue" data-id="${q.id}" title="Continue: open the next unfinished objective" aria-label="Continue">${PX.play}</button>`:''}
         <button class="ib" data-act="q-copy" data-id="${q.id}" title="Copy today’s time (Shift: total)">${IC.copy}</button>
         <button class="ib" data-act="q-edit" data-id="${q.id}" aria-label="Edit quest" aria-expanded="${editing}">${IC.dots}</button>
       </span>
@@ -1448,6 +1535,7 @@ function questBlock(q, child){
         <label>Jira link<input class="field" type="url" data-k="quest" data-id="${q.id}" data-f="jira" value="${esc(q.jira||'')}" placeholder="https://…atlassian.net/browse/KEY-123"></label>
       </div>
       ${lookRow('q',q)}
+      ${linksBlock(q,'q:'+q.id,{ folderObj:!child })}
       <div class="qnote"><span class="lbl">Notes</span>${richBox('quest:'+q.id, q.note, 'Description, links, what’s next… also listed under Notes → Quest notes')}</div>
       <div class="foot">
         ${child?'':`<form data-form="obj-add" data-id="${q.id}"><input class="field" name="t" placeholder="Add objective (subtask)" autocomplete="off"><button class="btn sm">${IC.plus}Objective</button></form>`}
@@ -1484,19 +1572,38 @@ function viewCampaigns(){
     <div class="goals">${gs.map(goalRow).join('')}</div>`
   : `<div class="empty"><b>No campaigns yet</b>The bar fills as time runs toward the deadline. It starts red, and every step you tick off shifts it through yellow to green.</div>`}`;
 }
+const stepTitle = i => (i.questId && Q(i.questId)?.title) || i.t;
+function syncQuestToSteps(q){ state.goals.forEach(g=>g.items.forEach(i=>{ if(i.questId===q.id) i.done=q.done; })); }
 function goalRow(g){
-  const open=state.ui.openGoal===g.id, tm=goalTimes(g), pr=goalProgress(g), complete=pr.n&&pr.d===pr.n;
+  const ui=state.ui, open=ui.openGoal===g.id, tm=goalTimes(g), pr=goalProgress(g), complete=pr.n&&pr.d===pr.n;
   const left = complete?'Complete':tm.over?`${Math.max(1,Math.ceil((now()-tm.end)/DAY))}d overdue`:tm.daysLeft<=0?'Last day':`${tm.daysLeft}d left`;
+  const proj = g.projectId && P(g.projectId);
+  const miles = g.items.filter(i=>i.date).map(i=>{ const t=endOfIso(i.date), f=clamp((t-tm.start)/Math.max(1,tm.end-tm.start)); const cls=i.done?'ok':(t<now()?'late':'');
+    return `<i class="mile ${cls}" style="left:${(f*100).toFixed(2)}%" title="${esc(stepTitle(i))}, ${fmtDate(i.date)}"></i>`; }).join('');
+  const spent = proj ? tops(proj.id).reduce((a,q)=>a+qTotal(q),0) : 0;
   return `<div class="goal ${tm.over&&!complete?'over':''} ${complete?'complete':''}" data-goal="${g.id}">
     <button class="bar" data-act="goal-open" data-id="${g.id}" aria-expanded="${open}" style="--fill:${goalColor(g)}">
-      <span class="bar-fill" style="width:${(tm.frac*100).toFixed(2)}%"></span><span class="bar-icon">${g.icon}</span>
+      <span class="bar-fill" style="width:${(tm.frac*100).toFixed(2)}%"></span>${miles}<span class="bar-icon">${g.icon}</span>
       <span class="bar-title">${esc(g.title)}</span>
-      <span class="bar-meta">${pr.n?`<span>${pr.d}/${pr.n}</span>`:''}<span>by ${fmtDate(g.deadline)}</span><b>${left}</b></span>
+      <span class="bar-meta">${proj?`<span title="Linked project">⚔ ${esc(proj.name)}</span>`:''}${pr.n?`<span>${pr.d}/${pr.n}</span>`:''}<span>by ${fmtDate(g.deadline)}</span><b>${left}</b></span>
     </button>
     ${open?`<div class="gpanel">
-      <p class="explain">The bar shows elapsed time: ${Math.round(tm.frac*100)}% of the way from ${fmtDate(isoDay(tm.start))} to ${fmtDate(g.deadline)}. ${g.colorMode==='progress'?'Its colour shows how many steps are done.':''}</p>
-      <div>${g.items.map(i=>`<div class="ci ${i.done?'done':''}"><button class="box ${i.done?'on':''}" data-act="gi-toggle" data-id="${g.id}" data-sub="${i.id}" aria-label="Toggle step">${PX.check}</button><span>${esc(i.t)}</span><button class="ib" data-act="gi-del" data-id="${g.id}" data-sub="${i.id}" aria-label="Remove step">${IC.x}</button></div>`).join('')}
-        <form class="inline" data-form="gi-add" data-id="${g.id}" style="margin-top:6px"><input class="field" name="t" placeholder="Add a step" autocomplete="off"><button class="btn sm">${IC.plus}Step</button></form></div>
+      <p class="explain">The bar shows elapsed time: ${Math.round(tm.frac*100)}% of the way from ${fmtDate(isoDay(tm.start))} to ${fmtDate(g.deadline)}. ${g.colorMode==='progress'?'Its colour shows how many steps are done.':''} Steps with a date appear as markers on the bar.</p>
+      <div class="gproj">${proj
+        ? `Linked to project <button class="plink" data-act="goal-proj-open" data-id="${proj.id}">${emo(proj)}${esc(proj.name)}</button><span class="sub">${fmtHM(spent)} spent, steps and quests stay in sync</span><span style="flex:1"></span><button class="btn sm" data-act="goal-unlink" data-id="${g.id}">Unlink</button>`
+        : `<span class="sub">Work on it as quests:</span><button class="btn sm soul" data-act="goal-mkproj" data-id="${g.id}">${IC.plus}Create project from steps</button><select class="field" data-goallink="${g.id}" aria-label="Link to an existing project"><option value="">or link an existing project…</option>${state.projects.filter(p=>!p.frozen).map(p=>`<option value="${p.id}">${p.emoji?esc(p.emoji)+' ':''}${esc(p.name)}</option>`).join('')}</select>`}</div>
+      <div class="steps">${g.items.map(i=>{ const lq=i.questId&&Q(i.questId), nl=(i.links||[]).length;
+        return `<div class="ci step ${i.done?'done':''}" data-sid="${i.id}" data-gid="${g.id}">
+          <span class="grip" draggable="true" data-drag="s:${i.id}" title="Drag to reorder" aria-label="Drag to reorder">⠿</span>
+          <button class="box ${i.done?'on':''}" data-act="gi-toggle" data-id="${g.id}" data-sub="${i.id}" aria-label="Toggle step">${PX.check}</button>
+          ${ui.stepEdit===i.id ? `<input class="field stepin" data-stepedit="${g.id}|${i.id}" value="${esc(stepTitle(i))}" aria-label="Step text">`
+            : `<span class="st" data-act="step-edit" data-id="${g.id}" data-sub="${i.id}" title="Click to edit">${esc(stepTitle(i))}${lq?' <small class="qlink">quest</small>':''}</span>`}
+          ${nl?`<button class="ib lk" data-act="step-open" data-id="${g.id}" data-sub="${i.id}" title="Open ${esc(i.links[0].label)}">📎${nl>1?nl:''}</button>`:''}
+          <input type="date" class="field sdate" data-stepdate="${g.id}|${i.id}" value="${i.date||''}" title="Milestone date (optional)" aria-label="Milestone date">
+          <button class="ib" data-act="step-links" data-id="${g.id}" data-sub="${i.id}" aria-expanded="${ui.stepLinks===i.id}" title="Files and folders" aria-label="Files and folders">${IC.link}</button>
+          <button class="ib" data-act="gi-del" data-id="${g.id}" data-sub="${i.id}" aria-label="Remove step">${IC.x}</button></div>
+          ${ui.stepLinks===i.id?`<div class="steplinks">${linksBlock(i,'g:'+g.id+':'+i.id)}</div>`:''}`; }).join('')}
+        <form class="inline" data-form="gi-add" data-id="${g.id}" style="margin-top:6px"><input class="field" name="t" placeholder="Add a step${proj?' (also becomes a quest)':''}" autocomplete="off"><button class="btn sm">${IC.plus}Step</button></form></div>
       <div class="grid4"><label>Name<input class="field" data-k="goal" data-id="${g.id}" data-f="title" value="${esc(g.title)}"></label>
         <label>Start<input class="field" type="date" data-k="goal" data-id="${g.id}" data-f="startIso" value="${isoDay(tm.start)}"></label>
         <label>Deadline<input class="field" type="date" data-k="goal" data-id="${g.id}" data-f="deadline" value="${g.deadline}"></label></div>
@@ -1711,6 +1818,7 @@ function richBar(){
     .map(([c,l,t])=>`<button type="button" class="rb rb-${c}" data-act="rich" data-sub="${c}" title="${t}" aria-label="${t}" aria-pressed="false">${l}</button>`).join('')}
     <button type="button" class="rb" data-act="rich" data-sub="insertUnorderedList" title="Bullets (Ctrl+Shift+8)" aria-label="Bullets" aria-pressed="false">${IC.list}</button>
     <button type="button" class="rb" data-act="rich-todo" title="Checklist item (Ctrl+Shift+9)" aria-label="Checklist">${IC.todo}</button>
+    <button type="button" class="rb" data-act="rich-link" title="Link a file or folder" aria-label="Link a file or folder">${IC.link}</button>
     <button type="button" class="rb" data-act="rich-img" title="Add image (you can also paste or drop one)" aria-label="Add image">${IC.img}</button></div>`;
 }
 const richBox = (key, html, ph, cls='') => `<div class="rich-wrap ${cls}">${richBar()}<div class="rich" contenteditable="true" data-rich="${key}" data-ph="${esc(ph)}" role="textbox" aria-multiline="true" aria-label="${esc(ph)}">${sanitize(html||'')}</div></div>`;
@@ -1868,6 +1976,52 @@ const A_ = {
   'layout-swap': ()=>{ state.ui.swap=!state.ui.swap; commit(); openSettings(); },
   'layout-scene': ()=>{ state.ui.hideScene=!state.ui.hideScene; commit(); openSettings(); },
   'layout-reset': ()=>{ Object.assign(state.ui,{ swap:false, leftW:400, leftOrder:['ritual','harvest'], hideScene:false, fold:{} }); commit(); openSettings(); toast('Layout reset'); },
+  'rich-link': (el)=>{ const ed=el.closest('.rich-wrap').querySelector('.rich'); openLinkPicker(ed); },
+  'chip-pick': async (el,kind)=>{ const res=await tinvoke(kind==='file'?'pick_any_files':'pick_folder').catch(()=>null); const ps=Array.isArray(res)?res:(res?[res]:[]); if(ps.length) insertChips(ps,kind); },
+  'chip-insert': ()=>{ const v=$('#chipPath')?.value||''; if(!isPathLike(v)){ toast('Paste a full path, e.g. D:\\Books\\Anatomy.pdf'); return; } insertChips([cleanPath(v)]); },
+  'link-add': async (el,key,kind)=>{ const res=await tinvoke(kind==='file'?'pick_any_files':'pick_folder').catch(()=>null); const ps=Array.isArray(res)?res:(res?[res]:[]); if(!ps.length) return; snap(); ps.forEach(x=>addLinkTo(key,x,kind)); commit(); },
+  'link-open': (el,key,lid)=>{ const l=linkOwner(key)?.links?.find(x=>x.id===lid); if(l) openLink(linkPath(l)); },
+  'link-reveal': (el,key,lid)=>{ const l=linkOwner(key)?.links?.find(x=>x.id===lid); if(l) revealLink(linkPath(l)); },
+  'link-copy': async (el,key,lid)=>{ const l=linkOwner(key)?.links?.find(x=>x.id===lid); if(l && await copyText(linkPath(l))) toast('Path copied'); },
+  'link-ren': (el,key,lid)=>{ state.ui.linkRen = state.ui.linkRen===lid ? null : lid; commit(); document.querySelector(`[data-lname="${key}|${lid}"]`)?.select(); },
+  'link-del': (el,key,lid)=>{ const o=linkOwner(key); if(!o) return; snap(); o.links=(o.links||[]).filter(x=>x.id!==lid); commit(); toast('Link removed', true); },
+  'link-relink': async (el,key,lid)=>{ const o=linkOwner(key), l=o?.links?.find(x=>x.id===lid); if(!l) return; const res=await tinvoke(l.kind==='folder'?'pick_folder':'pick_any_files').catch(()=>null); const np=Array.isArray(res)?res[0]:res; if(!np) return;
+    snap(); const nl=makeLink(np,l.kind); delete l.path; delete l.root; delete l.rel; Object.assign(l,{ path:nl.path, root:nl.root, rel:nl.rel }); Object.keys(l).forEach(k=>l[k]===undefined&&delete l[k]); existMap.delete(linkPath(l)); commit(); toast('Link updated'); },
+  'folder-objectives': async (el,qid)=>{ const q=Q(qid); if(!q) return; const folder=await tinvoke('pick_folder').catch(()=>null); if(!folder) return;
+    const entries=await tinvoke('list_dir',{ path:folder }).catch(e=>{ toast('Could not read the folder: '+e); return null; }); if(!entries) return;
+    const coll=new Intl.Collator(undefined,{ numeric:true, sensitivity:'base' });
+    const list=entries.filter(([n])=>!n.startsWith('.') && !/^(desktop\.ini|thumbs\.db)$/i.test(n)).sort((a,b)=>coll.compare(a[0],b[0]));
+    if(!list.length){ toast('That folder is empty'); return; } snap();
+    list.forEach(([n,dir])=>{ const c=newQuest(q.projectId,q.id,dir?n:n.replace(/\.[^.]+$/,''),null); c.links=[makeLink(normP(folder)+'\\'+n, dir?'folder':'file')]; state.quests.push(c); });
+    if(!(q.links||[]).some(l=>normP(linkPath(l)).toLowerCase()===normP(folder).toLowerCase())) (q.links ||= []).push(makeLink(folder,'folder'));
+    commit(); toast(`${list.length} objectives added from ${fileName(normP(folder))}`, true); },
+  'q-links': (el,id)=>{ const q=Q(id); if(!q) return; if(q.links.length===1) openLink(linkPath(q.links[0])); else { state.ui.edit=id; commit(); } },
+  'q-continue': (el,id)=>{ const q=Q(id); const next=kids(q).filter(c=>!c.done && (c.links||[]).length).sort((a,b)=>(a.order||0)-(b.order||0))[0];
+    if(!next){ toast('Every linked objective is done'); return; } state.focus=next.id; commit(); toast(`Continue: ${next.title}`); openLink(linkPath(next.links[0])); },
+  'lib-f': (el,id)=>{ state.ui.libF=id; commit(); },
+  'lib-open': (el,_,p)=> openLink(p),
+  'lib-reveal': (el,_,p)=> revealLink(p),
+  'lib-copy': async (el,_,p)=>{ if(await copyText(p)) toast('Path copied'); },
+  'note-goto': (el,id)=>{ state.ui.tab='notes'; state.ui.noteCat=''; state.ui.noteQ=''; commit(); document.querySelector(`[data-nid="${id}"]`)?.scrollIntoView({ block:'center' }); },
+  'goal-goto': (el,id)=>{ state.ui.tab='campaigns'; state.ui.openGoal=id; commit(); },
+  'goal-proj-open': (el,id)=>{ const p=P(id); if(!p) return; p.collapsed=false; state.ui.tab='board'; commit(); },
+  'goal-mkproj': (el,id)=>{ const g=G(id); if(!g) return; snap(); const p={ id:uid(), name:g.title, emoji:g.icon, collapsed:false, frozen:false }; state.projects.push(p);
+    g.items.forEach(i=>{ const q=newQuest(p.id,null,i.t,null); q.done=i.done; state.quests.push(q); i.questId=q.id; }); g.projectId=p.id; commit(); toast(`Project “${p.name}” created with ${g.items.length} quests`, true); },
+  'goal-unlink': (el,id)=>{ const g=G(id); if(!g) return; snap(); g.items.forEach(i=>{ if(i.questId){ i.t=stepTitle(i); delete i.questId; } }); g.projectId=null; commit(); toast('Unlinked. Quests and steps now live separately', true); },
+  'step-edit': (el,gid,sid)=>{ state.ui.stepEdit=sid; commit(); const inp=document.querySelector(`[data-stepedit="${gid}|${sid}"]`); inp?.focus(); inp?.select(); },
+  'step-open': (el,gid,sid)=>{ const i=G(gid)?.items.find(x=>x.id===sid); if(i?.links?.length) openLink(linkPath(i.links[0])); },
+  'step-links': (el,gid,sid)=>{ state.ui.stepLinks = state.ui.stepLinks===sid ? null : sid; commit(); },
+  'root-add': ()=>{ const path=cleanPath($('#rootPath')?.value), name=($('#rootName')?.value||'').trim()||fileName(normP(path));
+    if(!isPathLike(path)){ toast('Paste or pick a folder path, e.g. D:\\Courses'); return; } snap(); const r={ id:uid(), name, path:normP(path) }; state.roots.push(r); const n=attachRoot(r); commit(); toast(`Root “${name}” added${n?`, ${n} links now follow it`:''}`, true); },
+  'root-pick': async (el,id)=>{ const f=await tinvoke('pick_folder').catch(()=>null); if(!f) return;
+    if(id==='__new'){ $('#rootPath').value=f; if(!$('#rootName').value) $('#rootName').value=fileName(normP(f)); return; }
+    const r=state.roots.find(x=>x.id===id); if(!r) return; snap(); r.path=normP(f); existMap.clear(); commit(); toast(`“${r.name}” now points to ${r.path}`, true); },
+  'root-del': (el,id)=>{ snap(); detachRoot(id); state.roots=state.roots.filter(r=>r.id!==id); commit(); toast('Root removed, its links keep their full paths', true); },
+  compact: ()=>{ const tab=state.ui.tab, c={ ...(state.ui.compact||{}) }; c[tab]=!c[tab]; state.ui.compact=c; commit(); toast(c[tab]?'Compact timer on this tab. Press \\ to switch back':'Full timer on this tab'); },
+  'harvest-pop': ()=>{ document.body.classList.toggle('harvest-pop'); renderPill(); },
+  'upd-open': ()=> openUpdate(),
+  'upd-check': ()=> checkUpdate(true),
+  'upd-go': async ()=>{ $('#dlgBody').innerHTML='<h2>Updating…</h2><p class="hint" style="margin-top:6px">Downloading and installing. Taskromancer will start again by itself.</p>'; await deskSave(true); tinvoke('install_update').catch(e=>{ toast('Update failed: '+e); $('#dlg').close(); }); },
   'hide-done': ()=>{ state.ui.hideDone=!state.ui.hideDone; commit(); },
   crypt: ()=>{ state.ui.crypt=!state.ui.crypt; commit(); },
   'p-collapse': (el,id)=>{ const p=P(id); p.collapsed=!p.collapsed; commit(); },
@@ -1878,7 +2032,7 @@ const A_ = {
     const ids=new Set(state.quests.filter(q=>q.projectId===id).map(q=>q.id)); state.quests=state.quests.filter(q=>!ids.has(q.id)); if(ids.has(state.focus)) state.focus=null;
     state.projects=state.projects.filter(x=>x!==p); commit(); toast(`Deleted “${p.name}”`, true); },
   'p-copy': async (el,id,sub,e)=>{ const all=tops(id); const ms = e.shiftKey ? all.reduce((a,q)=>a+qTotal(q),0) : all.reduce((a,q)=>a+qToday(q),0); if(await copyText(fmtHM(ms))) toast(`Copied ${fmtHM(ms)}`); },
-  'q-done': (el,id)=>{ snap(); const q=Q(id); q.done=!q.done; if(q.done){ state.stats.questsDone++; if(state.focus===id) state.focus=null; toast(T.questDone[state.stats.questsDone%T.questDone.length]); } commit(); },
+  'q-done': (el,id)=>{ snap(); const q=Q(id); q.done=!q.done; syncQuestToSteps(q); if(q.done){ state.stats.questsDone++; if(state.focus===id) state.focus=null; toast(T.questDone[state.stats.questsDone%T.questDone.length]); } commit(); },
   'q-edit': (el,id)=>{ state.ui.edit = state.ui.edit===id ? null : id; commit(); },
   'q-copy': async (el,id,sub,e)=>{ const q=Q(id), ms = e.shiftKey ? qTotal(q) : qToday(q); if(await copyText(fmtHM(ms))) toast(`Copied ${fmtHM(ms)} ${e.shiftKey?'total':'today'}`); else toast('Copy failed'); },
   'q-del': (el,id)=>{ const q=Q(id); snap();
@@ -1934,7 +2088,7 @@ const A_ = {
     state.cats=state.cats.filter(x=>x!==c); state.notes.forEach(x=>{ if(x.cat===id) x.cat=''; }); if(state.ui.noteCat===id) state.ui.noteCat=''; if(state.ui.noteCatNew===id) state.ui.noteCatNew=state.cats[0]?.id||''; commit(); },
   /* campaigns */
   'goal-open': (el,id)=>{ state.ui.openGoal = state.ui.openGoal===id?null:id; commit(); },
-  'gi-toggle': (el,id,sub)=>{ const i=G(id).items.find(x=>x.id===sub); i.done=!i.done; commit(); },
+  'gi-toggle': (el,id,sub)=>{ const i=G(id).items.find(x=>x.id===sub); i.done=!i.done; const q=i.questId&&Q(i.questId); if(q){ q.done=i.done; syncQuestToSteps(q); } commit(); },
   'gi-del': (el,id,sub)=>{ const g=G(id); g.items=g.items.filter(x=>x.id!==sub); commit(); },
   'goal-mode': (el,id,m)=>{ G(id).colorMode=m; commit(); },
   'goal-color': (el,id,c)=>{ G(id).color=c; commit(); },
@@ -1957,7 +2111,7 @@ const FORMS = {
     state.quests.push(newQuest(par.projectId,par.id,title,est)); commit(); document.querySelector(`[data-form="obj-add"][data-id="${par.id}"] input`)?.focus(); },
   'goal-add': f=>{ const t=f.t.value.trim(); if(!t||!f.d.value) return; const g={ id:uid(), title:t, icon:f.i.value, deadline:f.d.value, start:dayStart(), colorMode:'progress', color:'#3b6fd6', items:[] };
     state.goals.push(g); state.ui.openGoal=g.id; commit(); document.querySelector(`[data-form="gi-add"][data-id="${g.id}"] input`)?.focus(); },
-  'gi-add': f=>{ const v=f.t.value.trim(); if(!v) return; const id=f.dataset.id; G(id).items.push({ id:uid(), t:v, done:false }); commit(); document.querySelector(`[data-form="gi-add"][data-id="${id}"] input`)?.focus(); },
+  'gi-add': f=>{ const v=f.t.value.trim(); if(!v) return; const id=f.dataset.id; const g=G(id), it={ id:uid(), t:v, done:false }; if(g.projectId && P(g.projectId)){ const q=newQuest(g.projectId,null,v,null); state.quests.push(q); it.questId=q.id; } g.items.push(it); commit(); document.querySelector(`[data-form="gi-add"][data-id="${id}"] input`)?.focus(); },
   'note-add': f=>{ const t=f.t.value.trim(); if(!t) return; const n={ id:uid(), text:t, cat:f.c.value, createdAt:now(), updatedAt:now() };
     state.notes.push(n); state.ui.noteCatNew=f.c.value; if(state.ui.noteCat && state.ui.noteCat!==n.cat) state.ui.noteCat=''; commit(); document.querySelector('[data-form="note-add"] textarea')?.focus(); },
   'cat-add': f=>{ const n=f.n.value.trim(); if(!n) return; state.cats.push({ id:uid(), emoji:f.e.value, name:n }); commit(); document.querySelector('[data-form="cat-add"] input')?.focus(); }
@@ -1970,6 +2124,7 @@ document.addEventListener('click', e=>{
 });
 document.addEventListener('click', e=>{ const dl=$('#dlg'); if(!dl.open || e.target!==dl) return; const r=dl.getBoundingClientRect();
   if(e.clientX<r.left || e.clientX>r.right || e.clientY<r.top || e.clientY>r.bottom) dl.close(); });
+document.addEventListener('click', e=>{ if(document.body.classList.contains('harvest-pop') && !e.target.closest?.('#harvest,.hbadge')){ document.body.classList.remove('harvest-pop'); renderPill(); } });
 document.addEventListener('submit', e=>{ e.preventDefault(); FORMS[e.target.dataset.form]?.(e.target); });
 document.addEventListener('focusin', e=>{ const c=e.target.dataset?.calc; if(c!==undefined){ calcActive=+c; document.querySelectorAll('.crow').forEach((r,i)=>r.classList.toggle('active',i===calcActive)); } });
 
@@ -1987,9 +2142,10 @@ function applyField(el){
 document.addEventListener('input', e=>{
   const el=e.target, d=el.dataset;
   if(el.classList?.contains('rich')){ if(e.inputType==='insertParagraph') todoAfterEnter(el); richChanged(el); return; }
-  if(d.ui==='q'||d.ui==='noteQ'){ state.ui[d.ui]=el.value; save(); const pos=el.selectionStart; renderBoard(); const s=document.querySelector(`[data-ui="${d.ui}"]`); s.focus(); s.setSelectionRange(pos,pos); return; }
+  if(d.ui==='q'||d.ui==='noteQ'||d.ui==='libQ'){ state.ui[d.ui]=el.value; save(); const pos=el.selectionStart; renderBoard(); const s=document.querySelector(`[data-ui="${d.ui}"]`); s.focus(); s.setSelectionRange(pos,pos); return; }
   if(d.calc!==undefined){ state.calc[+d.calc]=el.value; save(); updateCalc(); return; }
   if(d.sess){ return; }
+  if(d.linkpaste!==undefined || d.lname!==undefined || d.stepedit!==undefined || d.rootname!==undefined || d.rootpath!==undefined) return;
   if(d.qname){ const l=state.quotes.lists.find(x=>x.id===d.qname); if(l){ l.name=el.value; save(); } return; }
   if(d.qitems){ const l=state.quotes.lists.find(x=>x.id===d.qitems); if(l){ l.items=el.value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean); save(); } return; }
   if(d.deckName){ const k=D(d.deckName); if(k){ k.name=el.value; save(); } return; }
@@ -2008,6 +2164,15 @@ document.addEventListener('change', e=>{
     if(i<S.length-1){ const lo=(A.cuts[i-1]??0)+MIN, hi=(A.cuts[i+1]??A.total)-MIN; A.cuts[i]=clamp(S[i].start+want,lo,hi); }
     else { const lo=(A.cuts[i-2]??0)+MIN, hi=A.total-MIN; A.cuts[i-1]=clamp(A.total-want,lo,hi); }
     updateAllocDom(); return; }
+  if(d.linkpaste!==undefined){ if(isPathLike(el.value)){ snap(); addLinkTo(d.linkpaste, el.value); softCommit(); } return; }
+  if(d.lname!==undefined){ const [key,lid]=d.lname.split('|'); const l=linkOwner(key)?.links?.find(x=>x.id===lid); if(l && el.value.trim()) l.label=el.value.trim(); state.ui.linkRen=null; softCommit(); return; }
+  if(d.stepedit!==undefined){ const [gid,sid]=d.stepedit.split('|'); const i=G(gid)?.items.find(x=>x.id===sid); const v=el.value.trim(); if(i && v){ i.t=v; const q=i.questId&&Q(i.questId); if(q) q.title=v; } state.ui.stepEdit=null; softCommit(); return; }
+  if(d.stepdate!==undefined){ const [gid,sid]=d.stepdate.split('|'); const i=G(gid)?.items.find(x=>x.id===sid); if(i){ i.date=el.value||''; softCommit(); } return; }
+  if(d.goallink!==undefined){ const g=G(d.goallink), pid=el.value; if(!g||!pid) return; snap(); g.projectId=pid; let made=0;
+    g.items.forEach(i=>{ if(i.questId && Q(i.questId)) return; const m=tops(pid).find(q=>q.title.trim().toLowerCase()===i.t.trim().toLowerCase()); if(m){ i.questId=m.id; i.done=m.done; } else { const q=newQuest(pid,null,i.t,null); q.done=i.done; state.quests.push(q); i.questId=q.id; made++; } });
+    softCommit(); toast(`Linked to “${P(pid).name}”${made?`, ${made} new quests`:''}`, true); return; }
+  if(d.rootname!==undefined){ const r=state.roots.find(x=>x.id===d.rootname); if(r && el.value.trim()){ r.name=el.value.trim(); softCommit(); } return; }
+  if(d.rootpath!==undefined){ const r=state.roots.find(x=>x.id===d.rootpath); if(r && isPathLike(el.value)){ r.path=normP(cleanPath(el.value)); existMap.clear(); softCommit(); toast(`“${r.name}” now points to ${r.path}`); } return; }
   if(d.qactive!==undefined){ state.quotes.active=el.value; save(); pickQuote(); return; }
   if(d.qitems||d.qname){ openQuotes(); pickQuote(); return; }
   if(d.rndf!==undefined){ const f=R().formulas.find(x=>x.id===el.value); if(f){ loadFormula(f); softCommit(); toast(`Formula “${f.name}” loaded, press Roll`); } else { R().curFormula=''; softCommit(); } return; }
@@ -2043,6 +2208,11 @@ document.addEventListener('keydown', e=>{
   if(e.key==='Enter' && (e.ctrlKey||e.metaKey) && ae?.closest('[data-form="note-add"]')){ e.preventDefault(); ae.closest('form').requestSubmit(); return; }
   if(e.key==='Enter' && ae?.dataset.calc!==undefined){ e.preventDefault(); const i=+ae.dataset.calc; state.calc.splice(i+1,0,''); calcActive=i+1; commit(); document.querySelector(`[data-calc="${i+1}"]`)?.focus(); return; }
   if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='z' && !typing){ e.preventDefault(); undo(); return; }
+  if(e.key==='Enter' && ae?.dataset?.linkpaste!==undefined){ e.preventDefault(); ae.blur(); return; }
+  if(e.key==='Enter' && (ae?.dataset?.lname!==undefined || ae?.dataset?.stepedit!==undefined || ae?.dataset?.rootpath!==undefined || ae?.dataset?.rootname!==undefined)){ e.preventDefault(); ae.blur(); return; }
+  if(e.key==='Escape' && ae?.dataset?.stepedit!==undefined){ e.preventDefault(); state.ui.stepEdit=null; ae.value=''; commit(); return; }
+  if(e.key==='Enter' && ae?.id==='chipPath'){ e.preventDefault(); A_['chip-insert'](); return; }
+  if(e.key==='Enter' && (ae?.id==='rootPath'||ae?.id==='rootName')){ e.preventDefault(); A_['root-add'](); return; }
   if(e.key==='Enter' && ae?.id==='mqNew'){ e.preventDefault(); makeQuests(); return; }
   if(e.key==='Enter' && ae?.id==='formulaName'){ e.preventDefault(); A_['formula-save'](); return; }
   if(e.key==='Escape' && state.ui.noteMenu){ closeMenu(); return; }
@@ -2056,6 +2226,7 @@ document.addEventListener('keydown', e=>{
   else if(k==='s' || k==='і' || k==='ы'){ if(state.timer.state!=='idle') cut(true); }
   else if(k==='a' || k==='ф'){ if(state.pending.length) openSplit(state.pending.map(c=>c.id)); }
   else if((k==='r' || k==='к') && state.ui.tab==='rnd'){ rollAll(); }
+  else if(e.key==='\\'){ e.preventDefault(); A_.compact(); }
 });
 
 /* ================= rich text runtime ================= */
@@ -2121,7 +2292,9 @@ document.addEventListener('paste', e=>{
   const files=[...(e.clipboardData?.files||[])].filter(f=>f.type.startsWith('image/'));
   e.preventDefault();
   if(files.length) insertImages(files, ed, selRangeIn(ed));
-  else { document.execCommand('insertText', false, e.clipboardData.getData('text/plain')); richChanged(ed); }
+  else { const txt=e.clipboardData.getData('text/plain'), lines=txt.split(/\r?\n/).filter(x=>x.trim());
+    if(lines.length && lines.length<=50 && lines.every(isPathLike)){ linkTarget={ ed, range:selRangeIn(ed) }; insertChips(lines.map(cleanPath)); toast(lines.length>1?`${lines.length} paths turned into links`:'Path turned into a link'); return; }
+    document.execCommand('insertText', false, txt); richChanged(ed); }
 });
 document.addEventListener('dblclick', e=>{
   const img=e.target.closest?.('.rich img'); if(!img) return;
@@ -2231,6 +2404,7 @@ function dropTarget(node){
       const cr=node.closest('#crypt'); if(cr && !q.parentId) return { el:cr, type:'freeze' };
     } else { const bd=node.closest('#boardDrop'); if(bd && q.frozen && !P(q.projectId)?.frozen) return { el:bd, type:'thaw' }; }
   }
+  if(kind==='s'){ const card=node.closest('.step[data-sid]'), g=state.goals.find(x=>x.items.some(i=>i.id===id)); return card && g && card.dataset.gid===g.id && card.dataset.sid!==id ? { el:card, type:'step', id:card.dataset.sid, gid:g.id } : null; }
   if(kind==='l'){ const pn=node.closest('#ritual,#harvest'); return pn && pn.id!==id ? { el:pn, type:'panel', id:pn.id } : null; }
   if(kind==='d'){ const dk=node.closest('.deck[data-did]'); return dk && dk.dataset.did!==id ? { el:dk, type:'deck', id:dk.dataset.did } : null; }
   if(kind==='t'){ const tb=node.closest('.tab[data-id]'); return tb && tb.dataset.id!==id ? { el:tb, type:'tab', id:tb.dataset.id } : null; }
@@ -2244,14 +2418,15 @@ const clearHi = () => document.querySelectorAll('.drop-hi,.drop-before,.drop-aft
 document.addEventListener('dragstart', e=>{
   const el=e.target.closest?.('[data-drag]'); if(!el) return;
   const [kind,id]=el.dataset.drag.split(':'); dragging={kind,id};
-  e.dataTransfer.effectAllowed='copyMove'; e.dataTransfer.setData('text/plain', kind==='q'?Q(id)?.title||'':kind==='p'?P(id)?.name||'':kind==='n'||kind==='t'||kind==='d'||kind==='l'?'':'time'); if(kind==='n'){ const card=el.closest('.note'); try{ e.dataTransfer.setDragImage(card,20,20); }catch{} }
+  e.dataTransfer.effectAllowed='copyMove'; e.dataTransfer.setData('text/plain', kind==='q'?Q(id)?.title||'':kind==='p'?P(id)?.name||'':kind==='n'||kind==='t'||kind==='d'||kind==='l'||kind==='s'?'':'time'); if(kind==='n'){ const card=el.closest('.note'); try{ e.dataTransfer.setDragImage(card,20,20); }catch{} }
   el.closest('.q,.chunk,.frozen,.project,.note,.deck')?.classList.add('dragging');
   document.body.classList.add('is-dragging', 'drag-'+kind);
 });
-document.addEventListener('dragend', ()=>{ dragging=null; clearHi(); document.querySelectorAll('.dragging').forEach(x=>x.classList.remove('dragging')); document.body.classList.remove('is-dragging','drag-c','drag-q','drag-p','drag-n','drag-t','drag-d','drag-l'); });
+document.addEventListener('dragend', ()=>{ dragging=null; clearHi(); document.querySelectorAll('.dragging').forEach(x=>x.classList.remove('dragging')); document.body.classList.remove('is-dragging','drag-c','drag-q','drag-p','drag-n','drag-t','drag-d','drag-l','drag-s'); });
 document.addEventListener('dragover', e=>{ const t=dropTarget(e.target); clearHi(); if(t){ e.preventDefault(); e.dataTransfer.dropEffect = t.type==='give'||t.type==='strip'||t.type==='chunk' ? 'copy' : 'move'; if(t.type==='note'||t.type==='tab'){ const r=t.el.getBoundingClientRect(); t.el.classList.add(e.clientX<r.left+r.width/2?'drop-before':'drop-after'); }
+  else if(t.type==='step'){ const g=G(t.gid), r=t.el.getBoundingClientRect(), it=g.items.find(i=>i.id===id); g.items.splice(g.items.indexOf(it),1); g.items.splice(g.items.indexOf(g.items.find(i=>i.id===t.id))+(e.clientY<r.top+r.height/2?0:1),0,it); commit(); }
   else if(t.type==='panel'){ const o=state.ui.leftOrder||['ritual','harvest']; state.ui.leftOrder=[...o].reverse(); commit(); }
-  else if(t.type==='deck'){ const r=t.el.getBoundingClientRect(); t.el.classList.add(e.clientY<r.top+r.height/2?'drop-above':'drop-below'); } else t.el.classList.add('drop-hi'); }
+  else if(t.type==='deck'||t.type==='step'){ const r=t.el.getBoundingClientRect(); t.el.classList.add(e.clientY<r.top+r.height/2?'drop-above':'drop-below'); } else t.el.classList.add('drop-hi'); }
   else if(!dragging && e.dataTransfer?.types?.includes('Files') && e.target.closest?.('.rich')) e.preventDefault(); });
 document.addEventListener('drop', e=>{
   if(!dragging){ const ed=e.target.closest?.('.rich'); const files=[...(e.dataTransfer?.files||[])].filter(f=>f.type.startsWith('image/'));
@@ -2322,9 +2497,181 @@ function loadDemo(){
   state.focus=cd.id;
 }
 
+/* ================= local links: files and folders on disk ================= */
+const EXEC_EXT=/\.(exe|bat|cmd|ps1|vbs|vbe|js|jse|wsf|msi|com|scr|lnk|jar|reg|hta|cpl)$/i;
+const isPathLike = s => /^\s*"?([a-zA-Z]:[\\/]|\\\\[^\\\s]+\\)[^\n"]*"?\s*$/.test(s||'');
+const cleanPath = s => String(s||'').trim().replace(/^"|"$/g,'').trim();
+const normP = p => String(p||'').replace(/\//g,'\\').replace(/\\+$/,'');
+const rootName = id => (state.roots||[]).find(r=>r.id===id)?.name || 'root';
+function rootFor(path){ const P=normP(path).toLowerCase(); let best=null;
+  (state.roots||[]).forEach(r=>{ const rp=normP(r.path).toLowerCase(); if(rp && (P===rp || P.startsWith(rp+'\\')) && (!best || rp.length>normP(best.path).length)) best=r; }); return best; }
+function makeLink(path, kind){
+  path=cleanPath(path); const base=normP(path); const l={ id:uid(), kind: kind || (/\.[a-z0-9]{1,6}$/i.test(base)?'file':'folder'), label: fileName(base)||path };
+  const r=rootFor(path); if(r){ l.root=r.id; l.rel=normP(path).slice(normP(r.path).length).replace(/^\\+/,''); } else l.path=path; return l;
+}
+function linkPath(l){ if(l.root){ const r=(state.roots||[]).find(x=>x.id===l.root); if(r) return normP(r.path)+(l.rel?'\\'+l.rel:''); } return l.path||''; }
+function fileIcon(p, kind){
+  if(kind==='folder') return '📁'; const e=(p.match(/\.([a-z0-9]+)$/i)||[])[1]?.toLowerCase()||'';
+  if(/^(png|jpe?g|gif|webp|bmp|psd|kra|clip|tiff?|svg|heic)$/.test(e)) return '🖼️';
+  if(/^(mp4|mkv|mov|avi|webm|m4v|wmv)$/.test(e)) return '🎬';
+  if(/^(mp3|wav|flac|ogg|m4a|aac)$/.test(e)) return '🎵';
+  if(/^(pdf|epub|djvu|mobi|fb2|cbz|cbr)$/.test(e)) return '📕';
+  if(/^(zip|rar|7z|tar|gz)$/.test(e)) return '🗜️';
+  if(EXEC_EXT.test(p)) return '⚙️';
+  return '📄';
+}
+// does the file still exist? asked in small batches, cached until the window regains focus
+const existMap=new Map(); const existPending=new Set(); let existT=null;
+function linkMissing(p){ if(!DESK || !p) return false; const v=existMap.get(p); if(v===undefined){ queueExist(p); return false; } return v===false; }
+function queueExist(p){ existPending.add(p); clearTimeout(existT); existT=setTimeout(async()=>{ const list=[...existPending]; existPending.clear(); if(!list.length) return;
+  const res=await tinvoke('paths_exist',{ paths:list }).catch(()=>null); if(!res) return; list.forEach((x,i)=>existMap.set(x,!!res[i])); markMissing(); },120); }
+function markMissing(){ document.querySelectorAll('[data-lpath]').forEach(el=>{ const v=existMap.get(el.dataset.lpath); el.classList.toggle('missing', v===false); if(v===undefined && DESK) queueExist(el.dataset.lpath); }); }
+window.addEventListener('focus', ()=>{ if(DESK){ existMap.clear(); markMissing(); } });
+function confirmRun(path){
+  return new Promise(res=>{ let done=false; const fin=v=>{ if(done) return; done=true; res(v); };
+    $('#dlg').dataset.mode='run';
+    $('#dlgBody').innerHTML=`<h2>Run this program?</h2><p class="hint" style="margin-top:6px">${esc(fileName(path))} is a program or script. Only run it if you trust it.</p><p class="pathline">${esc(path)}</p>
+      <div class="dlg-foot"><span class="sum"></span><button class="btn" id="runNo">Cancel</button><button class="btn soul" id="runYes">Run it</button></div>`;
+    $('#dlg').showModal(); $('#runYes').onclick=()=>{ fin(true); $('#dlg').close(); }; $('#runNo').onclick=()=>{ fin(false); $('#dlg').close(); };
+    $('#dlg').addEventListener('close',()=>fin(false),{ once:true }); });
+}
+async function openLink(path){
+  if(!path) return;
+  if(!DESK){ if(await copyText(path)) toast('Path copied. Opening files works in the desktop app.'); return; }
+  if(existMap.get(path)===false){ toast('Not found there any more. Use Relink to point it to the new place.'); return; }
+  if(EXEC_EXT.test(path) && !await confirmRun(path)) return;
+  tinvoke('open_path',{ path }).catch(e=>toast('Could not open it: '+e));
+}
+function revealLink(path){ if(DESK) tinvoke('reveal_path',{ path }).catch(e=>toast('Could not show it: '+e)); else copyText(path).then(ok=>ok&&toast('Path copied')); }
+function linkOwner(key){ const [k,a,b]=key.split(':'); if(k==='q') return Q(a); if(k==='g'){ const g=G(a); return g && g.items.find(i=>i.id===b); } return null; }
+function linksBlock(owner, key, opts={}){
+  const ls=owner.links||[];
+  return `<div class="links"><span class="lbl">Links</span>
+    ${ls.map(l=>linkRow(l,key)).join('')}
+    <div class="link-add">${DESK?`<button class="btn sm" data-act="link-add" data-id="${key}" data-sub="file">${IC.plus}File</button><button class="btn sm" data-act="link-add" data-id="${key}" data-sub="folder">${IC.plus}Folder</button>`:''}
+      <input class="field" data-linkpaste="${key}" placeholder="${DESK?'or paste a path and press Enter':'Paste a path, e.g. D:\\Courses\\Anatomy'}" aria-label="Paste a file or folder path">
+      ${opts.folderObj&&DESK?`<button class="btn sm" data-act="folder-objectives" data-id="${key.slice(2)}" title="Pick a folder: each file inside becomes an objective with its own link">Folder → objectives</button>`:''}</div></div>`;
+}
+function linkRow(l,key){
+  const p=linkPath(l), ren=state.ui.linkRen===l.id;
+  return `<div class="lrow ${linkMissing(p)?'missing':''}" data-lpath="${esc(p)}">
+    ${ren?`<input class="field lname" data-lname="${key}|${l.id}" value="${esc(l.label)}" aria-label="Link name">`
+      :`<button class="lopen" data-act="link-open" data-id="${key}" data-sub="${l.id}" title="${esc(p)}"><span class="lic">${fileIcon(p,l.kind)}</span><span class="lname-t">${esc(l.label)}</span>${l.root?`<small class="rootb">${esc(rootName(l.root))}</small>`:''}<em class="miss">missing</em></button>`}
+    <button class="ib" data-act="link-reveal" data-id="${key}" data-sub="${l.id}" title="Show in folder" aria-label="Show in folder">${IC.folder}</button>
+    <button class="ib" data-act="link-copy" data-id="${key}" data-sub="${l.id}" title="Copy path" aria-label="Copy path">${IC.copy}</button>
+    <button class="ib" data-act="link-ren" data-id="${key}" data-sub="${l.id}" title="Rename" aria-label="Rename">${IC.pen}</button>
+    ${DESK?`<button class="ib relink" data-act="link-relink" data-id="${key}" data-sub="${l.id}" title="Relink: point it to the new place" aria-label="Relink">${IC.reload}</button>`:''}
+    <button class="ib" data-act="link-del" data-id="${key}" data-sub="${l.id}" title="Remove link" aria-label="Remove link">${IC.x}</button></div>`;
+}
+function addLinkTo(key, path, kind){ const o=linkOwner(key); if(!o) return false; if(!isPathLike(path)){ toast('That doesn’t look like a path, e.g. D:\\Courses\\Anatomy'); return false; }
+  (o.links ||= []).push(makeLink(path, kind)); return true; }
+// inline link chips inside notes
+const chipHtml = l => `<a class="loc" contenteditable="false" data-kind="${l.kind}"${l.root?` data-root="${l.root}" data-rel="${esc(l.rel)}"`:` data-path="${esc(l.path)}"`}>${esc(l.label)}</a>&nbsp;`;
+function chipPath(a){ if(a.dataset.root){ const r=(state.roots||[]).find(x=>x.id===a.dataset.root); if(r) return normP(r.path)+(a.dataset.rel?'\\'+a.dataset.rel:''); } return a.dataset.path||''; }
+function decorateChips(){ document.querySelectorAll('.rich a.loc').forEach(a=>{ const p=chipPath(a); a.dataset.lpath=p; a.title=p+(DESK?'\nClick to open, Ctrl+click to show in folder':'\nClick to copy the path'); a.dataset.icon=fileIcon(p,a.dataset.kind); }); markMissing(); }
+let linkTarget=null;
+function openLinkPicker(ed){
+  linkTarget={ ed, range: selRangeIn(ed) }; $('#dlg').dataset.mode='link';
+  $('#dlgBody').innerHTML=`<h2>Link a file or folder</h2><p class="hint" style="margin-top:6px">${DESK?'Pick one, or paste a path (in Explorer: Shift + right click → Copy as path).':'Paste a path. Opening it works in the desktop app.'}</p>
+    ${DESK?`<div class="dlg-row" style="margin-bottom:10px"><button class="btn" data-act="chip-pick" data-id="file">${IC.plus}File…</button><button class="btn" data-act="chip-pick" data-id="folder">${IC.plus}Folder…</button></div>`:''}
+    <div class="inline"><input class="field" id="chipPath" placeholder="D:\\Courses\\Anatomy\\01 Intro.mp4" autocomplete="off"><button class="btn soul" data-act="chip-insert">Insert</button></div>`;
+  $('#dlg').showModal(); setTimeout(()=>$('#chipPath')?.focus(),30);
+}
+function insertChips(paths, kind){
+  const t=linkTarget; if(!t||!t.ed?.isConnected) return; $('#dlg').close();
+  t.ed.focus(); const s=getSelection(); s.removeAllRanges(); if(t.range) s.addRange(t.range); else caretToEnd(t.ed);
+  document.execCommand('insertHTML', false, paths.map(p=>chipHtml(makeLink(p,kind))).join(' ')); richChanged(t.ed); decorateChips(); linkTarget=null;
+}
+document.addEventListener('click', e=>{
+  if(!DESK) return; const a=e.target.closest?.('a[href]'); if(!a || a.classList.contains('loc')) return;
+  const url=a.getAttribute('href')||''; if(!/^https?:\/\//i.test(url)) return;
+  e.preventDefault(); e.stopPropagation(); tinvoke('open_url',{ url }).catch(err=>toast('Could not open the link: '+err));
+}, true);
+document.addEventListener('click', e=>{
+  const a=e.target.closest?.('.rich a.loc'); if(!a) return; e.preventDefault(); e.stopPropagation();
+  const p=chipPath(a); if(e.ctrlKey||e.metaKey) revealLink(p); else openLink(p);
+}, true);
+// roots: links under a root folder are stored relative to it, so moving the collection only needs the root changed
+function attachRoot(r){
+  let n=0; const rp=normP(r.path).toLowerCase();
+  const under = p => { const P=normP(p).toLowerCase(); return P===rp || P.startsWith(rp+'\\'); };
+  const fix = l => { if(!l.root && l.path && under(l.path)){ l.rel=normP(l.path).slice(normP(r.path).length).replace(/^\\+/,''); l.root=r.id; delete l.path; n++; } };
+  state.quests.forEach(q=>(q.links||[]).forEach(fix)); state.goals.forEach(g=>g.items.forEach(i=>(i.links||[]).forEach(fix)));
+  const fixHtml = h => { if(!h || !/class="loc"/.test(h)) return h; const d=new DOMParser().parseFromString(`<body>${h}</body>`,'text/html');
+    d.querySelectorAll('a.loc[data-path]').forEach(a=>{ if(under(a.dataset.path)){ a.dataset.rel=normP(a.dataset.path).slice(normP(r.path).length).replace(/^\\+/,''); a.dataset.root=r.id; a.removeAttribute('data-path'); n++; } }); return d.body.innerHTML; };
+  state.notes.forEach(x=>{ x.html=fixHtml(x.html); }); state.quests.forEach(q=>{ if(q.note) q.note=fixHtml(q.note); });
+  return n;
+}
+function detachRoot(id){
+  const r=(state.roots||[]).find(x=>x.id===id); if(!r) return; const base=normP(r.path);
+  const fix=l=>{ if(l.root===id){ l.path=base+(l.rel?'\\'+l.rel:''); delete l.root; delete l.rel; } };
+  state.quests.forEach(q=>(q.links||[]).forEach(fix)); state.goals.forEach(g=>g.items.forEach(i=>(i.links||[]).forEach(fix)));
+  const fixHtml=h=>{ if(!h || !h.includes(`data-root="${id}"`)) return h; const d=new DOMParser().parseFromString(`<body>${h}</body>`,'text/html');
+    d.querySelectorAll(`a.loc[data-root="${id}"]`).forEach(a=>{ a.dataset.path=base+(a.dataset.rel?'\\'+a.dataset.rel:''); a.removeAttribute('data-root'); a.removeAttribute('data-rel'); }); return d.body.innerHTML; };
+  state.notes.forEach(x=>{ x.html=fixHtml(x.html); }); state.quests.forEach(q=>{ if(q.note) q.note=fixHtml(q.note); });
+}
+// library: every link in one place
+function allLinks(){
+  const out=[];
+  state.quests.forEach(q=>(q.links||[]).forEach(l=>out.push({ l, path:linkPath(l), src:questLabel(q), go:['open-quest',q.id], kind:l.kind })));
+  state.goals.forEach(g=>g.items.forEach(i=>(i.links||[]).forEach(l=>out.push({ l, path:linkPath(l), src:`${g.icon} ${g.title} › ${stepTitle(i)}`, go:['goal-goto',g.id], kind:l.kind }))));
+  const chips=(h,src,go)=>{ if(!h || !/class="loc"/.test(h)) return; const d=new DOMParser().parseFromString(`<body>${h}</body>`,'text/html');
+    d.querySelectorAll('a.loc').forEach(a=>{ const p=chipPath(a); out.push({ l:{ label:a.textContent, kind:a.dataset.kind, root:a.dataset.root }, path:p, src, go, kind:a.dataset.kind }); }); };
+  state.notes.forEach(n=>chips(n.html, `Note: ${(n.text||'').slice(0,50)}`, ['note-goto',n.id]));
+  state.quests.forEach(q=>chips(q.note, `${questLabel(q)} (notes)`, ['open-quest',q.id]));
+  return out;
+}
+function viewLibrary(){
+  const ui=state.ui, q=(ui.libQ||'').toLowerCase(), f=ui.libF||'all';
+  let ls=allLinks().filter(x=>(!q || (x.l.label+' '+x.path+' '+x.src).toLowerCase().includes(q)) && (f==='all' || (f==='missing' ? existMap.get(x.path)===false : x.kind===f)));
+  const groups={}; ls.forEach(x=>(groups[x.src] ||= { go:x.go, items:[] }).items.push(x));
+  return `<div class="plate"><h2>Library</h2><span class="sub">every file and folder linked anywhere</span></div>
+  <div class="toolbar"><input class="field search" type="search" data-ui="libQ" value="${esc(ui.libQ||'')}" placeholder="Search links, paths and where they live" aria-label="Search links">
+    <div class="seg" role="group" aria-label="Filter">${[['all','All'],['file','Files'],['folder','Folders'],['missing','Missing']].map(([k,l])=>`<button data-act="lib-f" data-id="${k}" aria-pressed="${f===k}">${l}</button>`).join('')}</div></div>
+  ${Object.keys(groups).length ? `<div class="lib">${Object.entries(groups).map(([src,g])=>`<div class="libg"><button class="libsrc" data-act="${g.go[0]}" data-id="${g.go[1]}" title="Go there">${esc(src)}</button>
+      ${g.items.map(x=>`<div class="lrow ${linkMissing(x.path)?'missing':''}" data-lpath="${esc(x.path)}"><button class="lopen" data-act="lib-open" data-sub="${esc(x.path)}" title="${esc(x.path)}"><span class="lic">${fileIcon(x.path,x.kind)}</span><span class="lname-t">${esc(x.l.label)}</span>${x.l.root?`<small class="rootb">${esc(rootName(x.l.root))}</small>`:''}<em class="miss">missing</em><small class="lp">${esc(x.path)}</small></button>
+        <button class="ib" data-act="lib-reveal" data-sub="${esc(x.path)}" title="Show in folder" aria-label="Show in folder">${IC.folder}</button><button class="ib" data-act="lib-copy" data-sub="${esc(x.path)}" title="Copy path" aria-label="Copy path">${IC.copy}</button></div>`).join('')}</div>`).join('')}</div>`
+    : `<div class="empty"><b>${allLinks().length?'Nothing matches':'No links yet'}</b>${allLinks().length?'Try another search or filter.':'Add links to files and folders in a quest’s ⋯ menu, in campaign steps, or inside notes with the link button.'}</div>`}
+  <h3 class="dh" style="margin-top:22px">Root folders</h3>
+  <p class="hint">Links inside a root folder are stored relative to it. If you move a whole collection to another disk or computer, change the root path once and every link inside keeps working.</p>
+  <div class="roots">${(state.roots||[]).map(r=>`<div class="rootrow" data-lpath="${esc(normP(r.path))}"><input class="field" data-rootname="${r.id}" value="${esc(r.name)}" aria-label="Root name"><input class="field rp" data-rootpath="${r.id}" value="${esc(r.path)}" aria-label="Root path">
+      ${DESK?`<button class="btn sm" data-act="root-pick" data-id="${r.id}">Change…</button>`:''}<button class="ib" data-act="root-del" data-id="${r.id}" title="Remove root, links keep their full paths" aria-label="Remove root">${IC.x}</button></div>`).join('')}
+    <div class="rootrow"><input class="field" id="rootName" placeholder="Name, e.g. Courses" autocomplete="off"><input class="field rp" id="rootPath" placeholder="D:\\Courses" autocomplete="off">${DESK?`<button class="btn sm" data-act="root-pick" data-id="__new">Pick…</button>`:''}<button class="btn sm soul" data-act="root-add">${IC.plus}Add</button></div></div>`;
+}
+
+/* ================= compact timer ================= */
+const isCompact = () => !!state.ui.compact?.[state.ui.tab];
+function renderPill(){
+  const el=$('#pill'); if(!el) return; if(!isCompact()){ el.innerHTML=''; return; }
+  const t=state.timer, st=t.state, r=state.sess.run, n=state.pending.length;
+  el.innerHTML=`<span class="pd" id="pdigits">${fmtClock(elapsed())}</span>
+    <button class="ib" data-act="toggle" title="${st==='running'?'Pause':'Play'} (Space)" aria-label="${st==='running'?'Pause':'Play'}">${st==='running'?PX.pause:PX.play}</button>
+    <button class="ib" data-act="cut" ${st==='idle'?'disabled':''} title="Cut (C)" aria-label="Cut">${PX.cut}</button>
+    <button class="ib" data-act="stop" ${st==='idle'?'disabled':''} title="Stop (S)" aria-label="Stop">${PX.stop}</button>
+    ${sessActive()?`<button class="ps" data-act="sess-toggle" title="Session: click to ${r.state==='running'?'pause':'resume'}">${r.phase==='work'?'Work':'Break'} <b id="psess">${fmtClock(sessLeft())}</b></button>`:''}
+    <button class="hbadge ${n?'has':''}" data-act="harvest-pop" title="Harvested time" aria-expanded="${document.body.classList.contains('harvest-pop')}">⌛ ${n}</button>
+    <button class="ib" data-act="compact" title="Full timer (\\)" aria-label="Show the full timer">${IC.expand}</button>`;
+}
+
+/* ================= updates (desktop) ================= */
+let updInfo=null;
+async function checkUpdate(manual){
+  if(!DESK) return; const res=await tinvoke('check_update').catch(e=>{ if(manual) toast('Could not check for updates: '+e); return 'err'; });
+  if(res==='err') return; if(!res){ if(manual) toast(`You have the latest version, ${APP_VER}`); return; }
+  updInfo={ version:res[0], notes:res[1] }; const b=$('#updBtn'); if(b){ b.style.display=''; b.textContent=`Update ${res[0]}`; }
+  if(manual) openUpdate();
+}
+function openUpdate(){
+  if(!updInfo) return; $('#dlg').dataset.mode='update';
+  $('#dlgBody').innerHTML=`<h2>Version ${esc(updInfo.version)} is ready</h2><p class="hint" style="margin-top:6px">You have ${APP_VER}. Taskromancer saves your data, installs the update and starts again. It takes a few seconds.</p>
+    ${updInfo.notes?`<p class="pathline" style="white-space:pre-wrap">${esc(updInfo.notes)}</p>`:''}
+    <div class="dlg-foot"><span class="sum"></span><button class="btn" data-act="dlg-close">Later</button><button class="btn soul" data-act="upd-go">Update and restart</button></div>`;
+  if(!$('#dlg').open) $('#dlg').showModal();
+}
+
 /* ================= desktop (Tauri) ================= */
 // Everything here is inert in the browser; in the desktop app it adds file storage, tray, mini timer and more.
-const APP_VER='1.0.1';
+const APP_VER='1.1.1';
 const DESK = !!(window.__TAURI__ && window.__TAURI__.core);
 const tinvoke = (cmd,args) => window.__TAURI__.core.invoke(cmd,args);
 const fileName = p => String(p||'').split(/[\\/]/).pop();
@@ -2344,6 +2691,7 @@ async function deskInit(){
   deskLoaded=true;
   state.ui.autostart = await tinvoke('get_autostart').catch(()=>false);
   applyTheme(); pickQuote(); renderAll(); updUndo(); deskSave(true);
+  setTimeout(()=>checkUpdate(false), 5000);
   if(first) toast('Demo data is loaded so you can look around. Erase it in the menu ⚙, or load your backup there.');
   const ev=window.__TAURI__.event;
   ev.listen('close-requested', ()=>onCloseRequested());
@@ -2366,7 +2714,7 @@ function desktopSettings(){
   return `<h3 class="dh">Desktop</h3>
     <div class="sflags"><button class="sflag" data-act="desk-autostart" aria-pressed="${!!ui.autostart}"><span class="box ${ui.autostart?'on':''}">${PX.check}</span>Start Taskromancer when Windows starts</button></div>
     <div class="toolbar" style="margin:10px 0">When you close the window<div class="seg" role="group" aria-label="When you close the window">${[['ask','Ask'],['tray','Minimize to tray'],['quit','Quit']].map(([k,l])=>`<button data-act="close-action" data-id="${k}" aria-pressed="${ca===k}">${l}</button>`).join('')}</div></div>
-    <div class="dlg-row"><button class="btn sm" data-act="mini-open">Open mini timer</button><button class="btn sm" data-act="fullscreen">Full screen (F11)</button><button class="btn sm" data-act="data-folder">Open data folder</button></div>
+    <div class="dlg-row"><button class="btn sm" data-act="upd-check">Check for updates</button><button class="btn sm" data-act="mini-open">Open mini timer</button><button class="btn sm" data-act="fullscreen">Full screen (F11)</button><button class="btn sm" data-act="data-folder">Open data folder</button></div>
     <p class="hint" style="margin-top:8px">Your data is saved to a file on this computer, with a backup for each of the last 14 days in the data folder.</p>`;
 }
 function pushMini(){
@@ -2435,7 +2783,8 @@ function tick(){
   if(r.state==='running' && r.endsAt<=now()){ sessAdvance(false); return; }
   const c=fmtClock(elapsed()), sc=fmtClock(sessActive()?sessLeft():state.sess.cfg.work*MIN);
   if(c!==lastClock || sc!==lastS){ lastClock=c; lastS=sc;
-    const d=$('#digits'); if(d) d.textContent=c; const sd=$('#sdigits'); if(sd) sd.textContent=sc;
+    const d=$('#digits'); if(d) d.textContent=c; const sd=$('#sdigits'); if(sd) sd.textContent=sc; const pd=$('#pdigits'); if(pd) pd.textContent=c; const ps=$('#psess'); if(ps) ps.textContent=sc;
+    const pl=$('#pill'); if(pl) pl.classList.toggle('run', state.timer.state==='running');
     document.querySelectorAll('[data-live-trk]').forEach(x=>x.textContent=c); document.querySelectorAll('[data-live-sess]').forEach(x=>x.textContent=sc);
     const bar=$('#sbar'); if(bar && sessActive() && r.total) bar.style.width=((1-clamp(sessLeft()/r.total))*100).toFixed(2)+'%';
     updateScene();
@@ -2444,7 +2793,7 @@ function tick(){
   if(DESK && ticks%2===0) pushMini();
   if(ticks%240===0 && state.ui.tab==='campaigns' && !/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName) && !document.activeElement?.isContentEditable && !$('#dlg').open) renderBoard();
 }
-$('#quoteEdit').innerHTML=IC.dots; $('#miniBtn').innerHTML=IC.mini; applyTheme(); pickQuote(); renderAll(); updUndo(); setInterval(tick, 250);
+$('#quoteEdit').innerHTML=IC.dots; $('#compactBtn').innerHTML=IC.compress; $('#miniBtn').innerHTML=IC.mini; applyTheme(); pickQuote(); renderAll(); updUndo(); setInterval(tick, 250);
 if(DESK) deskInit();
 </script>
 </body>
