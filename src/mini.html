@@ -5,15 +5,21 @@
 <title>Taskromancer mini</title>
 <link rel="stylesheet" href="fonts/fonts.css">
 <style>
-  html,body{margin:0;height:100%;overflow:hidden;background:#222839}
+  html,body{margin:0;height:100%;overflow:hidden;background:transparent}
   body{font:13px "Rubik",system-ui,sans-serif;color:var(--text,#dfe3ee);user-select:none;cursor:default}
-  .w{height:100%;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;gap:4px;padding:8px 10px;background:var(--bg,#222839);border:2px solid #080a12;box-shadow:inset 0 0 0 1px var(--edge,#363e57)}
-  .row{display:flex;align-items:center;gap:6px;min-width:0}
-  .clock{flex:1;font:700 27px "JetBrains Mono",ui-monospace,monospace;letter-spacing:-.01em}
+  .w{position:absolute;inset:0;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;gap:5px;padding:8px 10px;
+     background:rgba(var(--bg-rgb,34,40,57),var(--alpha,.95));border:2px solid rgba(8,10,18,var(--alpha,.95));box-shadow:inset 0 0 0 1px var(--edge,#363e57)}
+  .row{display:flex;align-items:center;gap:5px;min-width:0}
+  .clock{flex:1;font:700 27px "JetBrains Mono",ui-monospace,monospace;letter-spacing:-.01em;text-shadow:0 1px 2px #000a}
   .run .clock{color:var(--soul,#6ee7a8)}
-  button{all:unset;cursor:pointer;display:grid;place-items:center;width:28px;height:28px;border:1px solid var(--edge,#363e57);color:var(--text,#dfe3ee);font-size:13px}
+  button{all:unset;cursor:pointer;display:grid;place-items:center;width:26px;height:26px;border:1px solid var(--edge,#363e57);color:var(--text,#dfe3ee);font-size:13px;background:rgba(0,0,0,.18)}
   button:hover{border-color:var(--soul,#6ee7a8);color:var(--soul,#6ee7a8)}
-  .sub{flex:1;min-width:0;font-size:11.5px;color:var(--muted,#8d95ad);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .sub{flex:1;min-width:0;font-size:11.5px;color:var(--muted,#8d95ad);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 2px #000a}
+  .opts{display:none;font-size:11.5px;color:var(--muted,#8d95ad)}
+  .w.setting .opts{display:flex}.w.setting .info{display:none}
+  .opts input[type=range]{flex:1;min-width:0;accent-color:var(--soul,#6ee7a8)}
+  .opts label{display:flex;align-items:center;gap:4px;white-space:nowrap;cursor:pointer}
+  .opts input[type=checkbox]{accent-color:var(--soul,#6ee7a8);margin:0}
 </style>
 </head>
 <body>
@@ -22,22 +28,35 @@
     <span class="clock" id="clock" data-tauri-drag-region>00:00:00</span>
     <button id="toggle" title="Play / pause">▶</button>
     <button id="cut" title="Cut: harvest the time and keep going">✂</button>
+    <button id="opt" title="Transparency and always on top">⚙</button>
     <button id="show" title="Open Taskromancer">⤢</button>
     <button id="close" title="Close the mini timer">×</button>
   </div>
-  <div class="row" data-tauri-drag-region><span class="sub" id="sub" data-tauri-drag-region>Drag me anywhere</span></div>
+  <div class="row info" data-tauri-drag-region><span class="sub" id="sub" data-tauri-drag-region>Drag me anywhere</span></div>
+  <div class="row opts">
+    <span>Opacity</span><input type="range" id="alpha" min="30" max="100" value="95" aria-label="Opacity">
+    <label><input type="checkbox" id="ontop" checked>On top</label>
+  </div>
 </div>
 <script>
   const T = window.__TAURI__, $ = id => document.getElementById(id);
+  const hexRgb = h => { h = String(h || '#222839').replace('#', ''); if (h.length === 3) h = h.split('').map(c => c + c).join(''); return [0, 2, 4].map(i => parseInt(h.slice(i, i + 2), 16)).join(','); };
+  let dragging = false;
   T.event.listen('mini-state', e => {
     const d = e.payload, r = document.documentElement.style;
-    r.setProperty('--bg', d.bg); r.setProperty('--edge', d.edge); r.setProperty('--soul', d.soul); r.setProperty('--text', d.text); r.setProperty('--muted', d.muted);
+    r.setProperty('--bg-rgb', hexRgb(d.bg)); r.setProperty('--edge', d.edge); r.setProperty('--soul', d.soul); r.setProperty('--text', d.text); r.setProperty('--muted', d.muted);
+    if (!dragging) { r.setProperty('--alpha', d.opacity); $('alpha').value = Math.round(d.opacity * 100); }
+    $('ontop').checked = d.onTop;
     $('clock').textContent = d.clock;
     $('w').classList.toggle('run', d.st === 'running');
     $('toggle').textContent = d.st === 'running' ? '❚❚' : '▶';
     $('sub').textContent = d.s ? `${d.s.phase === 'work' ? 'Work' : 'Break'} ${d.s.clock}, round ${d.s.round}/${d.s.rounds}${d.focus ? ', ' + d.focus : ''}` : (d.focus || d.title);
   });
   ['toggle', 'cut', 'show'].forEach(id => $(id).addEventListener('click', () => T.event.emit('mini-cmd', id)));
+  $('opt').addEventListener('click', () => $('w').classList.toggle('setting'));
+  $('alpha').addEventListener('input', e => { dragging = true; document.documentElement.style.setProperty('--alpha', e.target.value / 100); });
+  $('alpha').addEventListener('change', e => { dragging = false; T.event.emit('mini-cmd', { cmd: 'opacity', v: e.target.value / 100 }); });
+  $('ontop').addEventListener('change', e => { T.core.invoke('set_mini_on_top', { on: e.target.checked }); T.event.emit('mini-cmd', { cmd: 'ontop', v: e.target.checked }); });
   $('close').addEventListener('click', () => T.core.invoke('close_mini'));
   T.event.emit('mini-ready');
 </script>

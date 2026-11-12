@@ -12,8 +12,14 @@ use tauri_plugin_autostart::{MacosLauncher, ManagerExt};
 use tauri_plugin_dialog::DialogExt;
 use tauri_plugin_notification::NotificationExt;
 use tauri_plugin_opener::OpenerExt;
+use tauri_plugin_window_state::{AppHandleExt, StateFlags, WindowExt};
 
 const BACKUPS_KEPT: usize = 14;
+
+/// Remember size, position, monitor and maximised state, but never restore a window as hidden.
+fn state_flags() -> StateFlags {
+    StateFlags::all() & !StateFlags::VISIBLE
+}
 const IMAGE_EXTS: [&str; 6] = ["png", "jpg", "jpeg", "webp", "gif", "bmp"];
 
 fn err<E: std::fmt::Display>(e: E) -> String {
@@ -209,56 +215,91 @@ fn show_main_window(app: &AppHandle) {
     }
 }
 
+fn quit_now(app: &AppHandle) {
+    let _ = app.save_window_state(state_flags());
+    app.exit(0);
+    // if anything keeps the loop alive, leave anyway
+    std::thread::spawn(|| {
+        std::thread::sleep(std::time::Duration::from_millis(1500));
+        std::process::exit(0);
+    });
+}
+
 #[tauri::command]
-fn show_main(app: AppHandle) {
+async fn show_main(app: AppHandle) {
     show_main_window(&app);
 }
 
 #[tauri::command]
-fn hide_main(app: AppHandle) {
+async fn hide_main(app: AppHandle) {
+    let _ = app.save_window_state(state_flags());
     if let Some(w) = app.get_webview_window("main") {
         let _ = w.hide();
     }
 }
 
 #[tauri::command]
-fn quit_app(app: AppHandle) {
-    app.exit(0);
+async fn quit_app(app: AppHandle) {
+    quit_now(&app);
 }
 
 #[tauri::command]
-fn toggle_fullscreen(window: tauri::WebviewWindow) {
-    let full = window.is_fullscreen().unwrap_or(false);
-    let _ = window.set_fullscreen(!full);
+async fn toggle_fullscreen(app: AppHandle) {
+    if let Some(w) = app.get_webview_window("main") {
+        let full = w.is_fullscreen().unwrap_or(false);
+        let _ = w.set_fullscreen(!full);
+    }
 }
 
 fn open_mini_window(app: &AppHandle) -> Result<(), String> {
     if let Some(w) = app.get_webview_window("mini") {
         let _ = w.show();
+        let _ = w.unminimize();
         let _ = w.set_focus();
         return Ok(());
     }
-    WebviewWindowBuilder::new(app, "mini", WebviewUrl::App("mini.html".into()))
+    // first time: put it near the top-right corner of the main window, on the same monitor
+    let (mut x, mut y) = (100.0, 100.0);
+    if let Some(main) = app.get_webview_window("main") {
+        if let (Ok(pos), Ok(size), Ok(scale)) = (main.outer_position(), main.outer_size(), main.scale_factor()) {
+            x = (pos.x as f64 + size.width as f64) / scale - 340.0;
+            y = pos.y as f64 / scale + 90.0;
+        }
+    }
+    let w = WebviewWindowBuilder::new(app, "mini", WebviewUrl::App("mini.html".into()))
         .title("Taskromancer mini")
         .inner_size(300.0, 96.0)
+        .position(x, y)
         .resizable(false)
         .decorations(false)
+        .transparent(true)
+        .shadow(false)
         .always_on_top(true)
         .skip_taskbar(true)
+        .disable_drag_drop_handler()
         .build()
-        .map(|_| ())
-        .map_err(err)
+        .map_err(err)?;
+    let _ = w.restore_state(state_flags());
+    Ok(())
 }
 
 #[tauri::command]
-fn open_mini(app: AppHandle) -> Result<(), String> {
+async fn open_mini(app: AppHandle) -> Result<(), String> {
     open_mini_window(&app)
 }
 
 #[tauri::command]
-fn close_mini(app: AppHandle) {
+async fn close_mini(app: AppHandle) {
+    let _ = app.save_window_state(state_flags());
     if let Some(w) = app.get_webview_window("mini") {
         let _ = w.close();
+    }
+}
+
+#[tauri::command]
+async fn set_mini_on_top(app: AppHandle, on: bool) {
+    if let Some(w) = app.get_webview_window("mini") {
+        let _ = w.set_always_on_top(on);
     }
 }
 
@@ -272,6 +313,7 @@ pub fn run() {
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_notification::init())
         .plugin(tauri_plugin_opener::init())
+        .plugin(tauri_plugin_window_state::Builder::default().with_state_flags(state_flags()).build())
         .setup(|app| {
             let show = MenuItem::with_id(app, "show", "Show Taskromancer", true, None::<&str>)?;
             let mini = MenuItem::with_id(app, "mini", "Mini timer", true, None::<&str>)?;
@@ -287,12 +329,12 @@ pub fn run() {
                         let _ = open_mini_window(app);
                     }
                     "quit" => {
-                        // let the page save first; exit anyway if it does not answer
+                        // let the page save first; leave anyway if it does not answer
                         let _ = app.emit("tray-quit", ());
                         let handle = app.clone();
                         std::thread::spawn(move || {
                             std::thread::sleep(std::time::Duration::from_millis(2500));
-                            handle.exit(0);
+                            quit_now(&handle);
                         });
                     }
                     _ => {}
@@ -342,7 +384,8 @@ pub fn run() {
             quit_app,
             toggle_fullscreen,
             open_mini,
-            close_mini
+            close_mini,
+            set_mini_on_top
         ])
         .run(tauri::generate_context!())
         .expect("error while running Taskromancer");

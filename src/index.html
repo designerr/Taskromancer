@@ -23,8 +23,9 @@
 :root[data-theme="dark"]{color-scheme:dark}
 *,*::before,*::after{box-sizing:inherit}
 html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
-body{margin:0;min-height:100%;color:var(--text);font:14px/1.45 var(--f-ui);font-variant-numeric:tabular-nums;
-  background:radial-gradient(1200px 500px at 20% -10%,var(--glow1) 0%,transparent 60%),radial-gradient(900px 600px at 110% 110%,var(--glow2) 0%,transparent 60%),var(--night)}
+html{background:var(--night)}
+body{margin:0;min-height:100%;color:var(--text);font:14px/1.45 var(--f-ui);font-variant-numeric:tabular-nums;background-attachment:fixed;background-repeat:no-repeat;
+  background:radial-gradient(1200px 500px at 20% -10%,var(--glow1) 0%,transparent 60%),radial-gradient(900px 600px at 110% 110%,var(--glow2) 0%,transparent 60%) fixed,var(--night)}
 button,input,select,textarea{font:inherit;color:inherit}
 button{cursor:pointer;background:none;border:0;padding:0}
 a{color:var(--arcane)}
@@ -66,7 +67,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .field::placeholder{color:var(--dim)}
 
 /* ---------- layout ---------- */
-.layout{display:grid;grid-template-columns:minmax(330px,400px) minmax(0,1fr);gap:18px;padding:18px 20px 60px;max-width:1440px;margin:0 auto;align-items:start}
+.layout{display:grid;grid-template-columns:var(--lw,400px) 22px minmax(0,1fr);gap:0;padding:18px 20px 60px;max-width:1440px;margin:0 auto;align-items:start}
 .left{display:flex;flex-direction:column;gap:18px;position:sticky;top:72px}
 
 /* ---------- ritual (timer) ---------- */
@@ -275,6 +276,24 @@ dialog h2{font:500 20px var(--f-px);margin:0;color:var(--bone)}
 .toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);display:none;align-items:center;gap:14px;background:var(--stone2);border:2px solid var(--abyss);box-shadow:inset 0 0 0 1px var(--soul),0 10px 30px #000a;padding:10px 14px;z-index:60;font-size:14px}
 .toast.show{display:flex}
 .toast button{font:500 14px var(--f-px);color:var(--soul)}
+
+/* ---------- v11: layout, dialogs, note images ---------- */
+.layout.swap{grid-template-columns:minmax(0,1fr) 22px var(--lw,400px)}
+.layout.swap .left{order:3}.layout.swap .colsplit{order:2}.layout.swap .right{order:1}
+.colsplit{align-self:stretch;cursor:col-resize;position:relative;touch-action:none;min-height:200px}
+.colsplit::before{content:"";position:absolute;left:10px;top:0;bottom:0;width:2px;background:var(--edge);opacity:0;transition:opacity .15s}
+.colsplit:hover::before,.colsplit.active::before{opacity:1;background:var(--soul)}
+.drag-h{cursor:grab}
+.fold svg{transition:transform .15s}
+.fold[aria-expanded="false"] svg{transform:rotate(-90deg)}
+.dlg-x{position:sticky;top:0;float:right;margin:-8px -8px 4px 12px;width:32px;height:32px;font-size:22px;line-height:1;color:var(--muted);background:var(--stone2);border:1px solid var(--edge);z-index:3}
+.dlg-x:hover{color:var(--text);border-color:var(--edge-hi)}
+.imgtools{position:absolute;z-index:70;display:flex;gap:4px;padding:4px;background:var(--stone2);border:2px solid var(--abyss);box-shadow:inset 0 0 0 1px var(--edge-hi),0 6px 18px #0009}
+.imgtools button{display:flex;align-items:center;gap:6px;padding:5px 9px;font-size:12.5px;color:var(--text)}
+.imgtools button:hover{background:var(--stone3)}
+.imgtools .danger{color:#ffb3b1}
+.imgtools svg{width:13px;height:13px}
+.rich img.img-sel{outline:2px solid var(--soul);outline-offset:2px}
 
 /* ---------- v10: desktop ---------- */
 .desk-only{display:none!important}
@@ -561,7 +580,9 @@ select.field option,select.catsel option{background:var(--card);color:var(--text
 
 @media (max-width:980px){
   .report-grid{grid-template-columns:1fr}
-  .layout{grid-template-columns:1fr}
+  .layout,.layout.swap{grid-template-columns:1fr;row-gap:18px}
+  .colsplit{display:none}
+  .layout.swap .left,.layout.swap .right{order:0}
   .left{position:static}
 }
 @media (max-width:640px){
@@ -590,22 +611,23 @@ select.field option,select.catsel option{background:var(--card);color:var(--text
   <button class="ib" data-act="settings" aria-label="Settings" title="Settings" id="gear"></button>
 </header>
 
-<div class="layout">
-  <section class="left">
+<div class="layout" id="layout">
+  <section class="left" id="leftCol">
     <div class="panel" id="ritual">
-      <div class="plate"><h2 id="ritualTitle">The Ritual</h2><div class="rtabs" id="rtabs" role="tablist" aria-label="Timer"></div></div>
+      <div class="plate"><h2 id="ritualTitle" class="drag-h" draggable="true" data-drag="l:ritual" title="Drag to swap with the panel below">The Ritual</h2><div class="rtabs" id="rtabs" role="tablist" aria-label="Timer"></div></div>
       <div class="scene" id="scene"></div>
       <div id="timer"></div>
     </div>
     <div class="panel" id="harvest"></div>
   </section>
+  <div class="colsplit" id="splitter" role="separator" aria-orientation="vertical" aria-label="Drag to resize the columns, double-click to reset" title="Drag to resize, double-click to reset"></div>
   <section class="right">
     <div class="tabs" role="tablist" id="tabs"></div>
     <div class="panel" id="board"></div>
   </section>
 </div>
 
-<dialog id="dlg"></dialog>
+<dialog id="dlg"><button class="dlg-x" data-act="dlg-close" aria-label="Close" title="Close (Esc)">×</button><div id="dlgBody"></div></dialog>
 <div class="toast" id="toast" role="status"><span id="toastMsg"></span><button id="toastUndo" data-act="undo">Undo</button></div>
 <input type="file" id="importFile" accept="application/json,.json" hidden>
 <input type="file" id="imgFile" accept="image/*" multiple hidden>
@@ -1235,7 +1257,7 @@ function pickQuote(){ const pool=quotePool().filter(Boolean); if(!pool.length){ 
 function renderQuote(){ const el=$('#quote'); if(!el) return; el.textContent = curQuote ? `“${curQuote}”` : 'Add phrases to show here'; el.classList.toggle('empty',!curQuote); }
 function openQuotes(){
   const Qs=state.quotes, ui=state.ui; if(!Qs.lists.find(l=>l.id===ui.qEdit)) ui.qEdit=Qs.lists[0]?.id||null; const L=Qs.lists.find(l=>l.id===ui.qEdit);
-  $('#dlg').innerHTML=`<h2>Phrases</h2><p class="hint" style="margin-top:6px">The phrase in the top bar changes when you click it. Pick which list it draws from, and edit any list below.</p>
+  $('#dlgBody').innerHTML=`<h2>Phrases</h2><p class="hint" style="margin-top:6px">The phrase in the top bar changes when you click it. Pick which list it draws from, and edit any list below.</p>
     <label class="mqf">Show phrases from<select class="field" data-qactive><option value="auto" ${Qs.active==='auto'?'selected':''}>Follow the theme (theme list + General)</option>${Qs.lists.map(l=>`<option value="${l.id}" ${Qs.active===l.id?'selected':''}>${esc(l.name)}</option>`).join('')}</select></label>
     <div class="qm"><div class="qlists">${Qs.lists.map(l=>`<button data-act="q-pick" data-id="${l.id}" aria-pressed="${l.id===ui.qEdit}"><span>${esc(l.name)}</span><small>${l.items.length}</small></button>`).join('')}<button class="qnew" data-act="q-new">${IC.plus}New list</button></div>
     ${L?`<div class="qedit"><input class="field" data-qname="${L.id}" value="${esc(L.name)}" aria-label="List name">
@@ -1285,7 +1307,13 @@ function themePreview(id){
 }
 
 /* ================= render ================= */
-function renderAll(){ renderTimer(); renderHarvest(); renderTabs(); renderBoard(); updateScene(); $('#today').textContent = new Date().toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'}); }
+function applyLayout(){
+  const ui=state.ui, L=$('#layout'); if(!L) return;
+  L.classList.toggle('swap', !!ui.swap); L.style.setProperty('--lw', (ui.leftW||400)+'px');
+  const order=ui.leftOrder||['ritual','harvest']; order.forEach((id,i)=>{ const el=$('#'+id); if(el) el.style.order=i; });
+  $('#scene').style.display = ui.hideScene ? 'none' : '';
+}
+function renderAll(){ applyLayout(); renderTimer(); renderHarvest(); renderTabs(); renderBoard(); updateScene(); $('#today').textContent = new Date().toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'}); }
 function commit(){ save(); renderAll(); }
 
 function renderTimer(){
@@ -1312,7 +1340,7 @@ function renderHarvest(){
   if(A && !A.ids.every(id=>P_.some(c=>c.id===id))) A=null;
   const total = P_.reduce((a,c)=>a+c.ms,0), selMs = P_.filter(c=>selChunks.has(c.id)).reduce((a,c)=>a+c.ms,0);
   $('#harvest').innerHTML = `
-    <div class="plate"><h2>${T.harvest}</h2><span class="right"><span class="sub">${P_.length?fmtHM(total)+' total':''}</span></span></div>
+    <div class="plate"><h2 class="drag-h" draggable="true" data-drag="l:harvest" title="Drag to swap with the panel above">${T.harvest}</h2><span class="right"><span class="sub">${P_.length?fmtHM(total)+' total':''}</span><button class="ib fold" data-act="fold" data-id="harvest" aria-expanded="${!state.ui.fold?.harvest}" aria-label="Collapse panel" title="Collapse or expand">${IC.chev}</button></span></div>${state.ui.fold?.harvest?'':`
     ${A ? splitEditor() : ''}
     ${P_.length ? `<div class="chunks">${P_.map(c=>`
       <div class="chunk ${selChunks.has(c.id)?'sel':''} ${A&&A.ids.includes(c.id)?'insplit':''}" draggable="true" data-drag="c:${c.id}" data-cid="${c.id}" title="Drag onto a quest to give it all of this time">
@@ -1325,11 +1353,11 @@ function renderHarvest(){
       <div class="harvest-foot">
         ${selChunks.size>1 ? `<button class="btn soul" data-act="split-sel">Merge &amp; split ${selChunks.size} · ${fmtHM(selMs)}</button>` : ''}
         ${P_.length>1 ? `<button class="btn" data-act="split-all">Split all together</button>` : ''}
-      </div>` : `<p class="empty-note">${T.noHarvest}</p>`}`;
+      </div>` : `<p class="empty-note">${T.noHarvest}</p>`}`}`;
   if(A) updateSum();
 }
 
-const TABS = [['board','Quest Board'],['report','Report'],['notes','Notes'],['rnd','Randomizer'],['campaigns','Campaigns']];
+const TABS = [['board','Quest Board'],['campaigns','Campaigns'],['report','Report'],['notes','Notes'],['rnd','Randomizer']];
 function closeMenu(){ state.ui.noteMenu=null; document.querySelector('.nmenu')?.remove(); }
 function tabOrder(all){ const keys=TABS.map(t=>t[0]), o=(state.ui.tabOrder||[]).filter(k=>keys.includes(k)), full=[...o, ...keys.filter(k=>!o.includes(k))]; return all ? full : full.filter(k=>!state.ui.hiddenTabs.includes(k)); }
 function renderTabs(){
@@ -1567,6 +1595,13 @@ function giveChunk(cid, qid){
   toast(`${fmtHM(c.ms)} → ${q.title}`, true);
   const row=document.querySelector(`[data-qbox="${qid}"]`); if(row){ row.classList.add('flash'); setTimeout(()=>row.classList.remove('flash'),1300); }
 }
+// column splitter
+let colDrag=null;
+document.addEventListener('pointerdown', e=>{ const sp=e.target.closest?.('#splitter'); if(!sp) return; const r=$('#layout').getBoundingClientRect(); colDrag={ r }; sp.setPointerCapture(e.pointerId); sp.classList.add('active'); e.preventDefault(); });
+document.addEventListener('pointermove', e=>{ if(!colDrag) return; const r=colDrag.r, pad=20; let w = state.ui.swap ? (r.right-pad-e.clientX-5) : (e.clientX-r.left-pad-5);
+  w=Math.round(clamp(w,300,Math.max(320,Math.min(760,r.width-560)))); state.ui.leftW=w; $('#layout').style.setProperty('--lw',w+'px'); layoutNotes?.(); });
+document.addEventListener('pointerup', ()=>{ if(!colDrag) return; colDrag=null; $('#splitter').classList.remove('active'); save(); });
+document.addEventListener('dblclick', e=>{ if(e.target.closest?.('#splitter')){ state.ui.leftW=400; applyLayout(); save(); } });
 // divider dragging
 let hdrag=null;
 document.addEventListener('pointerdown', e=>{
@@ -1698,7 +1733,7 @@ function viewNotes(){
   ${ui.manageCats ? catManager() : ''}
   ${ui.noteCat==='__quest' ? questNotes(qn)
     : list.length ? `<div class="notes">${pinned.length?`<div class="notes-sec">${IC.pin} Pinned</div>${pinned.map(noteCard).join('')}${rest.length?'<div class="notes-sec">Other notes</div>':''}`:''}${rest.map(noteCard).join('')}</div>
-      <p class="tip" style="margin-top:10px">Drag a note by its ⠿ handle to reorder it, drop it among the pinned ones to pin it. Double-click an image to see it large.</p>`
+      <p class="tip" style="margin-top:10px">Drag a note by its ⠿ handle to reorder it, drop it among the pinned ones to pin it. Click an image to open it large or remove it.</p>`
     : `<div class="empty"><b>${state.notes.length?'Nothing here':'No notes yet'}</b>${state.notes.length?'Try another category or clear the search.':'Write one above. Formatting, bullets and images all work, and notes can be pinned and dragged into your own order.'}</div>`}`;
 }
 function noteCard(n){
@@ -1829,6 +1864,10 @@ const A_ = {
   'part-split': (el,i)=>{ const s=segs()[+i]; if(!addCut(s.start+s.ms/2)) toast('This part is too short to split'); else renderHarvest(); },
   'set-color': (el,key,k)=>{ const [kd,i]=key.split(':'); const o=kd==='q'?Q(i):P(i); if(o){ o.color=k; commit(); } },
   'set-emoji': (el,key,e)=>{ const [kd,i]=key.split(':'); const o=kd==='q'?Q(i):P(i); if(o){ o.emoji=e; commit(); } },
+  fold: (el,id)=>{ state.ui.fold={ ...(state.ui.fold||{}), [id]:!state.ui.fold?.[id] }; commit(); },
+  'layout-swap': ()=>{ state.ui.swap=!state.ui.swap; commit(); openSettings(); },
+  'layout-scene': ()=>{ state.ui.hideScene=!state.ui.hideScene; commit(); openSettings(); },
+  'layout-reset': ()=>{ Object.assign(state.ui,{ swap:false, leftW:400, leftOrder:['ritual','harvest'], hideScene:false, fold:{} }); commit(); openSettings(); toast('Layout reset'); },
   'hide-done': ()=>{ state.ui.hideDone=!state.ui.hideDone; commit(); },
   crypt: ()=>{ state.ui.crypt=!state.ui.crypt; commit(); },
   'p-collapse': (el,id)=>{ const p=P(id); p.collapsed=!p.collapsed; commit(); },
@@ -1929,6 +1968,8 @@ document.addEventListener('click', e=>{
   if(el.dataset.act==='noop') return; // let links open
   const fn=A_[el.dataset.act]||DESK_ACTIONS[el.dataset.act]; if(fn){ e.preventDefault(); fn(el, el.dataset.id, el.dataset.sub, e); }
 });
+document.addEventListener('click', e=>{ const dl=$('#dlg'); if(!dl.open || e.target!==dl) return; const r=dl.getBoundingClientRect();
+  if(e.clientX<r.left || e.clientX>r.right || e.clientY<r.top || e.clientY>r.bottom) dl.close(); });
 document.addEventListener('submit', e=>{ e.preventDefault(); FORMS[e.target.dataset.form]?.(e.target); });
 document.addEventListener('focusin', e=>{ const c=e.target.dataset?.calc; if(c!==undefined){ calcActive=+c; document.querySelectorAll('.crow').forEach((r,i)=>r.classList.toggle('active',i===calcActive)); } });
 
@@ -2084,7 +2125,7 @@ document.addEventListener('paste', e=>{
 });
 document.addEventListener('dblclick', e=>{
   const img=e.target.closest?.('.rich img'); if(!img) return;
-  $('#dlg').innerHTML=`<img class="lightbox" src="${esc(img.getAttribute('src'))}" alt=""><div class="dlg-foot"><span class="sum"></span><button class="btn" data-act="dlg-close">Close</button></div>`;
+  $('#dlgBody').innerHTML=`<img class="lightbox" src="${esc(img.getAttribute('src'))}" alt=""><div class="dlg-foot"><span class="sum"></span><button class="btn" data-act="dlg-close">Close</button></div>`;
   $('#dlg').classList.add('wide'); $('#dlg').showModal();
 });
 $('#dlg').addEventListener('close', ()=>$('#dlg').classList.remove('wide'));
@@ -2120,6 +2161,25 @@ function todoAfterEnter(ed){
 }
 document.addEventListener('click', e=>{ const cb=e.target.closest?.('.rich .cb'); if(!cb) return; e.preventDefault(); cb.setAttribute('data-on', cb.getAttribute('data-on')==='1'?'0':'1'); richChanged(cb.closest('.rich')); }, true);
 
+/* images inside notes: click to select, then remove or open; Delete/Backspace also removes */
+let selImg=null;
+function clearImgSel(){ if(selImg){ selImg.classList.remove('img-sel'); selImg=null; } document.querySelector('.imgtools')?.remove(); }
+function showImgTools(img){
+  clearImgSel(); selImg=img; img.classList.add('img-sel');
+  const r=img.getBoundingClientRect(), t=document.createElement('div'); t.className='imgtools';
+  t.innerHTML=`<button data-img="open">Open large</button><button data-img="del" class="danger">${IC.trash}Remove image</button>`;
+  t.style.left=(r.left+window.scrollX+6)+'px'; t.style.top=(r.top+window.scrollY+6)+'px'; document.body.appendChild(t);
+}
+function removeSelImg(){ if(!selImg) return; const ed=selImg.closest('.rich'); snap(); selImg.remove(); selImg=null; document.querySelector('.imgtools')?.remove(); if(ed) richChanged(ed); toast('Image removed', true); }
+document.addEventListener('click', e=>{
+  const b=e.target.closest?.('.imgtools [data-img]');
+  if(b){ e.preventDefault(); if(b.dataset.img==='del') removeSelImg(); else if(selImg){ $('#dlgBody').innerHTML=`<img class="lightbox" src="${esc(selImg.getAttribute('src'))}" alt="">`; $('#dlg').classList.add('wide'); $('#dlg').showModal(); clearImgSel(); } return; }
+  const img=e.target.closest?.('.rich img'); if(img){ showImgTools(img); return; }
+  if(selImg) clearImgSel();
+}, true);
+document.addEventListener('keydown', e=>{ if(selImg && (e.key==='Delete'||e.key==='Backspace')){ e.preventDefault(); e.stopPropagation(); removeSelImg(); } else if(selImg && e.key==='Escape') clearImgSel(); }, true);
+window.addEventListener('scroll', ()=>{ if(selImg) clearImgSel(); }, true);
+
 /* note menu: copy, duplicate, turn into a quest */
 let menuSel=null;
 document.addEventListener('pointerdown', e=>{
@@ -2139,7 +2199,7 @@ function openMakeQuest(src){
 }
 function renderMQ(){
   const live=state.projects.filter(p=>!p.frozen), n=mq.items.length, first=mq.items[0].t;
-  $('#dlg').innerHTML=`<h2>Make a quest</h2>
+  $('#dlgBody').innerHTML=`<h2>Make a quest</h2>
     <p class="hint" style="margin-top:6px">${mq.mode==='one' ? `Title: “${esc(mq.src.from==='mix'?mq.src.text.slice(0,90):first.slice(0,90))}”${mq.src.from!=='mix'&&n>1?', the whole text goes into its notes.':''}` : `${n} quests, one per line${mq.items.some(x=>x.done)?', ticked lines are created as done':''}.`}</p>
     ${n>1?`<div class="seg" role="group" aria-label="How to split" style="margin-bottom:12px"><button data-act="mq-mode" data-id="one" aria-pressed="${mq.mode==='one'}">One quest</button><button data-act="mq-mode" data-id="each" aria-pressed="${mq.mode==='each'}">One per line (${n})</button></div>`:''}
     <label class="mqf">Project<select class="field" id="mqProject">${live.map(p=>`<option value="${p.id}" ${p.id===mq.pid?'selected':''}>${p.emoji?esc(p.emoji)+' ':''}${esc(p.name)}</option>`).join('')}<option value="__new" ${mq.pid==='__new'?'selected':''}>+ New project…</option></select></label>
@@ -2171,6 +2231,7 @@ function dropTarget(node){
       const cr=node.closest('#crypt'); if(cr && !q.parentId) return { el:cr, type:'freeze' };
     } else { const bd=node.closest('#boardDrop'); if(bd && q.frozen && !P(q.projectId)?.frozen) return { el:bd, type:'thaw' }; }
   }
+  if(kind==='l'){ const pn=node.closest('#ritual,#harvest'); return pn && pn.id!==id ? { el:pn, type:'panel', id:pn.id } : null; }
   if(kind==='d'){ const dk=node.closest('.deck[data-did]'); return dk && dk.dataset.did!==id ? { el:dk, type:'deck', id:dk.dataset.did } : null; }
   if(kind==='t'){ const tb=node.closest('.tab[data-id]'); return tb && tb.dataset.id!==id ? { el:tb, type:'tab', id:tb.dataset.id } : null; }
   if(kind==='n'){ const card=node.closest('.note[data-nid]'); return card && card.dataset.nid!==id ? { el:card, type:'note', id:card.dataset.nid } : null; }
@@ -2183,12 +2244,13 @@ const clearHi = () => document.querySelectorAll('.drop-hi,.drop-before,.drop-aft
 document.addEventListener('dragstart', e=>{
   const el=e.target.closest?.('[data-drag]'); if(!el) return;
   const [kind,id]=el.dataset.drag.split(':'); dragging={kind,id};
-  e.dataTransfer.effectAllowed='copyMove'; e.dataTransfer.setData('text/plain', kind==='q'?Q(id)?.title||'':kind==='p'?P(id)?.name||'':kind==='n'||kind==='t'||kind==='d'?'':'time'); if(kind==='n'){ const card=el.closest('.note'); try{ e.dataTransfer.setDragImage(card,20,20); }catch{} }
+  e.dataTransfer.effectAllowed='copyMove'; e.dataTransfer.setData('text/plain', kind==='q'?Q(id)?.title||'':kind==='p'?P(id)?.name||'':kind==='n'||kind==='t'||kind==='d'||kind==='l'?'':'time'); if(kind==='n'){ const card=el.closest('.note'); try{ e.dataTransfer.setDragImage(card,20,20); }catch{} }
   el.closest('.q,.chunk,.frozen,.project,.note,.deck')?.classList.add('dragging');
   document.body.classList.add('is-dragging', 'drag-'+kind);
 });
-document.addEventListener('dragend', ()=>{ dragging=null; clearHi(); document.querySelectorAll('.dragging').forEach(x=>x.classList.remove('dragging')); document.body.classList.remove('is-dragging','drag-c','drag-q','drag-p','drag-n','drag-t','drag-d'); });
+document.addEventListener('dragend', ()=>{ dragging=null; clearHi(); document.querySelectorAll('.dragging').forEach(x=>x.classList.remove('dragging')); document.body.classList.remove('is-dragging','drag-c','drag-q','drag-p','drag-n','drag-t','drag-d','drag-l'); });
 document.addEventListener('dragover', e=>{ const t=dropTarget(e.target); clearHi(); if(t){ e.preventDefault(); e.dataTransfer.dropEffect = t.type==='give'||t.type==='strip'||t.type==='chunk' ? 'copy' : 'move'; if(t.type==='note'||t.type==='tab'){ const r=t.el.getBoundingClientRect(); t.el.classList.add(e.clientX<r.left+r.width/2?'drop-before':'drop-after'); }
+  else if(t.type==='panel'){ const o=state.ui.leftOrder||['ritual','harvest']; state.ui.leftOrder=[...o].reverse(); commit(); }
   else if(t.type==='deck'){ const r=t.el.getBoundingClientRect(); t.el.classList.add(e.clientY<r.top+r.height/2?'drop-above':'drop-below'); } else t.el.classList.add('drop-hi'); }
   else if(!dragging && e.dataTransfer?.types?.includes('Files') && e.target.closest?.('.rich')) e.preventDefault(); });
 document.addEventListener('drop', e=>{
@@ -2212,10 +2274,14 @@ document.addEventListener('drop', e=>{
 function openSettings(){
   const ui=state.ui, vis=tabOrder();
   $('#dlg').dataset.mode='settings';
-  $('#dlg').innerHTML = `<h2>Game menu</h2>
+  $('#dlgBody').innerHTML = `<h2>Game menu</h2>
     <h3 class="dh">Theme</h3><div class="thgrid">${Object.keys(THEMES).map(themePreview).join('')}</div>
     <h3 class="dh">Tabs</h3><p class="hint">Hide the tabs you don’t use. Drag tabs in the top bar to reorder them.</p>
     <div class="tabvis">${tabOrder(true).map(k=>{ const on=!ui.hiddenTabs.includes(k), last=on&&vis.length===1; return `<button class="sflag" data-act="tab-vis" data-id="${k}" aria-pressed="${on}" ${last?'disabled title="At least one tab stays visible"':''}><span class="box ${on?'on':''}">${PX.check}</span>${TABS.find(t=>t[0]===k)[1]}</button>`; }).join('')}</div>
+    <h3 class="dh">Layout</h3><p class="hint">Drag the thin bar between the columns to resize them, drag a panel title to swap the Timer and Harvest panels.</p>
+    <div class="dlg-row"><button class="sflag" data-act="layout-swap" aria-pressed="${!!ui.swap}"><span class="box ${ui.swap?'on':''}">${PX.check}</span>Timer on the right</button>
+      <button class="sflag" data-act="layout-scene" aria-pressed="${!ui.hideScene}"><span class="box ${!ui.hideScene?'on':''}">${PX.check}</span>Show the scene</button>
+      <button class="btn sm" data-act="layout-reset">Reset layout</button></div>
     <h3 class="dh">Day</h3>
     <label class="goalset">Daily limit <input class="field" type="number" min="1" max="16" step="0.5" data-ui="dayGoal" value="${dayGoalH()}" aria-label="Daily limit in hours"> hours <span>The scene slowly turns to night (to dawn, for the necromancer) as your timed hours reach this.</span></label>
     <h3 class="dh">Data</h3><p class="hint">Everything saves automatically. A backup file lets you move your data to the desktop version later.</p>
@@ -2258,7 +2324,7 @@ function loadDemo(){
 
 /* ================= desktop (Tauri) ================= */
 // Everything here is inert in the browser; in the desktop app it adds file storage, tray, mini timer and more.
-const APP_VER='1.0.0';
+const APP_VER='1.0.1';
 const DESK = !!(window.__TAURI__ && window.__TAURI__.core);
 const tinvoke = (cmd,args) => window.__TAURI__.core.invoke(cmd,args);
 const fileName = p => String(p||'').split(/[\\/]/).pop();
@@ -2283,12 +2349,12 @@ async function deskInit(){
   ev.listen('close-requested', ()=>onCloseRequested());
   ev.listen('tray-quit', ()=>deskQuit());
   ev.listen('mini-cmd', e=>miniCmd(e.payload));
-  ev.listen('mini-ready', ()=>{ lastMini=''; pushMini(); });
+  ev.listen('mini-ready', ()=>{ lastMini=''; pushMini(); tinvoke('set_mini_on_top',{ on:state.ui.miniOnTop!==false }).catch(()=>{}); });
 }
 function onCloseRequested(){ const a=state.ui.closeAction||'ask'; if(a==='tray'){ tinvoke('hide_main'); return; } if(a==='quit'){ deskQuit(); return; } openCloseDialog(); }
 function openCloseDialog(){
   const ui=state.ui; $('#dlg').dataset.mode='close';
-  $('#dlg').innerHTML=`<h2>Close Taskromancer?</h2><p class="hint" style="margin-top:6px">Running timers keep counting either way, their time is safe.</p>
+  $('#dlgBody').innerHTML=`<h2>Close Taskromancer?</h2><p class="hint" style="margin-top:6px">Running timers keep counting either way, their time is safe.</p>
     <div class="sflags" style="margin:12px 0 4px">
       <button class="sflag" data-act="desk-autostart" aria-pressed="${!!ui.autostart}"><span class="box ${ui.autostart?'on':''}">${PX.check}</span>Start Taskromancer when Windows starts</button>
       <button class="sflag" data-act="close-remember" aria-pressed="${closeRemember}"><span class="box ${closeRemember?'on':''}">${PX.check}</span>Remember my choice (you can change it in the menu)</button></div>
@@ -2306,10 +2372,10 @@ function desktopSettings(){
 function pushMini(){
   if(!DESK) return; const r=state.sess.run, th=TH(), f=state.focus&&Q(state.focus);
   const d={ clock:fmtClock(elapsed()), st:state.timer.state, s:sessActive()?{ clock:fmtClock(sessLeft()), phase:r.phase, round:r.round, rounds:state.sess.cfg.rounds }:null,
-    focus:f?f.title:'', title:T.ritual, bg:th.pal.stone2, edge:th.pal.edge, soul:th.pal.soul, text:th.pal.text, muted:th.pal.muted };
+    focus:f?f.title:'', title:T.ritual, opacity:state.ui.miniOpacity??.95, onTop:state.ui.miniOnTop!==false, bg:th.pal.stone2, edge:th.pal.edge, soul:th.pal.soul, text:th.pal.text, muted:th.pal.muted };
   const k=JSON.stringify(d); if(k===lastMini) return; lastMini=k; window.__TAURI__.event.emit('mini-state', d).catch(()=>{});
 }
-function miniCmd(c){ if(c==='toggle') A_.toggle(); else if(c==='cut'){ if(state.timer.state!=='idle') cut(false); } else if(c==='stop'){ if(state.timer.state!=='idle') cut(true); } else if(c==='show') tinvoke('show_main'); }
+function miniCmd(c){ if(c && typeof c==='object'){ if(c.cmd==='opacity'){ state.ui.miniOpacity=clamp(+c.v,.3,1); save(); } if(c.cmd==='ontop'){ state.ui.miniOnTop=!!c.v; save(); } lastMini=''; pushMini(); return; } if(c==='toggle') A_.toggle(); else if(c==='cut'){ if(state.timer.state!=='idle') cut(false); } else if(c==='stop'){ if(state.timer.state!=='idle') cut(true); } else if(c==='show') tinvoke('show_main'); }
 async function deskImportDecks(replaceId){
   const paths=await tinvoke('pick_txt_files').catch(()=>[]); if(!paths.length) return; let n=0;
   for(const p of (replaceId?paths.slice(0,1):paths)){
