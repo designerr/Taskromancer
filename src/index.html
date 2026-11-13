@@ -294,7 +294,9 @@ dialog h2{font:500 20px var(--f-px);margin:0;color:var(--bone)}
 .onair{font:700 6px var(--f-px);fill:#ff3f6a;text-anchor:middle;filter:drop-shadow(0 0 2px #ff3f6a)}
 .clef{font-size:16px;fill:#cdb8e8}
 .neon{font:700 5px var(--f-num);filter:drop-shadow(0 0 1.5px currentColor)}
-.sign{transition:opacity .8s}
+.train{animation:train 10s linear infinite}
+@keyframes train{from{transform:translate(-80px,43px)}to{transform:translate(170px,43px)}}
+.st-paused .train,.st-idle .train{animation-play-state:paused}
 .pleco{animation:pleco 26s linear infinite}
 @keyframes pleco{0%{transform:translateX(10px)}50%{transform:translateX(120px)}100%{transform:translateX(10px)}}
 .st-paused .sway,.st-idle .sway,.st-paused .bub,.st-paused .pleco,.st-idle .pleco{animation-play-state:paused}
@@ -1407,7 +1409,7 @@ function minionsSvg(th){
         <g opacity="0" transform="translate(${ln.w} 0) scale(-1 1)"><animate attributeName="opacity" values="0;1" keyTimes="0;0.5" calcMode="discrete" ${a}/>${spr}</g></g></g></g></g>`; continue; }
     layers[li]+=`<g class="sk" data-i="${i}" style="--dx:${dx}px;animation-duration:${d.toFixed(2)}s;animation-delay:-${(cum[li]%d).toFixed(2)}s;visibility:hidden"><g class="bob" style="animation-delay:-${(Math.random()*.5).toFixed(2)}s"><g transform="translate(${flip?ln.from+ln.w:ln.from} ${ln.y})${flip?' scale(-1 1)':''}">${spr}</g></g></g>`;
   }
-  return layers.join('');
+  return layers.map((l,i)=>l+(i===0 && th.mid ? th.mid() : '')).join('');
 }
 
 /* ---------- necromancer ---------- */
@@ -1473,6 +1475,10 @@ const TRUCK_ROWS=["..............YYYYYYYYY.",".YYYYYYYYYYYYYYYYYYYYYYY",".Yyyyyy
 const TRUCK_PAL={Y:'#d9940f',y:'#ffbf1f',k:'#141414',K:'#303030',h:'#ffbf1f',O:'#8a6a10',w:'#7fa7c0',b:'#a8845a',B:'#7a5a3a',s:'#c9a676'};
 const SPR_TRUCK_EMPTY = pix(TRUCK_ROWS,TRUCK_PAL);
 const SPR_TRUCK_FULL = pix(["....bsbbsb.............","..bBbbbbBbbbs..........",...TRUCK_ROWS],TRUCK_PAL);
+function quarryPile(){ let rocks=''; [[118,40],[126,33],[134,28],[142,31],[150,36],[130,44],[144,44],[122,47],[138,38]].forEach(([x,y],k)=>rocks+=R1(x,y,k%3?2:3,2,k%2?'#8e6a40':'#d8b884'));
+  return `<polygon points="98,52 112,38 124,26 136,20 148,24 156,28 156,52" fill="#c8a06a"/>
+    <polygon points="136,20 148,24 156,28 156,52 128,52 140,30" fill="#a8804e"/>
+    <polygon points="112,38 124,26 136,20 130,22 120,30" fill="#e2c08a"/>${rocks}`; }
 function sceneQuarry(){
   let rocks=''; [[118,40],[126,33],[134,28],[142,31],[150,36],[130,44],[144,44],[122,47],[138,38]].forEach(([x,y],k)=>rocks+=R1(x,y,k%3?2:3,2,k%2?'#8e6a40':'#d8b884'));
   return `<defs>${skyG('skyW',[[0,'#d8a464'],[1,'#f4dcae']])}${skyG('skyR',[[0,'#0c0e16'],[1,'#262a3a']])}</defs>
@@ -1480,9 +1486,7 @@ function sceneQuarry(){
     <g class="rest-off" transform="translate(40 9)">${SUN('#e8b060','#ffe2a0','#fff8e0')}</g>${starsSvg('rest-on')}
     <path d="M0 46 L22 39 L44 42 L66 37 L90 41 L110 38 V46 Z" fill="#b98d5c"/>
     ${R1(0,46,192,18,'#7a5a3a')}${R1(0,52,192,4,'#8e6b46')}${R1(0,53,192,1,'#a07b52')}
-    <polygon points="98,52 112,38 124,26 136,20 148,24 156,28 156,52" fill="#c8a06a"/>
-    <polygon points="136,20 148,24 156,28 156,52 128,52 140,30" fill="#a8804e"/>
-    <polygon points="112,38 124,26 136,20 130,22 120,30" fill="#e2c08a"/>${rocks}
+
     ${R1(4,38,22,10,'#c9c2b0')}${R1(4,38,22,2,'#8d8676')}${R1(7,41,5,3,'#3a4a5a')}${R1(15,41,5,3,'#3a4a5a')}${R1(22,42,3,6,'#6e6758')}
     <g class="rest-on" opacity="0">${R1(7,41,5,3,'#ffe59a')}${R1(15,41,5,3,'#ffe59a')}</g>${R1(4,48,22,1,'#5a5446')}
     <rect class="rest-on" y="46" width="192" height="18" fill="#05060b" fill-opacity=".45" opacity="0"/>
@@ -1536,7 +1540,7 @@ const THEMES = {
   quarry:{ name:'Quarry', blurb:'Haul trucks drive empty to a rock pile and come back loaded. Floodlights mean the shift is over.',
     pal:{ bg:'#15161a', stone:'#202227', stone2:'#282a30', stone3:'#33363d', edge:'#43464f', edgeHi:'#5d616c', abyss:'#0a0b0d', text:'#ece9e1', muted:'#a19d93', dim:'#6e6b64', soul:'#ffbf1f', arcane:'#ff8a3d', bone:'#f1e6c8', frost:'#b5c7d6', glow1:'#2c2a1c', glow2:'#22252c', near:'#f08a3e', restInk:'#fff2b0' },
     brand:{ rows:[".........","...yyy...","..yyyyy..",".yyyYyyy.",".yyyYyyy.","yyyyyyyyy","YYYYYYYYY",".........","........."], pal:{y:'#ffbf1f',Y:'#c98c00'} },
-    scene:sceneQuarry, lanes:[{ from:-26, to:108, y:35, w:24, sprite:SPR_TRUCK_EMPTY },{ from:104, to:-30, y:41, w:24, sprite:SPR_TRUCK_FULL }], dur:15, max:6,
+    scene:sceneQuarry, mid:quarryPile, lanes:[{ from:-26, to:108, y:35, w:24, sprite:SPR_TRUCK_EMPTY },{ from:104, to:-30, y:41, w:24, sprite:SPR_TRUCK_FULL }], dur:15, max:6,
     cap:{ run:'Hauling… {n} loads moved today', pause:'Trucks idling. {n} loads moved today', idleN:'{n} loads moved today. Engines off', idle:'Engines off', restRun:'Shift’s over. Site closed for tonight.', restIdle:'Site closed. {h} on shift today.' },
     t:{ ritual:'The Shift', harvest:'Stockpile', crypt:'Storage yard', cryptSub:'frozen quests wait here', notes:'Site diary', report:'Shift report', calc:'Site calculator', mix:'The Mix',
       questDone:['Job done. Load it up.','Another one off the list. Nice digging.','Done. The foreman nods.'] } },
@@ -1551,21 +1555,27 @@ const THEMES = {
 /* ---------- five more themes: chinchillas, aquarium, vinyl, bee garden, neon city ---------- */
 const loopPath=(cx,cy,rx,ry)=>`M${cx-rx} ${cy} A${rx} ${ry} 0 0 0 ${cx+rx} ${cy} A${rx} ${ry} 0 0 0 ${cx-rx} ${cy}`;
 // chinchillas: big ears, fluffy tail, a few real colourings
-const CHIN_ROWS=["..........pp....",".........pBBp...","..........BB....","...BBBBBBBBBBB..",".TBBBBBBBBBBBkB.","TTBBBBBBBBBBBBBn",".TBBBBBBLLLBBBB.","..BBBBBLLLLBBB..","...BBB....BBB...","...kk.....kk...."];
-const CHIN_PALS=[['#f2f0ec','#ffffff','#d6d0c6'],['#9aa0a6','#e6e6e6','#7d8389'],['#d8c3a0','#f1e6d2','#bfa682'],['#3a3a40','#d9d9d9','#2a2a2e'],['#f4e3e3','#ffffff','#dcc6c6'],['#5a5048','#776c62','#463e37']];
-const chinSpr = i => { const [B,L,T]=CHIN_PALS[i%CHIN_PALS.length]; return pix(CHIN_ROWS,{ B, L, T, p:'#f0b6b6', k:'#141414', n:'#e58a9a' }); };
+const CHIN_ROWS=["..............EE....","............eEPPE...","............eEPPE...","TT..........eBEEB...","TTT...BBBBBBBBBBBB..","TTTBBBBBBBBBBBBBkBB.",".TTBBBBBBBBBBBBBBBBn","..TBBBBBBBBBBBBBBBB.","...BBBBBBLLLLLBBBB..","....BBBBLLLLLLBBB...",".....BBB.....BBB....",".....pp......pp....."];
+const CHIN_PALS=[['#9aa0a6','#e6e6e6','#7d8389','#8a9096','#6e747a'],['#f2f0ec','#ffffff','#d6d0c6','#e6e2da','#cfc8bd'],['#d8c3a0','#f1e6d2','#bfa682','#cbb48e','#b39a74'],['#9aa0a6','#e6e6e6','#7d8389','#8a9096','#6e747a'],['#3a3a40','#d9d9d9','#2a2a2e','#34343a','#26262a'],['#f4e3e3','#ffffff','#dcc6c6','#ecd6d6','#d8bebe'],['#5a5048','#776c62','#463e37','#524840','#3f3832']];
+const chinSpr = i => { const [B,L,T,E,e]=CHIN_PALS[i%CHIN_PALS.length]; return pix(CHIN_ROWS,{ B, L, T, E, e, P:'#f2b4bc', p:'#f2b4bc', k:'#141414', n:'#e58a9a' }); };
 function sceneChin(){
+  let beams=''; [0,38,98,150].forEach(x=>beams+=R1(x,4,6,36,'#b07a4a')+R1(x+5,4,1,36,'#8a5a34')+R1(x,4,1,36,'#c99a68'));
+  let panels=''; for(let x=8;x<156;x+=24) panels+=`<rect x="${x}" y="31" width="20" height="8" fill="none" stroke="#c9a578" stroke-width="1"/>`;
   let planks=''; for(let x=0;x<160;x+=14) planks+=R1(x,44,1,14,'#9a7048');
-  let spokes=''; for(let k=0;k<8;k++) spokes+=`<rect x="-.5" y="-11" width="1" height="11" fill="#c9c2b6" transform="rotate(${k*45})"/>`;
-  const hay=[[118,46,'#d9b85c'],[121,44,'#e8c96a'],[124,47,'#c9a84c'],[127,45,'#e0c063'],[120,48,'#d4b257']].map(([x,y,c])=>R1(x,y,6,2,c)).join('');
-  return `<defs>${skyG('wallW',[[0,'#efdcc0'],[1,'#e2c9a6']])}${skyG('nightW',[[0,'#0b1430'],[1,'#25345a']])}</defs>
-    <rect width="192" height="64" fill="url(#wallW)"/><rect class="rest-on" width="192" height="44" fill="#3a2a22" fill-opacity=".55" opacity="0"/>
-    ${R1(0,40,192,4,'#c9a57c')}${R1(0,44,192,20,'#b98a5a')}${planks}
-    <g transform="translate(60 8)">${R1(0,0,30,20,'#8a6a48')}<rect x="2" y="2" width="26" height="16" fill="#9fd4f0"/><rect class="rest-on" x="2" y="2" width="26" height="16" fill="url(#nightW)" opacity="0"/>${R1(14,2,2,16,'#8a6a48')}${R1(2,9,26,2,'#8a6a48')}<g class="rest-on" opacity="0">${R1(20,4,3,3,'#f2f4ff')}</g></g>
-    ${R1(40,14,3,16,'#9fd0e8')}${R1(39,12,5,3,'#5a8fb0')}${R1(41,30,1,4,'#cfe6f2')}
-    <g transform="translate(22 30)"><circle r="12" fill="none" stroke="#6b5a48" stroke-width="2.5"/><g class="wheel"><circle r="10" fill="none" stroke="#c9c2b6" stroke-width="1"/>${spokes}</g>${R1(-1,0,2,14,'#6b5a48')}
-      <g class="run-only" transform="translate(-6 0) scale(.75)">${chinSpr(1)}</g></g>
-    <g transform="translate(130 24)">${R1(0,8,22,14,'#a0724a')}<path d="M-2 9 L11 0 L24 9Z" fill="#7a5232"/>${R1(8,13,7,9,'#3a2618')}<rect class="rest-on" x="8" y="13" width="7" height="9" fill="#ffd27a" opacity="0"/><g class="rest-on" opacity="0"><text x="16" y="4" class="zzz">z z</text></g></g>
+  let wheel=''; for(let k=0;k<12;k++) wheel+=`<rect x="-.6" y="-11" width="1.2" height="11" fill="${k%2?'#c9a06a':'#b08850'}" transform="rotate(${k*30})"/>`;
+  const hay=[[118,47,'#d9b85c'],[121,45,'#e8c96a'],[124,48,'#c9a84c'],[127,46,'#e0c063'],[120,49,'#d4b257']].map(([x,y,c])=>R1(x,y,6,2,c)).join('');
+  return `<defs>${skyG('wallW',[[0,'#f3e2c8'],[1,'#e8d0ae']])}${skyG('nightW',[[0,'#0b1430'],[1,'#25345a']])}</defs>
+    <rect width="192" height="64" fill="url(#wallW)"/>${beams}${R1(0,4,192,3,'#a06e40')}${R1(0,29,192,1,'#c9a578')}${panels}
+    <rect class="rest-on" width="192" height="44" fill="#3a2a22" fill-opacity=".5" opacity="0"/>
+    ${R1(0,40,192,4,'#c9a57c')}${R1(0,40,192,1,'#e0c39c')}${R1(0,44,192,20,'#b98a5a')}${planks}
+    <g transform="translate(60 9)">${R1(-1,-1,32,22,'#7a5232')}${R1(0,0,30,20,'#8a6a48')}<rect x="2" y="2" width="26" height="16" fill="#9fd4f0"/><rect class="rest-on" x="2" y="2" width="26" height="16" fill="url(#nightW)" opacity="0"/>${R1(14,2,2,16,'#8a6a48')}${R1(2,9,26,2,'#8a6a48')}<g class="rest-on" opacity="0">${R1(20,4,3,3,'#f2f4ff')}</g>${R1(-2,20,34,2,'#7a5232')}</g>
+    <g transform="translate(102 12)">${R1(0,0,14,11,'#7a5232')}${R1(1,1,12,9,'#efe4cc')}${R1(4,6,6,2,'#f29a2e')}${R1(9,4,2,2,'#5fae4a')}</g>
+    <g transform="translate(44 15)">${R1(0,0,4,15,'#9fd0e8')}${R1(-1,-2,6,3,'#5a8fb0')}${R1(1,15,2,4,'#cfe6f2')}${R1(1,2,1,9,'#e8f6ff')}</g>
+    <g transform="translate(22 30)" shape-rendering="crispEdges">${R1(-10,10,3,6,'#6b4a2e')}${R1(7,10,3,6,'#6b4a2e')}${R1(-1,0,2,16,'#6b4a2e')}
+      <circle r="13" fill="#7a5232"/><circle r="11.5" fill="#d9b88a"/><g class="wheel">${wheel}<circle r="3" fill="#8a5a34"/></g><circle r="13" fill="none" stroke="#5a3a20" stroke-width="1.5"/></g>
+    <g transform="translate(126 26)" shape-rendering="crispEdges"><rect x="0" y="6" width="26" height="18" rx="4" fill="#b07a4a"/><rect x="0" y="12" width="26" height="1" fill="#9a6a3e"/><rect x="0" y="18" width="26" height="1" fill="#9a6a3e"/>
+      <rect x="-2" y="0" width="30" height="9" rx="4" fill="#7a5232"/><rect x="-2" y="6" width="30" height="2" fill="#6a4428"/>
+      <circle cx="13" cy="17" r="5" fill="#2a1a10"/><circle class="rest-on" cx="13" cy="17" r="5" fill="#ffd27a" opacity="0"/><g class="rest-on" opacity="0"><text x="22" y="-2" class="zzz">z z</text></g></g>
     ${hay}`;
 }
 // aquarium
@@ -1585,24 +1595,28 @@ function sceneAqua(){
     <g class="rest-off">${R1(0,4,156,2,'#bfeaff')}<polygon points="30,4 44,4 60,50 18,50" fill="#ffffff" fill-opacity=".06"/><polygon points="90,4 104,4 124,50 80,50" fill="#ffffff" fill-opacity=".06"/></g>
     <g class="rest-on" opacity="0">${R1(118,8,5,5,'#dfe8ff')}<polygon points="116,13 125,13 140,50 104,50" fill="#bcd0ff" fill-opacity=".07"/></g>
     ${R1(0,50,192,14,'#d9c28a')}${R1(0,50,192,1,'#e8d6a6')}${R1(10,52,3,2,'#b8a06a')}${R1(60,54,4,2,'#c4ad78')}${R1(98,52,3,2,'#b8a06a')}
+    <g class="pleco"><g transform="translate(0 47)">${pix(["..dddddd....","ddddddddddk.","dDdDdDdDdddd"],{ d:'#5a4a3a', D:'#3a2e24', k:'#111' })}</g></g>
     <g transform="translate(64 40)">${R1(0,4,22,10,'#6a6f78')}${R1(3,0,16,6,'#7f848e')}${R1(8,7,6,7,'#2a2d34')}</g>
     ${weeds}${R1(136,22,4,30,'#9aa6b4')}${bub}
-    <g class="pleco"><g transform="translate(0 47)">${pix(["..dddddd....","ddddddddddk.","dDdDdDdDdddd"],{ d:'#5a4a3a', D:'#3a2e24', k:'#111' })}</g></g>`;
+    `;
 }
 // vinyl & sheet music
 const NOTE_PALS=['#ff7ab6','#7ee0ff','#ffd23f','#b8ff7a','#ffffff','#c9a0ff'];
 const NOTES=[ ["....k.","....k.","....k.","....k.","....k.",".kkkk.","kkkkk.",".kkk.."], ["....kk","....k.k","....k..","....k..",".kkkk..","kkkkk..",".kkk..."], [".kkkk.","k....k","k....k",".kkkk."], ["....k...k.","....kkkkk.","....k...k.","....k...k.",".kkkk.kkkk","kkkkkkkkkk",".kkk..kkk."], ["..kk.",".k..k",".k.k.","..k..",".k.k.","k...k","k..kk",".kkk.","...k.","..k.."] ];
 const noteSpr = i => pix(NOTES[i%9===8?4:i%4], { k:NOTE_PALS[i%NOTE_PALS.length] });
 function sceneVinyl(){
-  let staff=''; [24,29,34,39,44].forEach(y=>staff+=R1(30,y,98,1,'#5b4a6a'));
-  let grooves=''; [11,9,7].forEach(r=>grooves+=`<circle r="${r}" fill="none" stroke="#2a2a30" stroke-width=".6"/>`);
+  let staff=''; [24,29,34,39,44].forEach(y=>staff+=R1(40,y,120,1,'#5b4a6a'));
+  let grooves=''; [10,8.5,7,5.5].forEach(r=>grooves+=`<circle r="${r}" fill="none" stroke="#2c2c34" stroke-width=".5"/>`);
   return `<defs>${skyG('roomW',[[0,'#2a1f3a'],[1,'#3a2440']])}</defs>
     <rect width="192" height="64" fill="url(#roomW)"/><rect class="rest-on" width="192" height="64" fill="#05030a" fill-opacity=".55" opacity="0"/>
     <g transform="translate(112 8)" class="rest-off">${R1(0,0,36,10,'#1a1022')}<text x="18" y="7.5" class="onair">ON AIR</text></g>
-    ${R1(0,48,192,16,'#2a1a26')}${R1(0,48,192,1,'#4a3044')}
-    <g transform="translate(4 34)">${R1(0,4,26,14,'#5a3a2a')}${R1(0,4,26,2,'#7a5238')}<g transform="translate(12 6)" class="disc"><circle r="12" fill="#151518"/>${grooves}<circle r="3" fill="#ff7ab6"/></g>${R1(23,0,2,10,'#c9c2b6')}${R1(16,8,8,2,'#c9c2b6')}</g>
-    ${staff}<text x="31" y="41" class="clef">𝄞</text>
-    <g transform="translate(130 22)">${R1(0,0,22,30,'#1a1418')}<circle cx="11" cy="9" r="6" fill="#2e2630"/><circle cx="11" cy="9" r="2.5" fill="#4a3e4c"/><circle cx="11" cy="22" r="5" fill="#2e2630"/><circle cx="11" cy="22" r="2" fill="#4a3e4c"/></g>`;
+    ${R1(0,52,192,12,'#2a1a26')}${R1(0,52,192,1,'#4a3044')}
+    <g transform="translate(3 21)"><rect x="0" y="0" width="34" height="30" rx="2" fill="#6a4630"/><rect x="1" y="1" width="32" height="28" rx="2" fill="#7a5238"/>
+      <circle cx="15" cy="15" r="12" fill="#2a2a30"/><g transform="translate(15 15)"><g class="disc"><circle r="11.5" fill="#121216"/>${grooves}<path d="M-9 -5 A10 10 0 0 1 -3 -9.5" stroke="#5a5a68" stroke-width="1" fill="none"/><circle r="3.5" fill="#ff7ab6"/><circle cx="1.6" cy="-1" r=".7" fill="#fff"/><circle r=".8" fill="#2a2a30"/></g></g>
+      <circle cx="30" cy="5" r="2.5" fill="#c9c2b6"/><g class="rest-off"><path d="M30 5 L29 18 L22 22" stroke="#d9d4c8" stroke-width="1.4" fill="none"/>${R1(20,21,4,3,'#e8e2d6')}</g>
+      <g class="rest-on" opacity="0"><path d="M30 5 L31 18 L33 23" stroke="#d9d4c8" stroke-width="1.4" fill="none"/>${R1(31,22,4,3,'#e8e2d6')}</g>
+      <circle cx="4" cy="26" r="1.5" fill="#3fe07a" class="run-only"/></g>
+    ${staff}<text x="41" y="41" class="clef">𝄞</text>`;
 }
 // bee garden: blocky bees of our own design
 const BEE = pix(["....WW.WW...","....WW.WW...",".YYYSSYYSSYY","tYYYSSYYSSkY",".YYYSSYYSSYY",".YYYSSYYSSY.","..d..d..d..."],{ W:'#e6f6ff', Y:'#ffd23f', S:'#5a3a1a', k:'#111', t:'#2a1a0a', d:'#2a1a0a' });
@@ -1625,19 +1639,23 @@ function sceneBees(){
 const CAR_NEON=[['#22f0ff','#0a6a7a'],['#ff3fa4','#7a1a50'],['#ffd23f','#7a6010'],['#e8f0ff','#5a6080']];
 const hoverSpr = i => { const [c,d]=CAR_NEON[i%CAR_NEON.length]; return pix(["....cccccc....","..cwwccwwcc...",".cccccccccccc.","ddddddddddddhh",".gg........gg."],{ c:'#2a2a3a', w:'#9fd8ff', d, h:'#fff6c8', g:c }); };
 function sceneNeon(){
-  const bl=[[0,14,30],[14,12,38],[26,16,24],[42,10,34],[52,18,28],[70,12,40],[82,16,30],[98,10,36],[108,18,26],[126,12,42],[138,18,30]]; let city='', wins='', signs='';
-  bl.forEach(([x,w,h],i)=>{ city+=R1(x,58-h,w,h,i%2?'#12122a':'#181834'); for(let yy=58-h+3; yy<56; yy+=4) for(let xx=x+2; xx<x+w-1; xx+=3) if(((xx*5+yy*7+i)%4)<2) wins+=R1(xx,yy,1,2,(xx+yy)%3?'#5a6aa8':'#c9b8ff'); });
-  [[16,22,'#ff3fa4','BAR'],[72,18,'#22f0ff','24/7'],[128,20,'#ffd23f','NOODLE']].forEach(([x,y,c,t],k)=>signs+=`<g class="rest-off sign" style="transition-delay:${k*.6}s"><rect x="${x-1}" y="${y-5}" width="${t.length*4+4}" height="7" fill="#0a0a14" stroke="${c}" stroke-width=".7"/><text x="${x+1}" y="${y}" class="neon" fill="${c}">${t}</text></g>`);
+  const bl=[[0,14,30],[14,12,38],[26,16,24],[42,10,34],[52,18,28],[70,12,40],[82,16,30],[98,10,36],[108,18,26],[126,12,42],[138,18,30]]; let city='', wins='';
+  bl.forEach(([x,w,h],i)=>{ city+=R1(x,50-h,w,h,i%2?'#12122a':'#181834')+R1(x,50-h,w,1,i%3?'#ff3fa455':'#22f0ff55'); for(let yy=50-h+3; yy<48; yy+=4) for(let xx=x+2; xx<x+w-1; xx+=3) if(((xx*5+yy*7+i)%4)<2) wins+=R1(xx,yy,1,2,(xx+yy)%3?'#5a6aa8':'#c9b8ff'); });
   let rain=''; for(let k=0;k<26;k++) rain+=`<rect class="rain" x="${(k*13)%156}" y="${(k*7)%40}" width="1" height="4" fill="#7ea8ff" opacity=".35" style="animation-delay:-${(k*.13).toFixed(2)}s"/>`;
+  let pylons=''; for(let x=6;x<160;x+=22) pylons+=R1(x,52,3,8,'#24243e');
+  const car=(x,c)=>`${R1(x,0,22,7,'#1e1e34')}${R1(x,0,22,1,c)}${R1(x+2,2,4,2,'#ffe9a8')}${R1(x+8,2,4,2,'#ffe9a8')}${R1(x+14,2,4,2,'#ffe9a8')}${R1(x,6,22,1,c)}`;
   return `<defs>${skyG('skyW',[[0,'#1a0a3a'],[1,'#3a1a5a']])}${skyG('skyR',[[0,'#03030a'],[1,'#0a0a1c']])}</defs>
     <rect width="192" height="64" fill="url(#skyW)"/><rect class="rest-on" width="192" height="64" fill="url(#skyR)" opacity="0"/>
-    ${R1(0,4,192,1,'#ff3fa4','opacity=".25"')}${city}<g class="rest-off">${wins}</g>${signs}<g class="rest-off">${rain}</g>`;
+    ${city}<g class="rest-off">${wins}</g>
+    ${R1(0,50,192,14,'#0c0c1a')}${pylons}${R1(0,50,192,2,'#3a3a5a')}${R1(0,52,192,1,'#22f0ff','opacity=".5"')}
+    <g class="train" transform="translate(0 43)">${car(0,'#22f0ff')}${car(23,'#22f0ff')}${car(46,'#ff3fa4')}<path d="M68 0 L74 3 L74 6 L68 7Z" fill="#1e1e34"/>${R1(72,3,2,2,'#fff6c8')}</g>
+    <g class="rest-off">${rain}</g>`;
 }
 const MORE_THEMES = {
   chin:{ name:'Chinchillas', blurb:'A cosy room where fluffy chinchillas run laps. When the lamp goes on, they tuck into their house.',
     pal:{ bg:'#1c1714', stone:'#28201b', stone2:'#30271f', stone3:'#3b3027', edge:'#4f4135', edgeHi:'#6b5948', abyss:'#0f0b09', text:'#f3ebe1', muted:'#b9a893', dim:'#7d6f61', soul:'#9fd8b8', arcane:'#e8b4c8', bone:'#f1e3cf', frost:'#c8d8e8', glow1:'#3a2a1c', glow2:'#1f2a24', near:'#e8b45a', restInk:'#ffe2b0' },
     brand:{ rows:[".pp...pp.","pBBp.pBBp",".BBBBBBB.","BBkBBBkBB","BBBBnBBBB",".BBBBBBB.","..BBBBB..",".........","........."], pal:{ p:'#f0b6b6', B:'#9aa0a6', k:'#111', n:'#e58a9a' } },
-    scene:sceneChin, lanes:[{ loop:true, path:loopPath(84,49,46,4), w:16, h:10, sprite:chinSpr },{ loop:true, path:loopPath(84,51,52,5), w:16, h:10, sprite:i=>chinSpr(i+3) }], dur:12, max:10, restHide:true,
+    scene:sceneChin, lanes:[{ loop:true, path:loopPath(80,49,40,4), w:20, h:12, sprite:chinSpr },{ loop:true, path:loopPath(80,52,46,5), w:20, h:12, sprite:i=>chinSpr(i+4) }], dur:13, max:10, restHide:true,
     cap:{ run:'Zooming… {n} chinchillas ran today', pause:'Ears up, waiting. {n} chinchillas out today', idleN:'{n} chinchillas played today. Nap time', idle:'Everyone is napping', restRun:'Lamp on, chins in bed. Time to rest.', restIdle:'Sleepy house. {h} today, plenty.' },
     t:{ ritual:'The Wheel', harvest:'Hay stash', crypt:'Hideout', cryptSub:'frozen quests nap here', notes:'Chin notes', report:'Day report', calc:'Pellet counter', mix:'The Mix', questDone:['Quest done. Happy popcorning!','Done. Have a raisin.','Finished. Dust bath earned.'] } },
   aqua:{ name:'Aquarium', blurb:'Colourful fish swim laps among the weeds. When the tank light goes off, the reef sleeps.',
@@ -1646,10 +1664,10 @@ const MORE_THEMES = {
     scene:sceneAqua, lanes:[{ loop:true, path:loopPath(78,22,58,6), w:14, h:9, sprite:fishSpr },{ loop:true, path:loopPath(78,34,52,6), w:14, h:9, sprite:i=>fishSpr(i+2) }], dur:16, max:12,
     cap:{ run:'Swimming laps… {n} fish in the tank today', pause:'Fish hovering. {n} in the tank today', idleN:'{n} fish swam today. Filter humming', idle:'Calm water', restRun:'Tank light off. Let the water rest, and you too.', restIdle:'Lights out. {h} today, the reef sleeps.' },
     t:{ ritual:'The Tank', harvest:'Bubbles', crypt:'Deep cave', cryptSub:'frozen quests drift here', notes:'Tide log', report:'Reef report', calc:'Depth gauge', mix:'The Mix', questDone:['Quest done. Bubbles of joy.','Finished. The fish approve.','Done. Smooth swimming.'] } },
-  vinyl:{ name:'Vinyl', blurb:'A spinning record sends notes along the staff to the speaker. The needle lifts when the day is done.',
+  vinyl:{ name:'Vinyl', blurb:'A record spins on the turntable and its notes drift along the staff. The needle lifts when the day is done.',
     pal:{ bg:'#150f1c', stone:'#211829', stone2:'#291e33', stone3:'#33263f', edge:'#45344f', edgeHi:'#61496f', abyss:'#0a070e', text:'#f2e8f4', muted:'#b39fbd', dim:'#7a6886', soul:'#ff7ab6', arcane:'#7ee0ff', bone:'#f6dfe9', frost:'#c9b8ff', glow1:'#3a1640', glow2:'#12283a', near:'#ffc857', restInk:'#ffd0e4' },
     brand:{ rows:["..kkkkk..",".kkkkkkk.","kkkkkkkkk","kkkpppkkk","kkkpkpkkk","kkkpppkkk","kkkkkkkkk",".kkkkkkk.","..kkkkk.."], pal:{ k:'#2a2a30', p:'#ff7ab6' } },
-    scene:sceneVinyl, lanes:[20,25,30,35,40].map(y=>({ from:40, to:128, y, w:10, sprite:noteSpr })), dur:15, max:15,
+    scene:sceneVinyl, lanes:[20,25,30,35,40].map(y=>({ from:52, to:166, y, w:10, sprite:noteSpr })), dur:15, max:15,
     cap:{ run:'Spinning… {n} notes on the staff today', pause:'Needle lifted. {n} notes played today', idleN:'{n} notes today. Turntable resting', idle:'Silence between tracks', restRun:'Record’s over. The night is for listening, not working.', restIdle:'Last track played. {h} today.' },
     t:{ ritual:'Side A', harvest:'B-sides', crypt:'The crate', cryptSub:'frozen quests wait in the crate', notes:'Liner notes', report:'Setlist', calc:'Tempo counter', mix:'The Mix', questDone:['Quest done. Drop the beat.','Finished. That one’s a hit.','Done. Encore earned.'] } },
   bees:{ name:'Bee Garden', blurb:'Blocky bees fly between the flowers and the hive, and a new flower opens for every hour. Fireflies mean it’s evening.',
@@ -1658,11 +1676,11 @@ const MORE_THEMES = {
     scene:sceneBees, lanes:[{ loop:true, path:loopPath(78,22,52,9), w:12, h:7, sprite:BEE },{ loop:true, path:loopPath(84,30,44,7), w:12, h:7, sprite:BEE }], dur:13, max:14, restHide:true,
     cap:{ run:'Buzzing… {n} bees out today', pause:'Bees resting on flowers. {n} out today', idleN:'{n} bees flew today. The hive is quiet', idle:'Quiet garden', restRun:'Fireflies are out. The bees went home, you go too.', restIdle:'Dusk in the garden. {h} today.' },
     t:{ ritual:'The Hive', harvest:'Honey jar', crypt:'Winter cluster', cryptSub:'frozen quests overwinter here', notes:'Garden journal', report:'Harvest report', calc:'Honey scale', mix:'The Mix', questDone:['Quest done. Sweet!','Finished. The hive hums happily.','Done. Pollen secured.'] } },
-  neon:{ name:'Neon City', blurb:'Flying cars stream between rainy neon towers. The signs go dark one by one when it’s time to log off.',
+  neon:{ name:'Neon City', blurb:'Flying cars stream between rainy towers while a train glides on the elevated line. Windows go dark when it’s time to log off.',
     pal:{ bg:'#0a0a14', stone:'#12121f', stone2:'#181829', stone3:'#202036', edge:'#2c2c4a', edgeHi:'#44446e', abyss:'#05050a', text:'#e8f0ff', muted:'#9aa4c8', dim:'#5e6688', soul:'#22f0ff', arcane:'#ff3fa4', bone:'#e0e8ff', frost:'#9fd8ff', glow1:'#2a0f3a', glow2:'#0a2a3a', near:'#ffd23f', restInk:'#a8e8ff' },
     brand:{ rows:[".........","..cccc...",".cwwcww..","ccccccccc","mmmmmmmhh",".c.....c.",".........",".........","........."], pal:{ c:'#2a2a3a', w:'#9fd8ff', m:'#ff3fa4', h:'#fff6c8' } },
-    scene:sceneNeon, lanes:[{ from:-16, to:166, y:16, w:14, sprite:hoverSpr },{ from:166, to:-16, y:26, w:14, sprite:i=>hoverSpr(i+1) },{ from:-16, to:166, y:36, w:14, sprite:i=>hoverSpr(i+2) }], dur:11, max:12,
-    cap:{ run:'Traffic flowing… {n} cars in the sky today', pause:'Gridlock. {n} cars up today', idleN:'{n} flights logged today. City idling', idle:'Rain on neon', restRun:'Signs going dark. Log off, runner.', restIdle:'City asleep. {h} today.' },
+    scene:sceneNeon, lanes:[{ from:-16, to:166, y:12, w:14, sprite:hoverSpr },{ from:166, to:-16, y:22, w:14, sprite:i=>hoverSpr(i+1) },{ from:-16, to:166, y:32, w:14, sprite:i=>hoverSpr(i+2) }], dur:11, max:12,
+    cap:{ run:'Traffic flowing… {n} cars in the sky today', pause:'Gridlock. {n} cars up today', idleN:'{n} flights logged today. City idling', idle:'Rain on neon', restRun:'City lights going dark. Log off, runner.', restIdle:'City asleep. {h} today.' },
     t:{ ritual:'Uplink', harvest:'Cache', crypt:'Cold storage', cryptSub:'frozen quests are archived here', notes:'Data logs', report:'Run report', calc:'Credit calc', mix:'The Mix', questDone:['Job done. Credits wired.','Quest complete. Clean run.','Done. Ghosted out of there.'] } }
 };
 Object.assign(THEMES, MORE_THEMES);
@@ -3827,7 +3845,7 @@ function openUpdate(){
 
 /* ================= desktop (Tauri) ================= */
 // Everything here is inert in the browser; in the desktop app it adds file storage, tray, mini timer and more.
-const APP_VER='1.6.0';
+const APP_VER='1.6.1';
 const DESK = !!(window.__TAURI__ && window.__TAURI__.core);
 const tinvoke = (cmd,args,opts) => window.__TAURI__.core.invoke(cmd,args,opts);
 const fileName = p => String(p||'').split(/[\\/]/).pop();
