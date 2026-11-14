@@ -67,7 +67,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .field::placeholder{color:var(--dim)}
 
 /* ---------- layout ---------- */
-.layout{display:grid;grid-template-columns:var(--lw,400px) 22px minmax(0,1fr);gap:0;padding:18px 20px 60px;max-width:1440px;margin:0 auto;align-items:start}
+.layout{display:grid;grid-template-columns:var(--lw,400px) 22px minmax(0,1fr);gap:0;padding:16px 18px 50px;align-items:start}
 .left{display:flex;flex-direction:column;gap:18px;position:sticky;top:72px}
 
 /* ---------- ritual (timer) ---------- */
@@ -277,6 +277,9 @@ dialog h2{font:500 20px var(--f-px);margin:0;color:var(--bone)}
 .toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);display:none;align-items:center;gap:14px;background:var(--stone2);border:2px solid var(--abyss);box-shadow:inset 0 0 0 1px var(--soul),0 10px 30px #000a;padding:10px 14px;z-index:60;font-size:14px}
 .toast.show{display:flex}
 .toast button{font:500 14px var(--f-px);color:var(--soul)}
+
+/* ---------- v19: time tab ---------- */
+.timebar{display:flex;justify-content:flex-start;margin:0 0 12px}
 
 /* ---------- v18: stats, habits ---------- */
 .scards{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:14px}
@@ -1551,7 +1554,7 @@ function sceneAlien(){
 const TRUCK_ROWS=["..............YYYYYYYYY.",".YYYYYYYYYYYYYYYYYYYYYYY",".YyyyyyyyyyyyyY..kwwwk..",".YyyyYyyyyYyyyY..kwwwk..","..YyyYyyyyYyyyY..kkkkkk.","...YYYYYYYYYYYYkkkkkkkYY","...kkkkkkkkkkkkkkkkkkkYY","..kkkkkk.......kkkkkk...",".kKKKKKKk.....kKKKKKKk..",".kKhhhhKk.....kKhhhhKk..",".kKhOOhKk.....kKhOOhKk..",".kKhhhhKk.....kKhhhhKk..",".kKKKKKKk.....kKKKKKKk..","..kkkkkk.......kkkkkk..."];
 const TRUCK_PAL={Y:'#d9940f',y:'#ffbf1f',k:'#141414',K:'#303030',h:'#ffbf1f',O:'#8a6a10',w:'#7fa7c0',b:'#a8845a',B:'#7a5a3a',s:'#c9a676'};
 const SPR_TRUCK_EMPTY = pix(TRUCK_ROWS,TRUCK_PAL);
-const SPR_TRUCK_FULL = pix(["....bsbbsb.............","..bBbbbbBbbbs..........",...TRUCK_ROWS],TRUCK_PAL);
+const SPR_TRUCK_FULL = pix(["...bsbbsbb..............",".bBbbbbBbbbbs.YYYYYYYYY.",...TRUCK_ROWS.slice(1)],TRUCK_PAL);
 function quarryPile(){ let rocks=''; [[118,40],[126,33],[134,28],[142,31],[150,36],[130,44],[144,44],[122,47],[138,38]].forEach(([x,y],k)=>rocks+=R1(x,y,k%3?2:3,2,k%2?'#8e6a40':'#d8b884'));
   return `<polygon points="98,52 112,38 124,26 136,20 148,24 156,28 156,52" fill="#c8a06a"/>
     <polygon points="136,20 148,24 156,28 156,52 128,52 140,30" fill="#a8804e"/>
@@ -1617,7 +1620,7 @@ const THEMES = {
   quarry:{ name:'Quarry', blurb:'Haul trucks drive empty to a rock pile and come back loaded. Floodlights mean the shift is over.',
     pal:{ bg:'#15161a', stone:'#202227', stone2:'#282a30', stone3:'#33363d', edge:'#43464f', edgeHi:'#5d616c', abyss:'#0a0b0d', text:'#ece9e1', muted:'#a19d93', dim:'#6e6b64', soul:'#ffbf1f', arcane:'#ff8a3d', bone:'#f1e6c8', frost:'#b5c7d6', glow1:'#2c2a1c', glow2:'#22252c', near:'#f08a3e', restInk:'#fff2b0' },
     brand:{ rows:[".........","...yyy...","..yyyyy..",".yyyYyyy.",".yyyYyyy.","yyyyyyyyy","YYYYYYYYY",".........","........."], pal:{y:'#ffbf1f',Y:'#c98c00'} },
-    scene:sceneQuarry, mid:quarryPile, lanes:[{ from:-26, to:108, y:35, w:24, sprite:SPR_TRUCK_EMPTY },{ from:104, to:-30, y:41, w:24, sprite:SPR_TRUCK_FULL }], dur:15, max:6,
+    scene:sceneQuarry, mid:quarryPile, lanes:[{ from:-26, to:108, y:35, w:24, sprite:SPR_TRUCK_EMPTY },{ from:104, to:-30, y:42, w:24, sprite:SPR_TRUCK_FULL }], dur:15, max:6,
     cap:{ run:'Hauling… {n} loads moved today', pause:'Trucks idling. {n} loads moved today', idleN:'{n} loads moved today. Engines off', idle:'Engines off', restRun:'Shift’s over. Site closed for tonight.', restIdle:'Site closed. {h} on shift today.' },
     t:{ ritual:'The Shift', harvest:'Stockpile', crypt:'Storage yard', cryptSub:'frozen quests wait here', notes:'Site diary', report:'Shift report', calc:'Site calculator', mix:'The Mix',
       questDone:['Job done. Load it up.','Another one off the list. Nice digging.','Done. The foreman nods.'] } },
@@ -1732,7 +1735,7 @@ const MORE_THEMES = {
   chin:{ name:'Chinchillas', blurb:'A cosy room where fluffy chinchillas run laps. When the lamp goes on, they tuck into their house.',
     pal:{ bg:'#1c1714', stone:'#28201b', stone2:'#30271f', stone3:'#3b3027', edge:'#4f4135', edgeHi:'#6b5948', abyss:'#0f0b09', text:'#f3ebe1', muted:'#b9a893', dim:'#7d6f61', soul:'#9fd8b8', arcane:'#e8b4c8', bone:'#f1e3cf', frost:'#c8d8e8', glow1:'#3a2a1c', glow2:'#1f2a24', near:'#e8b45a', restInk:'#ffe2b0' },
     brand:{ rows:[".pp...pp.","pBBp.pBBp",".BBBBBBB.","BBkBBBkBB","BBBBnBBBB",".BBBBBBB.","..BBBBB..",".........","........."], pal:{ p:'#f0b6b6', B:'#9aa0a6', k:'#111', n:'#e58a9a' } },
-    scene:sceneChin, lanes:[{ loop:true, path:loopPath(80,49,40,4), w:20, h:12, sprite:chinSpr },{ loop:true, path:loopPath(80,52,46,5), w:20, h:12, sprite:i=>chinSpr(i+4) }], dur:13, max:10, restHide:true,
+    scene:sceneChin, lanes:[{ from:172, to:-26, y:35, w:20, sprite:i=>chinSpr(i+4) },{ from:-26, to:172, y:41, w:20, sprite:chinSpr }], dur:12, max:10, restHide:true,
     cap:{ run:'Zooming… {n} chinchillas ran today', pause:'Ears up, waiting. {n} chinchillas out today', idleN:'{n} chinchillas played today. Nap time', idle:'Everyone is napping', restRun:'Lamp on, chins in bed. Time to rest.', restIdle:'Sleepy house. {h} today, plenty.' },
     t:{ ritual:'The Wheel', harvest:'Hay stash', crypt:'Hideout', cryptSub:'frozen quests nap here', notes:'Chin notes', report:'Day report', calc:'Pellet counter', mix:'The Mix', questDone:['Quest done. Happy popcorning!','Done. Have a raisin.','Finished. Dust bath earned.'] } },
   aqua:{ name:'Aquarium', blurb:'Colourful fish swim laps among the weeds. When the tank light goes off, the reef sleeps.',
@@ -1888,10 +1891,11 @@ function renderHarvest(){
   if(A) updateSum();
 }
 
-const TABS = [['board','Quest Board'],['campaigns','Campaigns'],['habits','Habits'],['report','Report'],['stats','Stats'],['notes','Notes'],['boards','Boards'],['atlas','Atlas'],['rnd','Randomizer'],['lib','Library']];
+const TABS = [['board','Quest Board'],['campaigns','Campaigns'],['habits','Habits'],['time','Time'],['notes','Notes'],['boards','Boards'],['atlas','Atlas'],['rnd','Randomizer']];
 function closeMenu(){ state.ui.noteMenu=null; document.querySelector('.nmenu')?.remove(); }
-function tabOrder(all){ const keys=TABS.map(t=>t[0]), o=(state.ui.tabOrder||[]).filter(k=>keys.includes(k)), full=[...o, ...keys.filter(k=>!o.includes(k))]; return all ? full : full.filter(k=>!state.ui.hiddenTabs.includes(k)); }
+function tabOrder(all){ const keys=TABS.map(t=>t[0]), o=[...new Set((state.ui.tabOrder||[]).map(k=>k==='report'||k==='stats'?'time':k==='lib'?'notes':k))].filter(k=>keys.includes(k)), full=[...o, ...keys.filter(k=>!o.includes(k))]; return all ? full : full.filter(k=>!state.ui.hiddenTabs.includes(k)); }
 function renderTabs(){
+  { const t=state.ui.tab; if(t==='report'){ state.ui.tab='time'; state.ui.statRange='day'; } if(t==='stats'){ state.ui.tab='time'; if((state.ui.statRange||'day')==='day') state.ui.statRange='week'; } if(t==='lib'){ state.ui.tab='notes'; state.ui.noteCat='__lib'; } }
   if(state.ui.hiddenTabs.includes(state.ui.tab)) state.ui.tab=tabOrder()[0]||'board';
   const n = { board: state.quests.filter(q=>!q.parentId && !q.done && !q.frozen && !P(q.projectId)?.frozen).length, report:'', rnd:'', notes: state.notes.length, campaigns: state.goals.length };
   $('#tabs').innerHTML = tabOrder().map(k=>{ const l=TABS.find(t=>t[0]===k)[1]; return `<button class="tab" role="tab" draggable="true" data-drag="t:${k}" data-act="tab" data-id="${k}" aria-selected="${state.ui.tab===k}" title="Drag to reorder tabs">${l}<span class="n">${n[k]||''}</span></button>`; }).join('');
@@ -1900,7 +1904,7 @@ function renderBoard(){
   const t=state.ui.tab;
   if(t==='boards'){ renderBoardsTab(); return; }
   if(t==='atlas'){ closeBoardMenu(); renderAtlasTab(); return; } $('#board').dataset.view=t; closeBoardMenu();
-  $('#board').innerHTML = t==='campaigns' ? viewCampaigns() : t==='report' ? viewReport() : t==='notes' ? viewNotes() : t==='rnd' ? viewRnd() : t==='lib' ? viewLibrary() : t==='stats' ? viewStats() : t==='habits' ? viewHabits() : viewBoard();
+  $('#board').innerHTML = t==='campaigns' ? viewCampaigns() : t==='time' ? viewTime() : t==='report' ? viewReport() : t==='notes' ? viewNotes() : t==='rnd' ? viewRnd() : t==='lib' ? viewLibrary() : t==='stats' ? viewStats() : t==='habits' ? viewHabits() : viewBoard();
   document.querySelectorAll('textarea.note-text').forEach(autosize);
   layoutNotes(); decorateChips();
 }
@@ -2185,7 +2189,7 @@ function dayTotals(){ const m={}; state.quests.forEach(q=>Object.entries(q.days)
 const addDays = (iso,n) => { const t=new Date(startOfIso(iso)); t.setDate(t.getDate()+n); return isoDay(t); };
 const mondayOf = iso => { const t=new Date(startOfIso(iso)); const wd=(t.getDay()+6)%7; t.setDate(t.getDate()-wd); return isoDay(t); };
 function statPeriod(){
-  const ui=state.ui, r=ui.statRange||'week', off=ui.statOff||0, td=today();
+  const ui=state.ui, r=(ui.statRange&&ui.statRange!=='day')?ui.statRange:'week', off=ui.statOff||0, td=today();
   if(r==='week'){ const s0=addDays(mondayOf(td),7*off); return { r, from:s0, to:addDays(s0,6), label:`${fmtDate(s0)} – ${fmtDate(addDays(s0,6))}` }; }
   if(r==='month'){ const t=new Date(startOfIso(td)); t.setDate(1); t.setMonth(t.getMonth()+off); const from=isoDay(t); t.setMonth(t.getMonth()+1); t.setDate(0); return { r, from, to:isoDay(t), label:new Date(startOfIso(from)).toLocaleDateString('en-GB',{ month:'long', year:'numeric' }) }; }
   if(r==='year'){ const y=new Date().getFullYear()+off; return { r, from:`${y}-01-01`, to:`${y}-12-31`, label:String(y) }; }
@@ -2220,6 +2224,10 @@ function heatmap(dt){
 function streaks(dt){ const days=Object.keys(dt).filter(d=>dt[d]>0).sort(); let best=0, cur=0, run=0, prev=null;
   days.forEach(d=>{ run = prev && addDays(prev,1)===d ? run+1 : 1; best=Math.max(best,run); prev=d; });
   let d=today(); if(!(dt[d]>0)) d=addDays(d,-1); while(dt[d]>0){ cur++; d=addDays(d,-1); } return { best, cur }; }
+function viewTime(){
+  const r=state.ui.statRange||'day';
+  return `<div class="timebar"><div class="seg" role="group" aria-label="Range">${[['day','Day'],['week','Week'],['month','Month'],['year','Year'],['all','All']].map(([k,l])=>`<button data-act="stat-range" data-id="${k}" aria-pressed="${r===k}">${l}</button>`).join('')}</div></div>${r==='day' ? viewReport() : viewStats()}`;
+}
 function viewStats(){
   const P=statPeriod(), byProj=dayTotalsByProject(), dt=dayTotals(), ui=state.ui;
   const inP = d => d>=P.from && d<=P.to, days=Object.keys(dt).filter(inP), total=days.reduce((a,d)=>a+dt[d],0), worked=days.filter(d=>dt[d]>0).length;
@@ -2227,7 +2235,6 @@ function viewStats(){
   const st=streaks(dt), open=ui.statProj;
   const questsIn = pid => tops(pid).map(q=>{ let ms=0; const walk=x=>{ Object.entries(x.days).forEach(([d,v])=>{ if(inP(d)) ms+=v; }); kids(x).forEach(walk); }; walk(q); return { q, ms }; }).filter(x=>x.ms>0).sort((a,b)=>b.ms-a.ms);
   return `<div class="plate"><h2>Statistics</h2><span class="right">
-      <div class="seg" role="group" aria-label="Range">${[['week','Week'],['month','Month'],['year','Year'],['all','All']].map(([k,l])=>`<button data-act="stat-range" data-id="${k}" aria-pressed="${(ui.statRange||'week')===k}">${l}</button>`).join('')}</div>
       ${P.r!=='all'?`<button class="ib" data-act="stat-off" data-id="-1" aria-label="Earlier">${IC.left}</button><span class="dayname">${esc(P.label)}</span><button class="ib" data-act="stat-off" data-id="1" aria-label="Later" ${(ui.statOff||0)>=0?'disabled':''}>${IC.right}</button>`:`<span class="dayname">${P.label}</span>`}</span></div>
     <div class="scards">
       <div class="scard"><b>${fmtHM(total)}</b><span>tracked</span></div>
@@ -2464,14 +2471,14 @@ function viewNotes(){
     <button class="btn soul" data-act="note-add">${IC.plus}Add note</button>
   </div>
   <div class="toolbar">
-    <div class="chips wrap">${chip('','All',state.notes.length)}${state.cats.map(c=>chip(c.id,`${c.emoji} ${esc(c.name)}`,state.notes.filter(n=>n.cat===c.id).length)).join('')}${chip('__quest','📜 Quest notes',qn.length)}<button class="addchip" data-act="cats-manage" title="Add or edit categories">${IC.plus}</button></div>
+    <div class="chips wrap">${chip('','All',state.notes.length)}${state.cats.map(c=>chip(c.id,`${c.emoji} ${esc(c.name)}`,state.notes.filter(n=>n.cat===c.id).length)).join('')}${chip('__quest','📜 Quest notes',qn.length)}${chip('__lib','🔗 Library',allLinks().length)}<button class="addchip" data-act="cats-manage" title="Add or edit categories">${IC.plus}</button></div>
     <span style="flex:1"></span>
-    ${ui.noteCat==='__quest'?'':`<input class="field" type="search" data-ui="noteQ" value="${esc(ui.noteQ||'')}" placeholder="Search notes" aria-label="Search notes" style="width:150px">
+    ${ui.noteCat==='__quest'||ui.noteCat==='__lib'?'':`<input class="field" type="search" data-ui="noteQ" value="${esc(ui.noteQ||'')}" placeholder="Search notes" aria-label="Search notes" style="width:150px">
     <select class="field" data-ui="noteSort" aria-label="Sort notes">${[['manual','My order'],['new','Newest first'],['old','Oldest first'],['cat','By category'],['az','A–Z']].map(([k,l])=>`<option value="${k}" ${ui.noteSort===k?'selected':''}>${l}</option>`).join('')}</select>`}
     <button class="btn sm" data-act="cats-manage" aria-pressed="${ui.manageCats}">${ui.manageCats?'Done':'Edit categories'}</button>
   </div>
   ${ui.manageCats ? catManager() : ''}
-  ${ui.noteCat==='__quest' ? questNotes(qn)
+  ${ui.noteCat==='__lib' ? viewLibrary(true) : ui.noteCat==='__quest' ? questNotes(qn)
     : list.length ? `<div class="notes">${pinned.length?`<div class="notes-sec">${IC.pin} Pinned</div>${pinned.map(noteCard).join('')}${rest.length?'<div class="notes-sec">Other notes</div>':''}`:''}${rest.map(noteCard).join('')}</div>
       <p class="tip" style="margin-top:10px">Drag a note by its ⠿ handle to reorder it, drop it among the pinned ones to pin it. Click an image to open it large or remove it.</p>`
     : `<div class="empty"><b>${state.notes.length?'Nothing here':'No notes yet'}</b>${state.notes.length?'Try another category or clear the search.':'Write one above. Formatting, bullets and images all work, and notes can be pinned and dragged into your own order.'}</div>`}`;
@@ -2695,9 +2702,9 @@ const A_ = {
   'log-del': (el,id)=>{ const d=state.ui.reportDay||today(); snap(); const en=logEntry(id,d); if(!en) return; bumpDays(en.q,en.d,-en.ms); state.log=state.log.filter(x=>x!==en); commit(); toast(`${fmtHM(en.ms)} removed`, true); },
   'log-back': (el,id)=>{ const d=state.ui.reportDay||today(); snap(); const en=logEntry(id,d); if(!en) return; bumpDays(en.q,en.d,-en.ms); state.log=state.log.filter(x=>x!==en);
     const start=en.s||startOfIso(en.d)+9*3600e3; state.pending.push({ id:uid(), ms:en.ms, start, end:en.e||start+en.ms, day:en.d }); state.pending.sort((a,b)=>a.start-b.start); commit(); toast(`${fmtHM(en.ms)} is back in the harvest`, true); },
-  'stat-range': (el,r)=>{ state.ui.statRange=r; state.ui.statOff=0; commit(); },
+  'stat-range': (el,r)=>{ state.ui.statRange=r; state.ui.statOff=0; if(r==='day') state.ui.reportDay=''; commit(); },
   'stat-off': (el,n)=>{ state.ui.statOff=Math.min(0,(state.ui.statOff||0)+ +n); commit(); },
-  'stat-day': (el,d)=>{ state.ui.reportDay = d===today() ? '' : d; state.ui.tab='report'; commit(); },
+  'stat-day': (el,d)=>{ state.ui.reportDay = d===today() ? '' : d; state.ui.tab='time'; state.ui.statRange='day'; commit(); },
   'stat-proj': (el,id)=>{ state.ui.statProj = state.ui.statProj===id ? null : id; commit(); },
   'hab-new': ()=> habitEditor(null),
   'hab-edit': (el,id)=> habitEditor(HAB(id)),
@@ -2744,7 +2751,7 @@ const A_ = {
   'calc-clear': ()=>{ state.calc=['']; calcActive=0; commit(); },
   'calc-copy': async (el,kind)=>{ const t=calcTotal(); const txt = kind==='dec' ? (t/60).toFixed(2) : fmtMinS(t); if(await copyText(txt)) toast(`Copied ${txt}`); },
   /* notes */
-  'note-cat': (el,id)=>{ state.ui.noteCat=id; if(id && id!=='__quest') state.ui.noteCatNew=id; commit(); },
+  'note-cat': (el,id)=>{ state.ui.noteCat=id; if(id && id!=='__quest' && id!=='__lib') state.ui.noteCatNew=id; commit(); },
   'note-add': ()=>{ const h=state.ui.draft||''; if(!hasRich(h)){ toast('Write something first'); return; }
     const min=state.notes.reduce((a,n)=>Math.min(a,n.order),0);
     state.notes.push({ id:uid(), html:h, text:htmlToText(h), cat:state.ui.noteCatNew||'', pinned:false, order:min-1, createdAt:now(), updatedAt:now() });
@@ -4048,11 +4055,11 @@ function allLinks(){
   state.quests.forEach(q=>chips(q.note, `${questLabel(q)} (notes)`, ['open-quest',q.id]));
   return out;
 }
-function viewLibrary(){
+function viewLibrary(embedded){
   const ui=state.ui, q=(ui.libQ||'').toLowerCase(), f=ui.libF||'all';
   let ls=allLinks().filter(x=>(!q || (x.l.label+' '+x.path+' '+x.src).toLowerCase().includes(q)) && (f==='all' || (f==='missing' ? existMap.get(x.path)===false : x.kind===f)));
   const groups={}; ls.forEach(x=>(groups[x.src] ||= { go:x.go, items:[] }).items.push(x));
-  return `<div class="plate"><h2>Library</h2><span class="sub">every file and folder linked anywhere</span></div>
+  return `${embedded?'':'<div class="plate"><h2>Library</h2><span class="sub">every file and folder linked anywhere</span></div>'}
   <div class="toolbar"><input class="field search" type="search" data-ui="libQ" value="${esc(ui.libQ||'')}" placeholder="Search links, paths and where they live" aria-label="Search links">
     <div class="seg" role="group" aria-label="Filter">${[['all','All'],['file','Files'],['folder','Folders'],['missing','Missing']].map(([k,l])=>`<button data-act="lib-f" data-id="${k}" aria-pressed="${f===k}">${l}</button>`).join('')}</div></div>
   ${Object.keys(groups).length ? `<div class="lib">${Object.entries(groups).map(([src,g])=>`<div class="libg"><button class="libsrc" data-act="${g.go[0]}" data-id="${g.go[1]}" title="Go there">${esc(src)}</button>
@@ -4098,7 +4105,7 @@ function openUpdate(){
 
 /* ================= desktop (Tauri) ================= */
 // Everything here is inert in the browser; in the desktop app it adds file storage, tray, mini timer and more.
-const APP_VER='1.7.0';
+const APP_VER='1.7.1';
 const DESK = !!(window.__TAURI__ && window.__TAURI__.core);
 const tinvoke = (cmd,args,opts) => window.__TAURI__.core.invoke(cmd,args,opts);
 const fileName = p => String(p||'').split(/[\\/]/).pop();
