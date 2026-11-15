@@ -968,6 +968,7 @@ select.field option,select.catsel option{background:var(--card);color:var(--text
   <button class="btn sm soul" id="updBtn" data-act="upd-open" style="display:none">Update</button>
   <button class="ib desk-only" data-act="mini-open" id="miniBtn" aria-label="Mini timer" title="Mini timer, always on top"></button>
   <button class="btn sm" data-act="undo" id="undoBtn" disabled title="Undo (Ctrl+Z)">Undo</button>
+  <button class="btn sm" data-act="redo" id="redoBtn" disabled title="Redo (Ctrl+Alt+Z)">Redo</button>
   <button class="ib" data-act="settings" aria-label="Settings" title="Settings" id="gear"></button>
 </header>
 
@@ -991,6 +992,7 @@ select.field option,select.catsel option{background:var(--card);color:var(--text
 <div class="toast" id="toast" role="status"><span id="toastMsg"></span><button id="toastUndo" data-act="undo">Undo</button></div>
 <input type="file" id="importFile" accept="application/json,.json" hidden>
 <input type="file" id="imgFile" accept="image/*" multiple hidden>
+<input type="file" id="mergeFile" accept="application/json,.json" hidden>
 <input type="file" id="tileFile" accept="image/png,image/gif,image/webp" multiple hidden>
 <input type="file" id="bdFile" accept="image/*" multiple hidden>
 <input type="file" id="qFile" accept=".txt,text/plain" hidden>
@@ -1187,11 +1189,26 @@ async function push(){
 })();
 
 /* undo: one level, for destructive or bulk actions */
-const UNDO_MAX=5; let undoStack=[];
-function snap(){ undoStack.push(JSON.stringify(state)); if(undoStack.length>UNDO_MAX) undoStack.shift(); updUndo(); }
-function updUndo(){ const b=$('#undoBtn'); if(!b) return; b.disabled=!undoStack.length; b.textContent = undoStack.length>1 ? `Undo · ${undoStack.length}` : 'Undo'; b.title=`Undo (Ctrl+Z), ${undoStack.length} of ${UNDO_MAX} steps saved`; }
-function undo(){ if(!undoStack.length) return; const timer=state.timer, run=state.sess?.run; state=normalize(JSON.parse(undoStack.pop())); state.timer=timer; if(run) state.sess.run=run;
-  updUndo(); hideToast(); commit(); toast(undoStack.length?`Undone, ${undoStack.length} more step${undoStack.length>1?'s':''} available`:'Undone'); }
+/* undo / redo: every action that changes data is a step; Ctrl+Z undoes, Ctrl+Alt+Z (or Ctrl+Shift+Z, Ctrl+Y) redoes */
+let undoStack=[], redoStack=[], autoSnap=null;
+// what counts as "data": everything except view settings and the running timers
+const dataJSON = () => JSON.stringify(state, (k,v)=> k==='ui'||k==='timer'||k==='run'||k==='updatedAt'||k==='dayTimed' ? undefined : v);
+const undoCap = () => { const sz=(undoStack[undoStack.length-1]?.json.length)||JSON.stringify(state).length; return clamp(Math.floor(80e6/Math.max(1,sz)),3,40); };
+function pushUndo(json, label){ undoStack.push({ json, label:label||'last change' }); while(undoStack.length>undoCap()) undoStack.shift(); redoStack=[]; updUndo(); }
+function snap(label){ if(autoSnap){ if(label) autoSnap.label=label; return; } pushUndo(JSON.stringify(state), label); }
+function updUndo(){ const u=$('#undoBtn'), r=$('#redoBtn'); if(u){ u.disabled=!undoStack.length; u.textContent = undoStack.length>1 ? `Undo · ${undoStack.length}` : 'Undo'; u.title = undoStack.length ? `Undo: ${undoStack[undoStack.length-1].label} (Ctrl+Z)` : 'Nothing to undo'; }
+  if(r){ r.disabled=!redoStack.length; r.title = redoStack.length ? `Redo: ${redoStack[redoStack.length-1].label} (Ctrl+Alt+Z)` : 'Nothing to redo'; } }
+function restoreFrom(json){ const timer=state.timer, run=state.sess?.run, ui=state.ui; state=normalize(JSON.parse(json)); state.timer=timer; if(run) state.sess.run=run; state.ui=ui; }
+function undo(){ if(!undoStack.length){ toast('Nothing to undo'); return; } const st=undoStack.pop(); redoStack.push({ json:JSON.stringify(state), label:st.label }); restoreFrom(st.json); updUndo(); hideToast(); commit(); toast(`Undone: ${st.label}. Ctrl+Alt+Z brings it back`); }
+function redo(){ if(!redoStack.length){ toast('Nothing to redo'); return; } const st=redoStack.pop(); undoStack.push({ json:JSON.stringify(state), label:st.label }); restoreFrom(st.json); updUndo(); hideToast(); commit(); toast(`Redone: ${st.label}`); }
+// run an action, and if it changed any data, make it one undo step
+function tracked(label, fn){
+  if(autoSnap){ return fn(); }
+  const before=JSON.stringify(state), beforeData=dataJSON(); autoSnap={ label }; let r;
+  try{ r=fn(); } finally { const a=autoSnap; autoSnap=null; if(dataJSON()!==beforeData){ undoStack.push({ json:before, label:a.label||label }); while(undoStack.length>undoCap()) undoStack.shift(); redoStack=[]; updUndo(); } }
+  return r;
+}
+const actLabel = (el, act) => { const t=(el?.getAttribute?.('aria-label') || el?.title || el?.textContent || '').replace(/\s+/g,' ').trim(); return t && t.length<=40 ? t : act.replace(/-/g,' '); };
 
 /* ================= domain ================= */
 const today = () => isoDay();
@@ -2715,6 +2732,7 @@ const A_ = {
   'hab-del': (el,id)=>{ if(!arm(el,'Delete?')) return; snap(); state.habits=state.habits.filter(h=>h.id!==id); state.ui.habitOpen=null; commit(); toast('Habit deleted', true); },
   'hab-tap': (el,id,d)=>{ const h=HAB(id); if(!h) return; if(h.type==='num'){ state.ui.habEdit=id+'|'+d; commit(); const i=document.querySelector(`[data-habnum="${id}|${d}"]`); i?.focus(); i?.select(); return; }
     h.log ||= {}; const v=h.log[d]; if(v===1) h.log[d]=0; else h.log[d]=1; save(); renderBoard(); checkAch(); },
+  'merge-notes': ()=> $('#mergeFile').click(),
   'hide-done': ()=>{ state.ui.hideDone=!state.ui.hideDone; commit(); },
   crypt: ()=>{ state.ui.crypt=!state.ui.crypt; commit(); },
   'p-collapse': (el,id)=>{ const p=P(id); p.collapsed=!p.collapsed; commit(); },
@@ -2789,7 +2807,7 @@ const A_ = {
   'goal-filter': (el,id)=>{ state.ui.goalIcon=id; commit(); },
   'goal-del': (el,id)=>{ const g=G(id); snap(); state.goals=state.goals.filter(x=>x!==g); commit(); toast('Campaign deleted', true); },
   /* menu */
-  undo, settings: openSettings, export: doExport, import: ()=>$('#importFile').click(),
+  undo, redo, settings: openSettings, export: doExport, import: ()=>$('#importFile').click(),
   demo: ()=>{ snap(); loadDemo(); $('#dlg').open && $('#dlg').close(); commit(); },
   wipe: (el)=>{ if(!arm(el,'Click again to erase everything')) return; snap(); const t=state.timer; state=fresh(); state.timer=t; A=null; $('#dlg').close(); commit(); toast('Everything erased', true); },
   'dlg-close': ()=>$('#dlg').close()
@@ -2825,13 +2843,13 @@ const FORMS = {
 document.addEventListener('click', e=>{
   const el=e.target.closest('[data-act]'); if(!el) return;
   if(el.dataset.act==='noop') return; // let links open
-  const fn=A_[el.dataset.act]||DESK_ACTIONS[el.dataset.act]; if(fn){ e.preventDefault(); fn(el, el.dataset.id, el.dataset.sub, e); }
+  const act=el.dataset.act, fn=A_[act]||DESK_ACTIONS[act]; if(fn){ e.preventDefault(); if(act==='undo'||act==='redo') return fn(); tracked(actLabel(el,act), ()=>fn(el, el.dataset.id, el.dataset.sub, e)); }
 });
 document.addEventListener('click', e=>{ const dl=$('#dlg'); if(!dl.open || e.target!==dl) return; const r=dl.getBoundingClientRect();
   if(e.clientX<r.left || e.clientX>r.right || e.clientY<r.top || e.clientY>r.bottom) dl.close(); });
 document.addEventListener('click', e=>{ if(document.body.classList.contains('harvest-pop') && !e.target.closest?.('#harvest,.hbadge')){ document.body.classList.remove('harvest-pop'); renderPill(); } });
 document.addEventListener('contextmenu', e=>{ const b=e.target.closest?.('[data-act="hab-tap"]'); if(!b) return; e.preventDefault(); const h=HAB(b.dataset.id); if(!h) return; h.log ||= {}; h.log[b.dataset.sub] = h.log[b.dataset.sub]===-1 ? 0 : -1; save(); renderBoard(); });
-document.addEventListener('submit', e=>{ e.preventDefault(); FORMS[e.target.dataset.form]?.(e.target); });
+document.addEventListener('submit', e=>{ e.preventDefault(); const f=e.target, fn=FORMS[f.dataset.form]; if(fn) tracked((f.querySelector('button:not([type=button])')?.textContent||f.dataset.form).trim(), ()=>fn(f)); });
 document.addEventListener('focusin', e=>{ const c=e.target.dataset?.calc; if(c!==undefined){ calcActive=+c; document.querySelectorAll('.crow').forEach((r,i)=>r.classList.toggle('active',i===calcActive)); } });
 
 function applyField(el){
@@ -2845,6 +2863,9 @@ function applyField(el){
   if(f==='jira'){ v=v.trim(); if(v && !/^https?:\/\//i.test(v)) v='https://'+v; }
   o[f]=v;
 }
+let typingBefore=null;
+document.addEventListener('focusin', e=>{ const t=e.target; if(t.classList?.contains('rich') || /^(INPUT|TEXTAREA)$/.test(t.tagName)) typingBefore={ json:JSON.stringify(state), data:dataJSON(), el:t }; });
+document.addEventListener('input', e=>{ if(typingBefore && typingBefore.el===e.target){ const tb=typingBefore; typingBefore=null; setTimeout(()=>{ if(dataJSON()!==tb.data){ undoStack.push({ json:tb.json, label:'typing' }); while(undoStack.length>undoCap()) undoStack.shift(); redoStack=[]; updUndo(); } },0); } }, true);
 document.addEventListener('input', e=>{
   const el=e.target, d=el.dataset;
   if(el.classList?.contains('rich')){ if(e.inputType==='insertParagraph') todoAfterEnter(el); richChanged(el); return; }
@@ -2870,7 +2891,8 @@ document.addEventListener('input', e=>{
   if(d.k){ applyField(el); save(); if(el.classList.contains('note-text')) autosize(el);
     if(el.type==='color'){ const b=document.querySelector(`[data-goal="${d.id}"] .bar`); b&&b.style.setProperty('--fill',el.value); } }
 });
-document.addEventListener('change', e=>{
+document.addEventListener('change', e=>tracked('edit', ()=>onChange(e)));
+function onChange(e){
   const el=e.target, d=el.dataset;
   if(d.ui){ state.ui[d.ui]=el.value; softCommit(); return; }
   if(d.passign!==undefined){ const i=+d.passign; A.assign[i]=el.value; A.active=i; renderHarvest(); return; }
@@ -2918,7 +2940,7 @@ document.addEventListener('change', e=>{
   if(d.catEmoji){ const c=CAT(d.catEmoji); if(c){ c.emoji=el.value; softCommit(); } return; }
   if(d.catName || d.calc!==undefined || d.note) { save(); return; }
   if(d.k){ applyField(el); if(d.f==='note') save(); else softCommit(); }
-});
+}
 // A field's change event fires on blur, i.e. while the mouse is already pressing the next button.
 // Re-rendering then would swallow that click, so we wait until the click has been delivered.
 let pDown=false, pendingCommit=false;
@@ -2941,7 +2963,8 @@ document.addEventListener('keydown', e=>{
   }
   if(e.key==='Enter' && (e.ctrlKey||e.metaKey) && ae?.closest('[data-form="note-add"]')){ e.preventDefault(); ae.closest('form').requestSubmit(); return; }
   if(e.key==='Enter' && ae?.dataset.calc!==undefined){ e.preventDefault(); const i=+ae.dataset.calc; state.calc.splice(i+1,0,''); calcActive=i+1; commit(); document.querySelector(`[data-calc="${i+1}"]`)?.focus(); return; }
-  if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='z' && !typing){ e.preventDefault(); undo(); return; }
+  if((e.ctrlKey||e.metaKey) && !typing && ((e.altKey && e.code==='KeyZ') || (e.shiftKey && e.code==='KeyZ') || e.code==='KeyY')){ e.preventDefault(); redo(); return; }
+  if((e.ctrlKey||e.metaKey) && !e.altKey && !e.shiftKey && e.code==='KeyZ' && !typing){ e.preventDefault(); undo(); return; }
   if(e.key==='Enter' && ae?.dataset?.linkpaste!==undefined){ e.preventDefault(); ae.blur(); return; }
   if(e.key==='Enter' && (ae?.dataset?.lname!==undefined || ae?.dataset?.stepedit!==undefined || ae?.dataset?.rootpath!==undefined || ae?.dataset?.rootname!==undefined)){ e.preventDefault(); ae.blur(); return; }
   if(e.key==='Escape' && ae?.dataset?.stepedit!==undefined){ e.preventDefault(); state.ui.stepEdit=null; ae.value=''; commit(); return; }
@@ -3019,6 +3042,12 @@ async function insertImages(files, ed, range){
   }
   hideToast();
 }
+$('#mergeFile').addEventListener('change', e=>{ const f=e.target.files[0]; e.target.value=''; if(!f) return; const r=new FileReader();
+  r.onload=()=>{ try{ const b=normalize(JSON.parse(r.result)), have=new Set(state.notes.map(n=>n.id)), add=b.notes.filter(n=>!have.has(n.id)); let qn=0;
+      tracked('recover notes', ()=>{ add.forEach(n=>state.notes.push(n)); b.cats.forEach(c=>{ if(!state.cats.some(x=>x.id===c.id)) state.cats.push(c); }); b.quests.forEach(bq=>{ const q=Q(bq.id); if(q && !hasRich(q.note) && hasRich(bq.note)){ q.note=bq.note; qn++; } }); });
+      commit(); toast(add.length||qn ? `Recovered ${add.length} note${add.length===1?'':'s'}${qn?` and ${qn} quest note${qn>1?'s':''}`:''}` : 'That backup has no notes you’re missing'); }
+    catch{ toast('That file is not a Taskromancer backup'); } };
+  r.readAsText(f); });
 $('#tileFile').addEventListener('change', e=>{ const f=[...e.target.files]; e.target.value=''; if(f.length) addTiles(f); });
 $('#bdFile').addEventListener('change', e=>{ const f=[...e.target.files]; e.target.value=''; if(f.length) addBoardImages(f); });
 $('#qFile').addEventListener('change', async e=>{ const f=e.target.files[0]; e.target.value=''; if(!f) return; const l=state.quotes.lists.find(x=>x.id===state.ui.qEdit); if(!l) return;
@@ -3174,7 +3203,8 @@ document.addEventListener('dragend', ()=>{ dragging=null; clearHi(); document.qu
 document.addEventListener('dragover', e=>{ const t=dropTarget(e.target); clearHi(); if(t){ e.preventDefault(); e.dataTransfer.dropEffect = t.type==='give'||t.type==='strip'||t.type==='chunk' ? 'copy' : 'move'; if(t.type==='note'||t.type==='tab'){ const r=t.el.getBoundingClientRect(); t.el.classList.add(e.clientX<r.left+r.width/2?'drop-before':'drop-after'); }
   else if(t.type==='deck'||t.type==='step'||t.type==='qsort'||t.type==='hsort'||t.type==='psort'){ const r=t.el.getBoundingClientRect(); t.el.classList.add(e.clientY<r.top+r.height/2?'drop-above':'drop-below'); } else t.el.classList.add('drop-hi'); }
   else if(!dragging && e.dataTransfer?.types?.includes('Files') && e.target.closest?.('.rich')) e.preventDefault(); });
-document.addEventListener('drop', e=>{
+document.addEventListener('drop', e=>tracked('move', ()=>onDrop(e)));
+function onDrop(e){
   if(!dragging){ const ed=e.target.closest?.('.rich'); const files=[...(e.dataTransfer?.files||[])].filter(f=>f.type.startsWith('image/'));
     if(ed && files.length){ e.preventDefault(); const r=document.caretRangeFromPoint?.(e.clientX,e.clientY); insertImages(files, ed, r && ed.contains(r.startContainer) ? r : null); } return; }
   const t=dropTarget(e.target); if(!t) return; e.preventDefault(); const {id}=dragging; clearHi();
@@ -3198,7 +3228,7 @@ document.addEventListener('drop', e=>{
   else if(t.type==='step'){ const g=G(t.gid), r=t.el.getBoundingClientRect(), it=g.items.find(i=>i.id===id); g.items.splice(g.items.indexOf(it),1); g.items.splice(g.items.indexOf(g.items.find(i=>i.id===t.id))+(e.clientY<r.top+r.height/2?0:1),0,it); commit(); }
   else if(t.type==='panel'){ const o=state.ui.leftOrder||['ritual','harvest']; state.ui.leftOrder=[...o].reverse(); commit(); }
   dragging=null;
-});
+}
 
 /* ================= settings / backup ================= */
 function openSettings(){
@@ -3218,13 +3248,14 @@ function openSettings(){
     <div class="dlg-row">
       <button class="btn sm" data-act="export">Save backup (JSON)</button>
       <button class="btn sm" data-act="import">Load backup…</button>
+      <button class="btn sm" data-act="merge-notes" title="Bring back notes from a backup file, keeping everything you have now">Recover notes from a backup…</button>
       <button class="btn sm" data-act="ach-open">🏆 Achievements</button>
       <button class="btn sm" data-act="demo">Load demo data</button>
       <button class="btn sm danger" data-act="wipe">${IC.trash}Erase everything</button>
     </div>
     ${desktopSettings()}
     <h3 class="dh">Keys</h3>
-    <div class="keys"><kbd>Space</kbd><span>Play / pause the timer on the open tab</span><kbd>C</kbd><span>Cut, the timer keeps going from zero</span><kbd>S</kbd><span>Stop, harvest and halt</span><kbd>A</kbd><span>Split all harvested time</span><kbd>R</kbd><span>Roll, on the Randomizer tab</span><kbd>?</kbd><span>On Boards: the ? button lists canvas controls</span><kbd>Esc</kbd><span>Close the splitter or a menu</span><kbd>Ctrl Z</kbd><span>Undo, up to 5 steps</span></div>
+    <div class="keys"><kbd>Space</kbd><span>Play / pause the timer on the open tab</span><kbd>C</kbd><span>Cut, the timer keeps going from zero</span><kbd>S</kbd><span>Stop, harvest and halt</span><kbd>A</kbd><span>Split all harvested time</span><kbd>R</kbd><span>Roll, on the Randomizer tab</span><kbd>?</kbd><span>On Boards: the ? button lists canvas controls</span><kbd>Esc</kbd><span>Close the splitter or a menu</span><kbd>Ctrl Z</kbd><span>Undo the last change</span><kbd>Ctrl Alt Z</kbd><span>Redo (Ctrl+Shift+Z and Ctrl+Y work too)</span></div>
     <div class="dlg-foot"><span class="sum">Taskromancer ${APP_VER}${DESK?', desktop':''}</span><button class="btn" data-act="dlg-close">Close</button></div>`;
   if(!$('#dlg').open) $('#dlg').showModal();
 }
@@ -4105,14 +4136,14 @@ function openUpdate(){
 
 /* ================= desktop (Tauri) ================= */
 // Everything here is inert in the browser; in the desktop app it adds file storage, tray, mini timer and more.
-const APP_VER='1.7.1';
+const APP_VER='1.8.0';
 const DESK = !!(window.__TAURI__ && window.__TAURI__.core);
 const tinvoke = (cmd,args,opts) => window.__TAURI__.core.invoke(cmd,args,opts);
 const fileName = p => String(p||'').split(/[\\/]/).pop();
 let deskLoaded=false, deskT=null, closeRemember=false, curImg=null, lastMini='';
 function deskSave(immediate){
   if(!DESK || !deskLoaded) return Promise.resolve(); clearTimeout(deskT);
-  const run=()=>tinvoke('save_state',{ json:JSON.stringify(state), day:isoDay() }).then(()=>setSync('Saved to disk')).catch(e=>setSync('Could not save: '+e));
+  const run=()=>tinvoke('save_state',{ json:JSON.stringify(state), day:isoDay(), hour:isoDay()+'-'+pad(new Date().getHours()) }).then(()=>setSync('Saved to disk')).catch(e=>setSync('Could not save: '+e));
   if(immediate) return run(); deskT=setTimeout(run,700); return Promise.resolve();
 }
 async function deskQuit(){ clearTimeout(deskT); try{ await deskSave(true); }catch{} tinvoke('quit_app'); }
@@ -4150,7 +4181,7 @@ function desktopSettings(){
     <div class="sflags"><button class="sflag" data-act="desk-autostart" aria-pressed="${!!ui.autostart}"><span class="box ${ui.autostart?'on':''}">${PX.check}</span>Start Taskromancer when Windows starts</button></div>
     <div class="toolbar" style="margin:10px 0">When you close the window<div class="seg" role="group" aria-label="When you close the window">${[['ask','Ask'],['tray','Minimize to tray'],['quit','Quit']].map(([k,l])=>`<button data-act="close-action" data-id="${k}" aria-pressed="${ca===k}">${l}</button>`).join('')}</div></div>
     <div class="dlg-row"><button class="btn sm" data-act="upd-check">Check for updates</button><button class="btn sm" data-act="mini-open">Open mini timer</button><button class="btn sm" data-act="fullscreen">Full screen (F11)</button><button class="btn sm" data-act="data-folder">Open data folder</button></div>
-    <p class="hint" style="margin-top:8px">Your data is saved to a file on this computer, with a backup for each of the last 14 days in the data folder.</p>`;
+    <p class="hint" style="margin-top:8px">Your data is saved to a file on this computer. The data folder keeps a backup for every hour of the last two days and for each of the last 14 days.</p>`;
 }
 function pushMini(){
   if(!DESK || BOARDWIN) return; const r=state.sess.run, th=TH(), f=state.focus&&Q(state.focus);

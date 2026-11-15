@@ -68,9 +68,24 @@ fn load_state(app: AppHandle) -> Result<Option<String>, String> {
     }
 }
 
-/// Writes the state atomically and keeps one backup per day for the last two weeks.
+/// Keeps only the newest `keep` files whose names start with `prefix`.
+fn prune(dir: &Path, prefix: &str, keep: usize) {
+    if let Ok(rd) = fs::read_dir(dir) {
+        let mut files: Vec<PathBuf> = rd
+            .filter_map(|e| e.ok().map(|e| e.path()))
+            .filter(|p| p.file_name().and_then(|n| n.to_str()).map(|n| n.starts_with(prefix) && n.ends_with(".json")).unwrap_or(false))
+            .collect();
+        files.sort();
+        while files.len() > keep {
+            let old = files.remove(0);
+            let _ = fs::remove_file(old);
+        }
+    }
+}
+
+/// Writes the state atomically and keeps backups: one per hour for two days, one per day for two weeks.
 #[tauri::command]
-fn save_state(app: AppHandle, json: String, day: String) -> Result<(), String> {
+fn save_state(app: AppHandle, json: String, day: String, hour: Option<String>) -> Result<(), String> {
     let dir = data_dir(&app)?;
     let tmp = dir.join("data.json.tmp");
     fs::write(&tmp, &json).map_err(err)?;
@@ -78,20 +93,16 @@ fn save_state(app: AppHandle, json: String, day: String) -> Result<(), String> {
 
     let backups = dir.join("backups");
     fs::create_dir_all(&backups).map_err(err)?;
-    let safe_day: String = day.chars().filter(|c| c.is_ascii_digit() || *c == '-').collect();
-    if !safe_day.is_empty() {
-        fs::write(backups.join(format!("data-{safe_day}.json")), &json).map_err(err)?;
+    let clean = |s: &str| -> String { s.chars().filter(|c| c.is_ascii_digit() || *c == '-').collect() };
+    let d = clean(&day);
+    if !d.is_empty() {
+        fs::write(backups.join(format!("data-{d}.json")), &json).map_err(err)?;
     }
-    let mut files: Vec<PathBuf> = fs::read_dir(&backups)
-        .map_err(err)?
-        .filter_map(|e| e.ok().map(|e| e.path()))
-        .filter(|p| p.extension().map(|x| x == "json").unwrap_or(false))
-        .collect();
-    files.sort();
-    while files.len() > BACKUPS_KEPT {
-        let old = files.remove(0);
-        let _ = fs::remove_file(old);
+    if let Some(h) = hour.map(|h| clean(&h)).filter(|h| !h.is_empty()) {
+        fs::write(backups.join(format!("hour-{h}.json")), &json).map_err(err)?;
     }
+    prune(&backups, "data-", BACKUPS_KEPT);
+    prune(&backups, "hour-", 48);
     Ok(())
 }
 
