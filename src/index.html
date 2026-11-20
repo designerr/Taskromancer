@@ -436,7 +436,14 @@ dialog h2{font:500 20px var(--f-px);margin:0;color:var(--bone)}
 .mp-panel .seg{border-color:#5a4024;box-shadow:none}
 .mp-panel .seg button{color:#5a4024}
 .mp-panel .seg button[aria-pressed="true"]{background:#d9c79e;color:#3a2a1a}
-.nb-ter img{width:100%;height:100%;object-fit:contain;image-rendering:pixelated}
+.nb-ter button,.nb-ter .tterr{min-width:0;min-height:0;overflow:hidden}
+.nb-ter img{display:block;width:100%;height:100%;max-height:34px;object-fit:contain;image-rendering:pixelated}
+.nb-ter .tterr{position:relative;display:block;overflow:visible}
+.nb-ter .tterr>button[data-act=hex-ter]{width:100%;box-sizing:border-box;image-rendering:pixelated}
+.nb-ter .tx{position:absolute;top:-6px;right:-6px;width:18px;height:18px;display:none;place-items:center;background:#e9dcbc;border:1px solid #5a4024;color:#5a4024;padding:0}
+.nb-ter .tx svg{width:10px;height:10px}
+.nb-ter .tterr:hover .tx,.nb-ter .tx:focus-visible{display:grid}
+.tc-del{align-self:flex-start;margin-bottom:4px}
 .tilegrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
 .tilecard{display:flex;flex-direction:column;gap:4px;padding:8px;background:var(--card);border:1px solid var(--edge)}
 .tilecard small{color:var(--dim);font-family:var(--f-num)}
@@ -1108,7 +1115,7 @@ function fmtEst(min){ if(!min) return ''; const h=Math.floor(min/60), m=min%60; 
 
 /* ================= state ================= */
 const LS = 'taskromancer-v1';
-const ICONS = ['💀','🦴','🕯️','🪦','📜','⚗️','🗡️','🏰','🐉','🔮','💰','🌑','🧪','🪓','👑','🌲'];
+const ICONS = ['💀','🦴','🕯️','⚰️','📜','⚗️','🗡️','🏰','🐉','🔮','💰','🌑','🧪','🔨','👑','🌲'];
 const SWATCHES = ['#5c6273','#3b6fd6','#7c5ce0','#c44f9a','#1fa08d','#d49a2f','#c94444','#3ea85d'];
 const QCOL = { red:'#ff8a85', orange:'#ffb36e', yellow:'#efd36a', green:'#82dc95', teal:'#66d7c7', blue:'#8ab8ff', purple:'#bba5ff', pink:'#ff9ad5', bone:'#d9d4c3' };
 const EMO = ['⚔️','🛡️','📜','🎨','🖌️','🧪','🔮','💀','🐉','🏰','🗝️','💰','🔥','⚡','🌙','⭐','🐛','🛠️','📈','✉️','📞','🎯','🧠','❤️'];
@@ -2702,6 +2709,7 @@ const A_ = {
   'hex-del': (el,id)=>{ const m=MP(); if(!m) return; if(m.hexes.length<=1){ toast('A map needs at least one region'); return; } snap(); m.hexes=m.hexes.filter(x=>x.id!==id); state.ui.mapHex=null; commit(); toast('Region removed, its quests stay on the board', true); },
   'mp-tiles': ()=>{ ensureTileUrls().then(openTiles); },
   'tiles-add': ()=> $('#tileFile').click(),
+  'tile-del-all': (el,k)=>{ if(!state.tiles?.[k]) return; if(!arm(el,'Remove?')) return; delete state.tiles[k]; state.maps.forEach(m=>m.hexes.forEach(h=>{ if(h.terrain===k) h.terrain=TERRAIN[k]?k:'plains'; })); commit(); if($('#dlg').open && $('#dlg').dataset.mode==='tiles') openTiles(); toast(`Tile “${k}” removed`, true); },
   'tile-del': (el,k,i)=>{ snap(); const vs=state.tiles[k]; if(!vs) return; vs.splice(+i,1); if(!vs.length) delete state.tiles[k]; commit(); openTiles(); },
   'plan-tool': (el,t)=>{ state.ui.planTool=t; if(t!=='route' && state.ui.routeDraft) finishRoute(); else drawPlanBar(); save(); },
   'plan-col': (el,_,c)=>{ state.ui.planColor=c; const rt=MP()?.routes.find(r=>r.id===state.ui.routeDraft); if(rt) rt.color=c; drawAtlas(); save(); },
@@ -3648,7 +3656,7 @@ const TERRAIN = {
 };
 const HERO = pix(["..kkk..",".kSSSk.",".kSkSk.",".kSSSk.","..kAk..",".kAAAk.","kAAAAAk",".kA.Ak.",".kk.kk."],{ k:'#05060b', S:'#f2d0a4', A:'currentColor' });
 const FLAG = pix(["fff..","fffff","fff..","p....","p....","p...."],{ f:'currentColor', p:'#ddd' });
-const LOOT = ['💎','🪙','🪵','⛏️','🍎','📜','🗝️','⭐','🧪','🦴'];
+const LOOT = ['💎','💰','🌲','⛏️','🍎','📜','🗝️','⭐','🧪','🦴'];
 const MARKS = { pin:'📍', x:'✖', flag:'🚩', star:'⭐', skull:'💀', chest:'🧰' };
 const ROUTE_COLS = ['#ff6b5b','#ffd23f','#6ee7a8','#5bc0ff','#c38bff','#ffffff'];
 const MP = () => state.maps.find(m=>m.id===state.ui.mapId) || state.maps[0] || null;
@@ -3677,7 +3685,8 @@ function tileFor(h){ const vs=(state.tiles||{})[h.terrain]; if(!vs||!vs.length) 
 async function addTiles(files){
   files=[...files].filter(f=>/png|gif|webp/i.test(f.type)); if(!files.length){ toast('Pick PNG tiles'); return; } snap(); let n=0; state.tiles ||= {};
   for(const f of files){ try{
-    const key=f.name.toLowerCase().replace(/\.[^.]+$/,'').replace(/[_\- ]\d+$/,'').replace(/[^a-z0-9_-]/g,'') || 'tile'; const bmp=await createImageBitmap(f); const t={ w:bmp.width, h:bmp.height, name:f.name };
+    const full=f.name.toLowerCase().replace(/\.[^.]+$/,'').replace(/[^a-z0-9_-]+/g,'_').replace(/^_+|_+$/g,'') || 'tile', base=full.replace(/[_-]\d+$/,'');
+    const key = base!==full && (TERRAIN[base] || state.tiles[base]) ? base : full; const bmp=await createImageBitmap(f); const t={ w:bmp.width, h:bmp.height, name:f.name };
     if(DESK) t.file=await tinvoke('save_board_image', new Uint8Array(await f.arrayBuffer()), { headers:{ ext:'png' } });
     else t.src=await new Promise(r=>{ const fr=new FileReader(); fr.onload=()=>r(fr.result); fr.readAsDataURL(f); });
     (state.tiles[key] ||= []).push(t); n++; }catch{ toast(`Could not read ${f.name}`); } }
@@ -3687,7 +3696,7 @@ function openTiles(){
   $('#dlg').dataset.mode='tiles'; const T_=state.tiles||{};
   $('#dlgBody').innerHTML=`<h2>Map tiles</h2><p class="hint" style="margin-top:6px">Add your own pixel tiles (PNG, footprint 56×64, canvas 56×88 or taller, see the hex kit). The file name picks the terrain: <b>forest.png</b> replaces Forest, <b>forest_2.png</b> adds a variant, <b>volcano.png</b> makes a new terrain.</p>
     <div class="dlg-row" style="margin-bottom:12px"><button class="btn soul" data-act="tiles-add">${IC.plus}Add PNG tiles…</button></div>
-    <div class="tilegrid">${terrainKeys().map(k=>{ const vs=T_[k]||[], ti=terrainInfo(k); return `<div class="tilecard"><b>${esc(ti.n)}</b><small>${k}</small><div class="tvars">${vs.map((v,i)=>`<span class="tvar"><img src="${esc(tileUrl.get(v.file||v.src)||'')}" alt="">${''}<button class="ib" data-act="tile-del" data-id="${k}" data-sub="${i}" aria-label="Remove variant">${IC.x}</button></span>`).join('') || `<span class="sub">built-in look</span>`}</div></div>`; }).join('')}</div>`;
+    <div class="tilegrid">${terrainKeys().map(k=>{ const vs=T_[k]||[], ti=terrainInfo(k); return `<div class="tilecard"><b>${esc(ti.n)}</b><small>${k}</small>${vs.length?`<button class="btn sm tc-del" data-act="tile-del-all" data-id="${k}">${IC.trash}${TERRAIN[k]?'Back to built-in':'Remove'}</button>`:''}<div class="tvars">${vs.map((v,i)=>`<span class="tvar"><img src="${esc(tileUrl.get(v.file||v.src)||'')}" alt="">${''}<button class="ib" data-act="tile-del" data-id="${k}" data-sub="${i}" aria-label="Remove variant">${IC.x}</button></span>`).join('') || `<span class="sub">built-in look</span>`}</div></div>`; }).join('')}</div>`;
   if(!$('#dlg').open) $('#dlg').showModal();
 }
 
@@ -3740,7 +3749,7 @@ function drawAtlas(){
   [...m.hexes].sort((a,b)=>a.r-b.r || a.q-b.q).forEach(h=>{
     const {x,y}=hexXY(h.q,h.r), ti=terrainInfo(h.terrain), st=hexState(h), fog=m.fog && st.total>0 && !st.started, sel=state.ui.mapHex===h.id, tile=tileFor(h);
     let art;
-    if(tile){ const w=tile.w*TS, ht=tile.h*TS, bottom=y+HH/2+TUNDER*TS; art=`<image href="${esc(tile.url)}" x="${(x-w/2).toFixed(1)}" y="${(bottom-ht).toFixed(1)}" width="${w}" height="${ht}" class="mp-img" preserveAspectRatio="none"/>`; }
+    if(tile){ const k=tile.w<=40?TS*2:TS, w=tile.w*k, ht=tile.h*k, bottom=y+HH/2+TUNDER*TS; art=`<image href="${esc(tile.url)}" x="${(x-w/2).toFixed(1)}" y="${(bottom-ht).toFixed(1)}" width="${w}" height="${ht}" class="mp-img" preserveAspectRatio="none"/>`; }
     else { const sp=ti.s, k=3.2; art=sp?`<polygon class="mp-fill" points="${hexPts(x,y)}" fill="${h.color||ti.c}"/><g transform="translate(${(x-Math.max(...sp.map(r=>r.length))*k/2).toFixed(1)} ${(y-sp.length*k/2-4).toFixed(1)}) scale(${k})" shape-rendering="crispEdges">${pix(sp,ti.p)}</g>`:`<polygon class="mp-fill" points="${hexPts(x,y)}" fill="${h.color||ti.c}"/>`; }
     tiles+=`<g class="mp-hex ${st.conquered?'won':''} ${fog?'fog':''} ${sel?'sel':''}" data-hex="${h.id}">${art}${tile&&h.color?`<polygon points="${hexPts(x,y)}" fill="${h.color}" fill-opacity=".28" style="pointer-events:none"/>`:''}<polygon class="mp-hit" points="${hexPts(x,y)}"/></g>`;
     over+=`<g class="mp-ov">
@@ -3803,9 +3812,10 @@ function drawMapPanel(){
     ${marks.length?`<div class="nb-marks">${marks.map(k=>`<div class="nb-mark"><span>${MARKS[k.kind]||'📍'}</span><input class="field" data-marknote="${k.id}" value="${esc(k.note||'')}" placeholder="Note" aria-label="Marker note"><button class="ib" data-act="mark-del" data-id="${k.id}" aria-label="Remove marker">${IC.x}</button></div>`).join('')}</div>`:''}
     <details class="nb-look" ${mapMode()==='build'?'open':''}><summary>Terrain, colour and icon</summary>
       <div class="nb-ter">${terrainKeys().map(k=>{ const v=terrainInfo(k), tv=(state.tiles||{})[k]?.[0], url=tv&&tileUrl.get(tv.file||tv.src);
-        return `<button data-act="hex-ter" data-id="${h.id}" data-sub="${k}" aria-pressed="${h.terrain===k}" title="${esc(v.n)}" style="background:${v.c}">${url?`<img src="${esc(url)}" alt="">`:v.s?`<svg viewBox="0 0 10 10" shape-rendering="crispEdges">${pix(v.s,v.p)}</svg>`:esc(v.n.slice(0,2))}</button>`; }).join('')}</div>
+        const btn=`<button data-act="hex-ter" data-id="${h.id}" data-sub="${k}" aria-pressed="${h.terrain===k}" title="${esc(v.n)}" style="background:${v.c}${url?`;background-image:url(&quot;${esc(url)}&quot;);background-size:contain;background-repeat:no-repeat;background-position:center`:''}">${url?'':v.s?`<svg viewBox="0 0 10 10" shape-rendering="crispEdges">${pix(v.s,v.p)}</svg>`:esc(v.n.slice(0,2))}</button>`;
+        return url ? `<span class="tterr">${btn}<button class="tx" data-act="tile-del-all" data-id="${k}" title="${TERRAIN[k]?'Use the built-in look again':'Remove this tile'}" aria-label="Remove tile">${IC.x}</button></span>` : btn; }).join('')}</div>
       <div class="swatches">${['',...Object.values(QCOL)].map(c=>`<button class="${c?'':'nocol'}" data-act="hex-col" data-id="${h.id}" data-sub="${c}" style="${c?`background:${c}`:''}" aria-pressed="${(h.color||'')===c}" aria-label="${c||'Terrain colour'}"></button>`).join('')}</div>
-      <div class="emos">${['','🏠','🏰','⛏️','💎','🪙','🪵','📚','🎨','⚔️','🛡️','🔥','🌙','⭐','💀','🐉','🗝️','🍄','⚓','🚀'].map(e=>`<button data-act="hex-emo" data-id="${h.id}" data-sub="${e}" aria-pressed="${(h.emoji||'')===e}">${e||'·'}</button>`).join('')}<input class="field emo-in" data-hexemo="${h.id}" value="${esc(h.emoji||'')}" placeholder="any" aria-label="Any emoji"></div>
+      <div class="emos">${['','🏠','🏰','⛏️','💎','💰','🌲','📚','🎨','⚔️','🛡️','🔥','🌙','⭐','💀','🐉','🗝️','🍄','⚓','🚀'].map(e=>`<button data-act="hex-emo" data-id="${h.id}" data-sub="${e}" aria-pressed="${(h.emoji||'')===e}">${e||'·'}</button>`).join('')}<input class="field emo-in" data-hexemo="${h.id}" value="${esc(h.emoji||'')}" placeholder="any" aria-label="Any emoji"></div>
     </details>
     <div class="nb-foot"><button class="btn sm danger" data-act="hex-del" data-id="${h.id}">${IC.trash}Remove region</button></div>`;
 }
@@ -4136,7 +4146,7 @@ function openUpdate(){
 
 /* ================= desktop (Tauri) ================= */
 // Everything here is inert in the browser; in the desktop app it adds file storage, tray, mini timer and more.
-const APP_VER='1.8.0';
+const APP_VER='1.8.1';
 const DESK = !!(window.__TAURI__ && window.__TAURI__.core);
 const tinvoke = (cmd,args,opts) => window.__TAURI__.core.invoke(cmd,args,opts);
 const fileName = p => String(p||'').split(/[\\/]/).pop();
