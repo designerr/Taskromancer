@@ -278,6 +278,41 @@ dialog h2{font:500 20px var(--f-px);margin:0;color:var(--bone)}
 .toast.show{display:flex}
 .toast button{font:500 14px var(--f-px);color:var(--soul)}
 
+/* ---------- v20: links, checklists, note width, ideas and notes on boards ---------- */
+.rich a[href]:not(.loc){color:var(--arcane);text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+.lpop{position:fixed;z-index:90;display:flex;align-items:center;gap:6px;padding:6px;background:var(--stone2);border:2px solid var(--abyss);box-shadow:inset 0 0 0 1px var(--edge-hi),0 10px 24px #000a;max-width:min(460px,92vw)}
+.lpop .field{width:260px;padding:5px 8px;font-size:13px}
+.lp-url{max-width:220px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;color:var(--arcane);text-decoration:underline;font-size:13px;padding:0 4px}
+.rb-web{font-size:13px}
+.rich .todo{display:block;position:relative;padding-left:23px;min-height:1.5em}
+.rich .cb{position:absolute;left:0;top:.18em;margin:0;width:15px;height:15px;box-sizing:border-box}
+.note-rs{position:absolute;top:8px;bottom:8px;right:-6px;width:10px;cursor:ew-resize;z-index:2}
+.note-rs::after{content:"";position:absolute;top:50%;left:4px;width:2px;height:28px;margin-top:-14px;background:var(--edge-hi);opacity:0;transition:opacity .15s}
+.note:hover .note-rs::after{opacity:1}
+.note.flash{box-shadow:inset 0 0 0 2px var(--soul)}
+.bd-edges{position:absolute;left:0;top:0;width:1px;height:1px;overflow:visible;pointer-events:none}
+.be{pointer-events:auto;cursor:pointer}
+.be-hit{fill:none;stroke:transparent;stroke-width:14}
+.be-l{fill:none;stroke:var(--muted);stroke-width:2.2;stroke-linecap:round}
+.be.sel .be-l{stroke:var(--soul);stroke-width:3.5}
+.be-tmp{fill:none;stroke:var(--soul);stroke-width:2;stroke-dasharray:6 5}
+.bnode{display:flex;align-items:center;justify-content:center;min-height:38px;padding:8px 12px;background:var(--nc);color:#f2f4f8;border:2px solid #0008;box-shadow:inset 0 0 0 1px #ffffff22;font:500 14px/1.35 var(--f-ui);text-align:center;box-sizing:border-box;cursor:default}
+.bnode.light{color:#2a2418}
+.bnode .bn-t{min-width:20px;white-space:pre-wrap;word-break:break-word;outline:none}
+.bnode.empty .bn-t:not([contenteditable="true"]):not([contenteditable="plaintext-only"])::before{content:"Idea";opacity:.45}
+.bnote{background:#f2ecdc;color:#2a2418;border:2px solid #5a4024;box-shadow:inset 0 0 0 1px #c9b48a;box-sizing:border-box;display:flex;flex-direction:column}
+.bnote-h{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:3px 4px 3px 8px;background:#e2d5b4;font-size:11.5px;color:#6a5034}
+.bnote-h .ib{width:22px;height:22px;color:#5a4024}
+.bnote .rich{padding:8px 10px;font-size:13.5px;color:#2a2418;min-height:30px;outline:none}
+.bnote .rich a[href]:not(.loc){color:#2f6fb0}
+.bnote.editing{box-shadow:0 0 0 2px var(--soul)}
+.bcon{position:absolute;left:100%;top:50%;width:calc(14px * var(--iz));height:calc(14px * var(--iz));margin-left:calc(8px * var(--iz));transform:translate(0,-50%);border-radius:50%;background:var(--soul);border:calc(2px * var(--iz)) solid #000;pointer-events:auto;cursor:crosshair}
+.bm-cols{display:flex;gap:4px;padding:4px 10px}
+.bm-cols button{width:20px;height:20px;border:2px solid var(--abyss);padding:0}
+.pn-list{display:flex;flex-direction:column;gap:4px;max-height:50vh;overflow:auto}
+.pn-item{display:flex;justify-content:space-between;gap:8px;padding:7px 10px;background:var(--card);border:1px solid var(--edge);text-align:left;font-size:13px}
+.pn-item:hover{border-color:var(--soul)}.pn-item small{color:var(--muted)}
+
 /* ---------- v19: time tab ---------- */
 .timebar{display:flex;justify-content:flex-start;margin:0 0 12px}
 
@@ -1090,10 +1125,14 @@ function sanitize(html){
     const tag=ch.tagName.toUpperCase();
     if(/^(SCRIPT|STYLE|IFRAME|OBJECT|EMBED|SVG|MATH|TEMPLATE|LINK|META)$/.test(tag)){ ch.remove(); return; }
     walk(ch);
-    if(!RICH_OK[tag] || (tag==='SPAN' && ch.getAttribute('class')!=='cb')){ ch.replaceWith(...ch.childNodes); return; }
+    if(tag==='SPAN' && ch.getAttribute('class')!=='cb'){ // browsers sometimes write bold/italic as styled spans: keep the formatting as tags
+      const st=(ch.getAttribute('style')||'').toLowerCase(), wrap=[]; if(/font-weight:\s*(bold|[6-9]00)/.test(st)) wrap.push('B'); if(/font-style:\s*italic/.test(st)) wrap.push('I'); if(/text-decoration[^;]*underline/.test(st)) wrap.push('U'); if(/line-through/.test(st)) wrap.push('S');
+      if(wrap.length){ let outer=null, inner=null; wrap.forEach(t=>{ const e2=doc.createElement(t); if(inner) inner.appendChild(e2); else outer=e2; inner=e2; }); inner.append(...ch.childNodes); ch.replaceWith(outer); return; }
+      ch.replaceWith(...ch.childNodes); return; }
+    if(!RICH_OK[tag]){ ch.replaceWith(...ch.childNodes); return; }
     [...ch.attributes].forEach(a=>{ const n=a.name.toLowerCase();
       if(tag==='IMG' && n==='src' && /^(\/_blob\/|data:image\/(png|jpe?g|gif|webp);|https:)/i.test(a.value)) return;
-      if(tag==='A' && n==='href' && /^https?:/i.test(a.value) && ch.getAttribute('class')!=='loc') return;
+      if(tag==='A' && n==='href' && /^(https?:|mailto:)/i.test(a.value) && ch.getAttribute('class')!=='loc') return;
       if(tag==='A' && ch.getAttribute('class')==='loc' && /^(class|data-kind|data-path|data-root|data-rel)$/.test(n)) return;
       if(tag==='SPAN' && (n==='class' || (n==='data-on' && /^[01]$/.test(a.value)))) return;
       if(tag==='DIV' && n==='class' && a.value==='todo') return;
@@ -1935,7 +1974,8 @@ function renderBoard(){
 // masonry: every card spans as many 6px grid rows as its height needs, so cards of any size pack without holes
 const masonryRO = typeof ResizeObserver!=='undefined' ? new ResizeObserver(es=>es.forEach(en=>layoutCard(en.target))) : null;
 function layoutCard(el){ const h=el.getBoundingClientRect().height; const span=`span ${Math.max(1,Math.ceil((h+10)/6))}`; if(el.style.gridRowEnd!==span) el.style.gridRowEnd=span; }
-function layoutNotes(){ masonryRO?.disconnect(); document.querySelectorAll('.notes>.note,.notes>.notes-sec').forEach(el=>{ layoutCard(el); masonryRO?.observe(el); }); }
+function layoutNotes(){ const g=document.querySelector('.notes'); if(g){ const cols=getComputedStyle(g).gridTemplateColumns.split(' ').length; g.querySelectorAll('.note[data-span]').forEach(c=>{ const sp=Math.min(cols,+c.dataset.span||1); c.style.gridColumn=sp>1?`span ${sp}`:''; }); }
+  masonryRO?.disconnect(); document.querySelectorAll('.notes>.note,.notes>.notes-sec').forEach(el=>{ layoutCard(el); masonryRO?.observe(el); }); }
 function autosize(el){ el.style.height='auto'; el.style.height=(el.scrollHeight+2)+'px'; }
 
 /* ---------- board ---------- */
@@ -2481,6 +2521,7 @@ function richBar(){
     .map(([c,l,t])=>`<button type="button" class="rb rb-${c}" data-act="rich" data-sub="${c}" title="${t}" aria-label="${t}" aria-pressed="false">${l}</button>`).join('')}
     <button type="button" class="rb" data-act="rich" data-sub="insertUnorderedList" title="Bullets (Ctrl+Shift+8)" aria-label="Bullets" aria-pressed="false">${IC.list}</button>
     <button type="button" class="rb" data-act="rich-todo" title="Checklist item (Ctrl+Shift+9)" aria-label="Checklist">${IC.todo}</button>
+    <button type="button" class="rb rb-web" data-act="rich-web" title="Turn the selected text into a web link (Ctrl+K)" aria-label="Web link">🌐</button>
     <button type="button" class="rb" data-act="rich-link" title="Link a file or folder" aria-label="Link a file or folder">${IC.link}</button>
     <button type="button" class="rb" data-act="rich-img" title="Add image (you can also paste or drop one)" aria-label="Add image">${IC.img}</button></div>`;
 }
@@ -2508,7 +2549,7 @@ function viewNotes(){
     : `<div class="empty"><b>${state.notes.length?'Nothing here':'No notes yet'}</b>${state.notes.length?'Try another category or clear the search.':'Write one above. Formatting, bullets and images all work, and notes can be pinned and dragged into your own order.'}</div>`}`;
 }
 function noteCard(n){
-  return `<div class="note ${n.pinned?'pinned':''}" data-nid="${n.id}"><div class="note-head">
+  return `<div class="note ${n.pinned?'pinned':''}" data-nid="${n.id}" data-span="${n.span||1}"><span class="note-rs" data-nrs="${n.id}" title="Drag to make the note wider or narrower"></span><div class="note-head">
     <span class="grip" draggable="true" data-drag="n:${n.id}" title="Drag to reorder" aria-label="Drag to reorder">⠿</span>
     <select class="catsel" data-note-cat="${n.id}" aria-label="Category">${state.cats.map(x=>`<option value="${x.id}" ${x.id===n.cat?'selected':''}>${x.emoji} ${esc(x.name)}</option>`).join('')}<option value="" ${!CAT(n.cat)?'selected':''}>No category</option></select>
     <span class="ndate">${fmtStamp(n.updatedAt||n.createdAt)}</span>
@@ -2688,6 +2729,11 @@ const A_ = {
   'upd-go': async ()=>{ $('#dlgBody').innerHTML='<h2>Updating…</h2><p class="hint" style="margin-top:6px">Downloading and installing. Taskromancer will start again by itself.</p>'; await deskSave(true); tinvoke('install_update').catch(e=>{ toast('Update failed: '+e); $('#dlg').close(); }); },
   'bd-new': ()=>{ snap(); newBoard(); BS.sel.clear(); BS.crop=null; $('#board').dataset.view=''; commit(); },
   'bd-add': ()=> $('#bdFile').click(),
+  'bd-node': ()=>{ const st=$('#bdStage').getBoundingClientRect(); addNode(bToWorld(st.left+st.width/2, st.top+st.height/2),''); },
+  'bd-note': (el)=>{ const st=$('#bdStage').getBoundingClientRect(), r=el.getBoundingClientRect(); BS.menuAt=bToWorld(st.left+st.width/2, st.top+st.height/2); closeBoardMenu();
+    const m=document.createElement('div'); m.className='bmenu'; m.innerHTML=`<button data-bm="note-new"><span>New note</span></button><button data-bm="note-place"><span>Place a note I already have…</span></button>`; document.body.appendChild(m); m.style.left=r.left+'px'; m.style.top=(r.bottom+4)+'px'; },
+  'bd-open-note': (el,id)=>{ const n=state.notes.find(x=>x.id===id); if(!n){ toast('That note was deleted'); return; } if(BOARDWIN){ tinvoke('show_main'); return; } state.ui.tab='notes'; state.ui.noteCat=''; state.ui.noteQ=''; commit(); setTimeout(()=>{ const c=document.querySelector(`.note[data-nid="${id}"]`); c?.scrollIntoView({ block:'center' }); c?.classList.add('flash'); setTimeout(()=>c?.classList.remove('flash'),1200); },60); },
+  'pn-place': (el,id)=>{ const at=BS.placeAt||{ x:0, y:0 }; $('#dlg').close(); addNoteCard(id, at); commit(); },
   'bd-fit': ()=> fitAll(),
   'bd-gray': ()=>{ const b=BB(); if(b){ b.gray=!b.gray; commit(); } },
   'bd-help': ()=> boardHelp(),
@@ -2796,6 +2842,7 @@ const A_ = {
   'mq-go': ()=> makeQuests(),
   'note-pin': (el,id)=>{ snap(); const n=state.notes.find(x=>x.id===id); n.pinned=!n.pinned; commit(); toast(n.pinned?'Pinned to the top':'Unpinned'); },
   rich: (el,_,cmd)=>{ const ed=el.closest('.rich-wrap').querySelector('.rich'); if(document.activeElement!==ed){ ed.focus(); caretToEnd(ed); } richCmd(ed,cmd); },
+  'rich-web': (el)=>{ linkFromSelection(el.closest('.rich-wrap').querySelector('.rich')); },
   'rich-todo': (el)=>{ const ed=el.closest('.rich-wrap').querySelector('.rich'); if(document.activeElement!==ed){ ed.focus(); caretToEnd(ed); } toggleTodo(ed); },
   'rich-img': (el)=>{ const ed=el.closest('.rich-wrap').querySelector('.rich'); imgTarget={ ed, range: selRangeIn(ed) }; $('#imgFile').click(); },
   'note-del': (el,id)=>{ closeMenu(); snap(); state.notes=state.notes.filter(n=>n.id!==id); commit(); toast('Note deleted', true); },
@@ -2876,7 +2923,7 @@ document.addEventListener('focusin', e=>{ const t=e.target; if(t.classList?.cont
 document.addEventListener('input', e=>{ if(typingBefore && typingBefore.el===e.target){ const tb=typingBefore; typingBefore=null; setTimeout(()=>{ if(dataJSON()!==tb.data){ undoStack.push({ json:tb.json, label:'typing' }); while(undoStack.length>undoCap()) undoStack.shift(); redoStack=[]; updUndo(); } },0); } }, true);
 document.addEventListener('input', e=>{
   const el=e.target, d=el.dataset;
-  if(el.classList?.contains('rich')){ if(e.inputType==='insertParagraph') todoAfterEnter(el); richChanged(el); return; }
+  if(el.classList?.contains('rich')){ if(e.inputType==='insertParagraph') todoAfterEnter(el); fixTodos(el); richChanged(el); return; }
   if(d.ui==='q'||d.ui==='noteQ'||d.ui==='libQ'){ state.ui[d.ui]=el.value; save(); const pos=el.selectionStart; renderBoard(); const s=document.querySelector(`[data-ui="${d.ui}"]`); s.focus(); s.setSelectionRange(pos,pos); return; }
   if(d.calc!==undefined){ state.calc[+d.calc]=el.value; save(); updateCalc(); return; }
   if(d.sess){ return; }
@@ -3325,6 +3372,8 @@ function boardTools(){
     <button class="btn sm" data-act="bd-new" title="New board">${IC.plus}</button>
     <select class="field bd-link" data-bdlink aria-label="Attach to">${opts}</select>
     <span style="flex:1"></span>
+    <button class="btn sm" data-act="bd-node" title="New idea for a mind map (N). Double-click empty space works too">${IC.plus}Idea</button>
+    <button class="btn sm" data-act="bd-note" title="Put a note on the board: a new one or one you already have">${IC.plus}Note</button>
     <button class="btn sm" data-act="bd-add" title="Add images from files">${IC.img}Add</button>
     <button class="btn sm" data-act="bd-fit" title="Fit everything (F)">Fit</button>
     <button class="btn sm" data-act="bd-gray" aria-pressed="${!!b.gray}" title="Grayscale view to check values (G)">B/W</button>
@@ -3344,13 +3393,24 @@ async function syncBoard(){
   const seen=new Set();
   for(const it of b.items){
     seen.add(it.id); let el=w.querySelector(`.bi[data-id="${it.id}"]`);
-    if(!el){ el=document.createElement('div'); el.className='bi'; el.dataset.id=it.id; el.innerHTML='<div class="bimg"><img draggable="false" alt=""></div>'; const src=await imgSrc(it); el.querySelector('img').src=src; }
+    if(!el){ el=document.createElement('div'); el.dataset.id=it.id;
+      if(it.type==='node'){ el.className='bi bnode'; el.innerHTML='<div class="bn-t"></div>'; }
+      else if(it.type==='note'){ el.className='bi bnote'; el.innerHTML=`<div class="bnote-h"><span class="bnote-c"></span><button class="ib" data-act="bd-open-note" data-id="${it.noteId}" title="Open in Notes" aria-label="Open in Notes">${IC.expand}</button></div><div class="rich bnote-r" contenteditable="false" data-rich="note:${it.noteId}"></div>`; }
+      else { el.className='bi'; el.innerHTML='<div class="bimg"><img draggable="false" alt=""></div>'; const src=await imgSrc(it); el.querySelector('img').src=src; } }
     w.appendChild(el); placeItem(el,it);
   }
   w.querySelectorAll('.bi').forEach(el=>{ if(!seen.has(el.dataset.id)) el.remove(); });
-  drawSel();
+  drawEdges(); drawSel();
 }
 function placeItem(el,it){
+  if(it.type==='node'||it.type==='note'){
+    Object.assign(el.style,{ left:(it.cx-it.w/2)+'px', top:(it.cy-it.h/2)+'px', width:it.w+'px', height:'', transform:`rotate(${it.rot||0}deg)`, opacity:it.op??1 }); el.classList.toggle('locked',!!it.locked);
+    if(it.type==='node'){ const col=it.color||NODE_COLS[0]; el.style.setProperty('--nc',col); el.classList.toggle('light', col==='#e9e4d8'); const t=el.firstChild; if(t.contentEditable!=='true' && t.contentEditable!=='plaintext-only' && t.textContent!==(it.text||'')) t.textContent=it.text||''; el.classList.toggle('empty',!it.text); }
+    else { const n=state.notes.find(x=>x.id===it.noteId), r=el.querySelector('.bnote-r'), c=el.querySelector('.bnote-c');
+      if(!n){ r.innerHTML='<p class="sub">This note was deleted.</p>'; c.textContent='Missing note'; }
+      else { const cat=CAT(n.cat); c.textContent=cat?`${cat.emoji} ${cat.name}`:'📝 Note'; if(r.contentEditable!=='true' && r.dataset.v!==String(n.updatedAt||n.createdAt)){ r.innerHTML=sanitize(n.html); r.dataset.v=String(n.updatedAt||n.createdAt); } } }
+    const h=el.offsetHeight; if(h && Math.abs(h-it.h)>0.5){ const top=it.cy-it.h/2; it.h=h; it.cy=top+h/2; el.style.top=top+'px'; }
+    return; }
   const c=it.crop||{ x:0, y:0, w:it.nw, h:it.nh }, s=it.w/c.w;
   Object.assign(el.style,{ left:(it.cx-it.w/2)+'px', top:(it.cy-it.h/2)+'px', width:it.w+'px', height:it.h+'px', transform:`rotate(${it.rot||0}deg)`, opacity:it.op??1 });
   el.classList.toggle('locked',!!it.locked); el.classList.toggle('igray',!!it.gray); el.classList.toggle('cropping', BS.crop===it.id);
@@ -3364,7 +3424,7 @@ function drawSel(){
   if(list.length===1){ const it=list[0]; Object.assign(box.style,{ left:(it.cx-it.w/2)+'px', top:(it.cy-it.h/2)+'px', width:it.w+'px', height:it.h+'px', transform:`rotate(${it.rot||0}deg)` }); }
   else { const a=selAABB(list); Object.assign(box.style,{ left:a.x1+'px', top:a.y1+'px', width:(a.x2-a.x1)+'px', height:(a.y2-a.y1)+'px' }); }
   const hs = BS.crop ? ['nw','n','ne','e','se','s','sw','w'] : ['nw','ne','se','sw'];
-  box.innerHTML=hs.map(h=>`<i class="bh ${h}" data-h="${h}"></i>`).join('')+(BS.crop?'':'<i class="brot" data-h="rot" title="Drag to rotate (Shift snaps 15°)"></i>');
+  box.innerHTML=hs.map(h=>`<i class="bh ${h}" data-h="${h}"></i>`).join('')+(BS.crop?'':'<i class="brot" data-h="rot" title="Drag to rotate (Shift snaps 15°)"></i>')+(!BS.crop && list.length===1?'<i class="bcon" data-h="con" title="Drag to connect to something, or drop on empty space for a new idea"></i>':'');
   w.appendChild(box);
 }
 
@@ -3375,7 +3435,9 @@ function bindStage(){
     const f=Math.exp(-e.deltaY*(e.ctrlKey?0.01:0.0015)), z=clamp(b.view.z*f,0.03,20); b.view.x=mx-(mx-b.view.x)*(z/b.view.z); b.view.y=my-(my-b.view.y)*(z/b.view.z); b.view.z=z; syncView(); }, { passive:false });
   st.addEventListener('pointerdown', bPointerDown);
   // pointer capture retargets dblclick to the stage, so look up what is under the cursor
-  st.addEventListener('dblclick', e=>{ const el=document.elementFromPoint(e.clientX,e.clientY)?.closest('.bi'); if(el && !el.classList.contains('locked')) toggleCrop(el.dataset.id); });
+  st.addEventListener('dblclick', e=>{ if(e.target.closest('[contenteditable="true"],[contenteditable="plaintext-only"]')) return; const el=document.elementFromPoint(e.clientX,e.clientY)?.closest('.bi');
+    if(!el){ if(!e.target.closest('.bsel,[data-edge]')) tracked('new idea', ()=>addNode(bToWorld(e.clientX,e.clientY),'')); return; } if(el.classList.contains('locked')) return; const it=bitem(el.dataset.id);
+    if(it?.type==='node') editNode(it.id); else if(it?.type==='note') editNote(it.id); else toggleCrop(el.dataset.id); });
   st.addEventListener('contextmenu', e=>{ e.preventDefault(); const el=e.target.closest('.bi'); if(el && !BS.sel.has(el.dataset.id) && !el.classList.contains('locked')){ selectWithGroups([el.dataset.id]); drawSel(); } openBoardMenu(e.clientX,e.clientY); });
   st.addEventListener('pointermove', e=>{ BS.mouse={ x:e.clientX, y:e.clientY }; });
   st.addEventListener('dragover', e=>{ const ty=e.dataTransfer?.types||[]; if(!dragging && (ty.includes('Files')||ty.includes('text/uri-list')||ty.includes('text/html'))){ e.preventDefault(); st.classList.add('dropping'); } });
@@ -3387,10 +3449,16 @@ function bindStage(){
 let viewSaveT=null;
 function syncView(){ const b=BB(), w=$('#bdWorld'); w.style.transform=`translate(${b.view.x}px,${b.view.y}px) scale(${b.view.z})`; w.style.setProperty('--iz',1/b.view.z); clearTimeout(viewSaveT); viewSaveT=setTimeout(save,600); }
 function bPointerDown(e){
-  closeBoardMenu(); const b=BB(); if(!b) return; const st=$('#bdStage'); st.focus({ preventScroll:true });
+  closeBoardMenu(); const b=BB(); if(!b) return; const st=$('#bdStage');
+  if(e.target.closest('[contenteditable="true"],[contenteditable="plaintext-only"]')) return;
+  if(e.target.closest('.bnote-h button')) return;
+  st.focus({ preventScroll:true });
   if(e.button===1 || (e.button===0 && BS.space)){ e.preventDefault(); BS.drag={ kind:'pan', sx:e.clientX, sy:e.clientY, vx:b.view.x, vy:b.view.y }; st.setPointerCapture(e.pointerId); st.classList.add('panning'); return; }
   if(e.button!==0) return;
-  const p=bToWorld(e.clientX,e.clientY), h=e.target.closest('.bh,.brot');
+  const p=bToWorld(e.clientX,e.clientY), h=e.target.closest('.bh,.brot,.bcon');
+  if(h && h.dataset.h==='con'){ const list=selItems(); if(list.length!==1) return; BS.drag={ kind:'link', from:list[0].id }; st.setPointerCapture(e.pointerId); return; }
+  const eg=!h && e.target.closest('[data-edge]'); if(eg){ BS.edge=eg.dataset.edge; BS.sel.clear(); drawSel(); drawEdges(); return; }
+  if(BS.edge){ BS.edge=null; drawEdges(); }
   if(h){ const list=selItems(); if(!list.length) return; snap();
     if(BS.crop){ const it=bitem(BS.crop); BS.drag={ kind:'crop', h:h.dataset.h, it, start:p, orig:{ ...it, crop:{ ...(it.crop||{ x:0,y:0,w:it.nw,h:it.nh }) } } }; }
     else if(h.dataset.h==='rot' || e.ctrlKey){ const a=list.length===1?{ x:list[0].cx, y:list[0].cy }:(()=>{ const q=selAABB(list); return { x:(q.x1+q.x2)/2, y:(q.y1+q.y2)/2 }; })();
@@ -3423,6 +3491,7 @@ document.addEventListener('pointermove', e=>{
     d.orig.forEach(o=>{ const it=bitem(o.id), x=o.cx-d.c.x, y=o.cy-d.c.y; it.cx=d.c.x+x*cs-y*sn; it.cy=d.c.y+x*sn+y*cs; let r=o.rot+da; if(e.shiftKey && d.orig.length===1) r=Math.round(r/15)*15; it.rot=((r%360)+360)%360; });
     refreshItems(d.orig.map(o=>o.id)); return; }
   if(d.kind==='scale'){
+    if(!d.box && (bitem(d.orig[0].id)?.type==='node' || bitem(d.orig[0].id)?.type==='note')){ const o=d.orig[0], it=bitem(o.id), east=d.h.includes('e'); it.w=Math.max(80, o.w+(p.x-d.start.x)*(east?1:-1)); it.cx = east ? (o.cx-o.w/2)+it.w/2 : (o.cx+o.w/2)-it.w/2; refreshItems([o.id]); return; }
     if(!d.box){ const o=d.orig[0], it=bitem(o.id), r=o.rot*Math.PI/180, cs=Math.cos(r), sn=Math.sin(r);
       const sx=d.h.includes('e')?1:-1, sy=d.h.includes('s')?1:-1; const ax=o.cx-sx*o.w/2*cs+sy*o.h/2*sn, ay=o.cy-sx*o.w/2*sn-sy*o.h/2*cs; // opposite corner, fixed
       const vx=p.x-ax, vy=p.y-ay, lx=vx*cs+vy*sn, ly=-vx*sn+vy*cs; const k=Math.max(0.02, Math.max(sx*lx/o.w, sy*ly/o.h));
@@ -3430,18 +3499,24 @@ document.addEventListener('pointermove', e=>{
     const B=d.box, ax=d.h.includes('e')?B.x1:B.x2, ay=d.h.includes('s')?B.y1:B.y2, k=Math.max(0.02, Math.max(Math.abs(p.x-ax)/(B.x2-B.x1), Math.abs(p.y-ay)/(B.y2-B.y1)));
     d.orig.forEach(o=>{ const it=bitem(o.id); it.cx=ax+(o.cx-ax)*k; it.cy=ay+(o.cy-ay)*k; it.w=o.w*k; it.h=o.h*k; }); refreshItems(d.orig.map(o=>o.id)); return; }
   if(d.kind==='crop' || d.kind==='cropmove'){ cropDrag(d,p,e); }
+  if(d.kind==='link'){ const f=bitem(d.from); if(!f) return; BS.tmpEdge=`M${f.cx} ${f.cy} L${p.x} ${p.y}`; drawEdges(); }
 });
-document.addEventListener('pointerup', ()=>{
+document.addEventListener('pointerup', e=>{
   const d=BS.drag; if(!d) return; BS.drag=null; $('#bdStage')?.classList.remove('panning');
+  if(d.kind==='link'){ BS.tmpEdge=null; const tEl=document.elementFromPoint(e.clientX,e.clientY)?.closest('.bi'), b=BB(), to=tEl?.dataset.id;
+    if(to && to!==d.from){ if(!(b.edges||[]).some(x=>(x.a===d.from&&x.b===to)||(x.a===to&&x.b===d.from))) tracked('connect', ()=>{ (b.edges ||= []).push({ id:uid(), a:d.from, b:to }); }); commit(); }
+    else if(!to && document.elementFromPoint(e.clientX,e.clientY)?.closest('#bdStage')) tracked('new idea', ()=>addNode(bToWorld(e.clientX,e.clientY),'',d.from));
+    else drawEdges(); return; }
   if(d.kind==='marq'){ $('#bdMarq').style.display='none'; return; }
   if(d.kind==='pan') return;
   if(d.kind==='move' && !d.moved){ undoStack.pop(); updUndo(); return; }
   save(); drawSel();
 });
-function refreshItems(ids){ const w=$('#bdWorld'); ids.forEach(id=>{ const el=w.querySelector(`.bi[data-id="${id}"]`), it=bitem(id); if(el&&it) placeItem(el,it); }); drawSel(); }
+function refreshItems(ids){ const w=$('#bdWorld'); ids.forEach(id=>{ const el=w.querySelector(`.bi[data-id="${id}"]`), it=bitem(id); if(el&&it) placeItem(el,it); }); drawEdges(); drawSel(); }
 
 /* ----- crop, Figma style: drag edges to crop, drag inside to slide the image ----- */
 function toggleCrop(id){
+  if(id && bitem(id)?.type && bitem(id).type!=='img'){ return; }
   if(BS.crop && BS.crop!==id){ const prev=BS.crop; BS.crop=null; refreshItems([prev]); }
   if(!id || BS.crop===id){ BS.crop=null; drawSel(); save(); return; }
   BS.crop=id; BS.sel.clear(); BS.sel.add(id); const it=bitem(id); if(!it.crop) it.crop={ x:0, y:0, w:it.nw, h:it.nh }; refreshItems([id]);
@@ -3541,10 +3616,17 @@ async function loadBitmap(it){
   const r=await fetch(it.src); return createImageBitmap(await r.blob());
 }
 async function renderItems(list, maxSide=8192){
-  const a=selAABB(list), res=Math.max(1, ...list.map(i=>(i.crop?.w||i.nw)/i.w)); let k=res; const W=(a.x2-a.x1)*k, H=(a.y2-a.y1)*k; if(Math.max(W,H)>maxSide) k*=maxSide/Math.max(W,H);
+  const a=selAABB(list), res=Math.max(1, ...list.filter(i=>!i.type||i.type==='img').map(i=>(i.crop?.w||i.nw)/i.w)); let k=res; const W=(a.x2-a.x1)*k, H=(a.y2-a.y1)*k; if(Math.max(W,H)>maxSide) k*=maxSide/Math.max(W,H);
   const cv=document.createElement('canvas'); cv.width=Math.max(1,Math.round((a.x2-a.x1)*k)); cv.height=Math.max(1,Math.round((a.y2-a.y1)*k)); const g=cv.getContext('2d');
   const b=BB(), ordered=b.items.filter(i=>list.includes(i));
-  for(const it of ordered){ const bmp=await loadBitmap(it), c=it.crop||{ x:0,y:0,w:it.nw,h:it.nh };
+  const by=Object.fromEntries(b.items.map(i=>[i.id,i])); g.save(); g.lineWidth=2*k; g.strokeStyle='#8a90a4';
+  (b.edges||[]).filter(e=>list.includes(by[e.a])&&list.includes(by[e.b])).forEach(e=>{ const A=itemAABB(by[e.a]), B=itemAABB(by[e.b]); g.beginPath(); g.moveTo(((A.x1+A.x2)/2-a.x1)*k,((A.y1+A.y2)/2-a.y1)*k); g.lineTo(((B.x1+B.x2)/2-a.x1)*k,((B.y1+B.y2)/2-a.y1)*k); g.stroke(); }); g.restore();
+  for(const it of ordered){
+    if(it.type==='node'||it.type==='note'){ const light=it.type==='note'||it.color==='#e9e4d8', txt=it.type==='node'?(it.text||''):htmlToText(state.notes.find(n=>n.id===it.noteId)?.html||''); g.save(); g.translate((it.cx-a.x1)*k,(it.cy-a.y1)*k);
+      g.fillStyle=it.type==='note'?'#f2ecdc':(it.color||NODE_COLS[0]); g.fillRect(-it.w*k/2,-it.h*k/2,it.w*k,it.h*k); g.fillStyle=light?'#2a2418':'#f2f4f8'; g.font=`${13*k}px sans-serif`; g.textBaseline='top';
+      const maxW=(it.w-16)*k; let y=-it.h*k/2+8*k; for(const para of txt.split('\n')){ let line=''; for(const w of para.split(' ')){ const t=line?line+' '+w:w; if(g.measureText(t).width>maxW && line){ g.fillText(line,-it.w*k/2+8*k,y); y+=17*k; line=w; } else line=t; } g.fillText(line,-it.w*k/2+8*k,y); y+=17*k; if(y>it.h*k/2-10*k) break; }
+      g.restore(); continue; }
+    const bmp=await loadBitmap(it), c=it.crop||{ x:0,y:0,w:it.nw,h:it.nh };
     g.save(); g.globalAlpha=it.op??1; g.translate((it.cx-a.x1)*k,(it.cy-a.y1)*k); g.rotate((it.rot||0)*Math.PI/180); g.scale(it.fx?-1:1,it.fy?-1:1);
     if(it.gray||b.gray) g.filter='grayscale(1)'; g.drawImage(bmp,c.x,c.y,c.w,c.h,-it.w*k/2,-it.h*k/2,it.w*k,it.h*k); g.restore(); }
   return await new Promise(r=>cv.toBlob(r,'image/png'));
@@ -3573,8 +3655,13 @@ function openBoardMenu(x,y){
   closeBoardMenu(); const n=BS.sel.size, one=n===1, b=BB();
   const it=(a,label,key,dis)=>`<button data-bm="${a}" ${dis?'disabled':''}><span>${label}</span><kbd>${key||''}</kbd></button>`, sep='<hr>';
   const m=document.createElement('div'); m.className='bmenu';
-  m.innerHTML=[ it('add','Add images…'), it('fit',n?'Fit selection':'Fit everything','F'), it('selall','Select all','Ctrl A'), it('gray',(b.gray?'✓ ':'')+'Grayscale view','G'), sep,
-    it('crop','Crop','Enter',!one), it('rotl','Rotate 90° left','',!n), it('rotr','Rotate 90° right','',!n), it('fliph','Flip horizontal','Alt Shift H',!n), it('flipv','Flip vertical','Alt Shift V',!n), it('reset','Reset crop, rotation and flip','',!n), sep,
+  const one1=one?selItems()[0]:null, isImg=one1 && (!one1.type||one1.type==='img');
+  BS.menuAt=bToWorld(x,y);
+  m.innerHTML=[ it('node-new','New idea here','N'), it('note-new','New note here'), it('note-place','Place a note…'), ...(BS.edge?[it('edge-del','Delete connection','Del')]:[]), sep,
+    ...(one1?.type==='node'?[it('node-child','Add a connected idea','Tab'), `<div class="bm-cols">${NODE_COLS.map(c=>`<button data-bm="ncol:${c}" style="background:${c}" aria-label="Idea colour"></button>`).join('')}</div>`, it('node-quest','Make a quest from this idea'), sep]:[]),
+    ...(one1?.type==='note'?[it('note-open','Open in Notes'), sep]:[]),
+    it('mm-arrange','Arrange as mind map from here','',!one), sep, it('add','Add images…'), it('fit',n?'Fit selection':'Fit everything','F'), it('selall','Select all','Ctrl A'), it('gray',(b.gray?'✓ ':'')+'Grayscale view','G'), sep,
+    it('crop','Crop','Enter',!isImg), it('rotl','Rotate 90° left','',!n), it('rotr','Rotate 90° right','',!n), it('fliph','Flip horizontal','Alt Shift H',!n), it('flipv','Flip vertical','Alt Shift V',!n), it('reset','Reset crop, rotation and flip','',!n), sep,
     it('size-h','Same height','',n<2), it('size-w','Same width','',n<2), it('size-a','Same area','',n<2), sep,
     it('al-l','Align left','',n<2), it('al-t','Align top','',n<2), it('al-ch','Align centres vertically','',n<2), it('al-cv','Align centres horizontally','',n<2), it('di-h','Distribute horizontally','',n<3), it('di-v','Distribute vertically','',n<3), sep,
     it('pk-keep','Pack, keep order','P',!n), it('pk-size','Pack by size','',!n), it('pk-color','Pack by colour','',!n), it('pk-name','Pack by name','',!n), it('pk-date','Pack by date added','',!n), sep,
@@ -3585,11 +3672,18 @@ function openBoardMenu(x,y){
 }
 function boardCmd(c){
   closeBoardMenu(); const b=BB(); if(!b) return;
-  const map={ add:()=>$('#bdFile').click(), fit:fitAll, selall:()=>{ BS.sel=new Set(b.items.filter(i=>!i.locked).map(i=>i.id)); drawSel(); }, gray:()=>{ b.gray=!b.gray; commit(); },
+  if(c.startsWith('ncol:')){ selTransform(i=>{ if(i.type==='node') i.color=c.slice(5); }); return; }
+  const at=BS.menuAt||{ x:0, y:0 };
+  const map={ 'node-new':()=>tracked('new idea', ()=>addNode(at,'')), 'note-new':()=>tracked('new note', ()=>newNoteOnBoard(at)), 'note-place':()=>placeNoteDialog(at),
+    'edge-del':()=>{ tracked('delete connection', ()=>{ b.edges=b.edges.filter(x=>x.id!==BS.edge); }); BS.edge=null; commit(); },
+    'node-child':()=>tracked('new idea', ()=>addChild([...BS.sel][0])), 'mm-arrange':arrangeMindMap,
+    'node-quest':()=>{ const it=selItems()[0]; if(it?.text) openMakeQuest({ text:it.text, from:'node' }); else toast('Write the idea first'); },
+    'note-open':()=>{ const it=selItems()[0]; if(it) A_['bd-open-note'](null,it.noteId); },
+    add:()=>$('#bdFile').click(), fit:fitAll, selall:()=>{ BS.sel=new Set(b.items.filter(i=>!i.locked).map(i=>i.id)); drawSel(); }, gray:()=>{ b.gray=!b.gray; commit(); },
     crop:()=>{ const L=selItems(); if(L.length===1) toggleCrop(L[0].id); },
     rotl:()=>selTransform(i=>{ i.rot=((i.rot||0)+270)%360; }), rotr:()=>selTransform(i=>{ i.rot=((i.rot||0)+90)%360; }),
     fliph:()=>selTransform(i=>{ i.fx=!i.fx; }), flipv:()=>selTransform(i=>{ i.fy=!i.fy; }),
-    reset:()=>selTransform(i=>{ const s=i.w/(i.crop?.w||i.nw); i.crop=null; i.rot=0; i.fx=i.fy=false; i.w=i.nw*s; i.h=i.nh*s; },'Reset'),
+    reset:()=>selTransform(i=>{ if(i.type&&i.type!=='img') return; const s=i.w/(i.crop?.w||i.nw); i.crop=null; i.rot=0; i.fx=i.fy=false; i.w=i.nw*s; i.h=i.nh*s; },'Reset'),
     'size-h':()=>arrange('size','h'), 'size-w':()=>arrange('size','w'), 'size-a':()=>arrange('size','a'),
     'al-l':()=>arrange('align','l'), 'al-t':()=>arrange('align','t'), 'al-ch':()=>arrange('align','ch'), 'al-cv':()=>arrange('align','cv'), 'di-h':()=>arrange('dist','h'), 'di-v':()=>arrange('dist','v'),
     'pk-keep':()=>arrange('pack','keep'), 'pk-size':()=>arrange('pack','size'), 'pk-color':()=>arrange('pack','color'), 'pk-name':()=>arrange('pack','name'), 'pk-date':()=>arrange('pack','date'),
@@ -3606,6 +3700,8 @@ function boardKeys(e){
   if(e.code==='Space'){ e.preventDefault(); if(!BS.space){ BS.space=true; $('#bdStage')?.classList.add('grab'); } return true; }
   if(BS.crop){ if(e.key==='Enter'){ e.preventDefault(); toggleCrop(null); return true; } if(e.key==='Escape'){ e.preventDefault(); cancelCrop(); drawSel(); return true; } }
   const go=(fn)=>{ e.preventDefault(); fn(); return true; };
+  if((e.key==='Delete'||e.key==='Backspace') && BS.edge){ return go(()=>{ tracked('delete connection', ()=>{ BB().edges=BB().edges.filter(x=>x.id!==BS.edge); }); BS.edge=null; commit(); }); }
+  if(e.key==='Tab' && BS.sel.size===1){ return go(()=>tracked('new idea', ()=>addChild([...BS.sel][0]))); }
   if(e.key==='Delete'||e.key==='Backspace') return go(delSel);
   if(c && k==='a') return go(()=>boardCmd('selall'));
   if(c && e.shiftKey && k==='g') return go(()=>groupSel(false));
@@ -3619,7 +3715,8 @@ function boardKeys(e){
   if(k==='f' || e.key==='Home') return go(fitAll);
   if(k==='g') return go(()=>boardCmd('gray'));
   if(k==='p') return go(()=>arrange('pack','keep'));
-  if(e.key==='Enter' && BS.sel.size===1) return go(()=>toggleCrop([...BS.sel][0]));
+  if(k==='n') return go(()=>{ const st=$('#bdStage')?.getBoundingClientRect(), inside=st && BS.mouse.x>=st.left && BS.mouse.x<=st.right && BS.mouse.y>=st.top && BS.mouse.y<=st.bottom; tracked('new idea', ()=>addNode(inside?bToWorld(BS.mouse.x,BS.mouse.y):bToWorld(st.left+st.width/2,st.top+st.height/2),'')); });
+  if(e.key==='Enter' && BS.sel.size===1) return go(()=>{ const it=bitem([...BS.sel][0]); if(it?.type==='node') editNode(it.id); else if(it?.type==='note') editNote(it.id); else toggleCrop(it.id); });
   if(e.key==='1') return go(()=>{ const b=BB(), st=$('#bdStage'), cx=st.clientWidth/2, cy=st.clientHeight/2; b.view.x=cx-(cx-b.view.x)/b.view.z; b.view.y=cy-(cy-b.view.y)/b.view.z; b.view.z=1; syncView(); });
   if(e.key==='Escape' && BS.sel.size){ BS.sel.clear(); drawSel(); return true; }
   return false;
@@ -3632,6 +3729,7 @@ function boardHelp(){
     <kbd>Drag</kbd><span>Move; drag empty space to select with a frame, Shift adds</span><kbd>Corner</kbd><span>Resize, keeps proportions</span><kbd>Ctrl + corner</kbd><span>Rotate, or use the round knob; Shift snaps to 15°</span>
     <kbd>Double click</kbd><span>Crop like in Figma: drag edges, drag inside to slide; Enter finishes, Esc cancels</span>
     <kbd>F / Home</kbd><span>Fit everything or the selection</span><kbd>1</kbd><span>Zoom 100%</span><kbd>G</kbd><span>Grayscale view</span><kbd>P</kbd><span>Pack the selection</span>
+    <kbd>N / double click</kbd><span>New idea; drag the round handle on the right of anything to connect it, or drop on empty space for a new idea</span><kbd>Tab</kbd><span>New idea connected to the selected one</span><kbd>Enter</kbd><span>Edit an idea or a note, crop an image</span>
     <kbd>Alt Shift H / V</kbd><span>Flip</span><kbd>Ctrl G</kbd><span>Group, Ctrl Shift G ungroups</span><kbd>Ctrl ] / [</kbd><span>Front / back</span><kbd>Ctrl D</kbd><span>Duplicate</span><kbd>Del</kbd><span>Delete</span><kbd>Ctrl V</kbd><span>Paste images</span></div>`;
   $('#dlg').showModal();
 }
@@ -3940,7 +4038,9 @@ const BOARDWIN = window.__BOARDWIN__ || null;
 let boardWinId=null, lastWinBoard='', bwPushT=null;
 function bwPrefs(){ try{ return JSON.parse(localStorage.getItem('tr-bw'))||{ op:1, top:true }; }catch{ return { op:1, top:true }; } }
 function bwSetPrefs(p){ try{ localStorage.setItem('tr-bw', JSON.stringify(p)); }catch{} }
-function boardWinPush(){ clearTimeout(bwPushT); bwPushT=setTimeout(()=>{ const b=BB(); if(!b) return; lastWinBoard=JSON.stringify(b); window.__TAURI__.event.emit('board-push',{ board:b }).catch(()=>{}); },250); }
+const boardNotes = b => state.notes.filter(n=>b.items.some(i=>i.type==='note'&&i.noteId===n.id));
+function boardWinPush(){ clearTimeout(bwPushT); bwPushT=setTimeout(()=>{ const b=BB(); if(!b) return; lastWinBoard=JSON.stringify([b,boardNotes(b)]); window.__TAURI__.event.emit('board-push',{ board:b, notes:boardNotes(b) }).catch(()=>{}); },250); }
+function mergeNotes(list){ (list||[]).forEach(n=>{ const i=state.notes.findIndex(x=>x.id===n.id); if(i<0) state.notes.unshift(n); else if((n.updatedAt||0)>=(state.notes[i].updatedAt||0)) state.notes[i]=n; }); }
 async function boardWinInit(){
   document.body.classList.add('desk','boardwin','canvas-full'); state.ui.tab='boards'; state.ui.boardId=BOARDWIN; state.ui.compact={}; const pr=bwPrefs();
   $('#bwBar').innerHTML=`<span class="bw-title" data-tauri-drag-region id="bwTitle">Board</span>
@@ -3954,7 +4054,7 @@ async function boardWinInit(){
   $('#bwMain').addEventListener('click', ()=>tinvoke('show_main'));
   $('#bwClose').addEventListener('click', ()=>{ window.__TAURI__.event.emit('board-closed',{}); tinvoke('close_board_window'); });
   const ev=window.__TAURI__.event;
-  ev.listen('board-data', e=>{ const b=e.payload.board; if(!b || BS.drag) return; const j=JSON.stringify(b); if(j===lastWinBoard) return; lastWinBoard=j;
+  ev.listen('board-data', e=>{ const b=e.payload.board; if(!b || BS.drag || document.activeElement?.isContentEditable) return; const j=JSON.stringify([b,e.payload.notes||[]]); if(j===lastWinBoard) return; lastWinBoard=j; mergeNotes(e.payload.notes);
     const i=state.boards.findIndex(x=>x.id===b.id); if(i>=0) state.boards[i]=b; else state.boards.push(b); state.roots=e.payload.roots||state.roots;
     state.ui.boardId=b.id; $('#bwTitle').textContent=b.name; $('#board').dataset.view=''; renderBoardsTab(); });
   ev.listen('board-switch', e=>{ state.ui.boardId=e.payload; ev.emit('board-req',{ id:e.payload }); });
@@ -3962,14 +4062,115 @@ async function boardWinInit(){
   renderBoardsTab();
 }
 function boardWinMainSync(){
-  if(!DESK || BOARDWIN || !boardWinId) return; const b=state.boards.find(x=>x.id===boardWinId); if(!b) return; const j=JSON.stringify(b);
-  if(j!==lastWinBoard){ lastWinBoard=j; window.__TAURI__.event.emit('board-data',{ board:b, roots:state.roots }).catch(()=>{}); }
+  if(!DESK || BOARDWIN || !boardWinId) return; const b=state.boards.find(x=>x.id===boardWinId); if(!b) return; const j=JSON.stringify([b,boardNotes(b)]);
+  if(j!==lastWinBoard){ lastWinBoard=j; window.__TAURI__.event.emit('board-data',{ board:b, roots:state.roots, notes:boardNotes(b) }).catch(()=>{}); }
 }
 function boardWinMainListen(){
   const ev=window.__TAURI__.event;
   ev.listen('board-req', e=>{ boardWinId=e.payload.id; lastWinBoard=''; boardWinMainSync(); });
-  ev.listen('board-push', e=>{ const b=e.payload.board, i=state.boards.findIndex(x=>x.id===b.id); if(i<0) return; lastWinBoard=JSON.stringify(b); state.boards[i]=b; save(); if(state.ui.tab==='boards' && state.ui.boardId===b.id) syncBoard(); });
+  ev.listen('board-push', e=>{ const b=e.payload.board, i=state.boards.findIndex(x=>x.id===b.id); if(i<0) return; mergeNotes(e.payload.notes); lastWinBoard=JSON.stringify([b,boardNotes(b)]); state.boards[i]=b; save(); if(state.ui.tab==='boards' && state.ui.boardId===b.id) syncBoard(); });
   ev.listen('board-closed', ()=>{ boardWinId=null; });
+}
+
+/* ================= web links in rich text, Telegram style ================= */
+function normUrl(u){ u=(u||'').trim(); if(!u) return ''; if(/^(https?:|mailto:)/i.test(u)) return u; if(/^[\w.+-]+@[\w-]+\.[\w.-]+$/.test(u)) return 'mailto:'+u; return 'https://'+u.replace(/^\/+/,''); }
+function openWeb(url){ if(!url) return; if(DESK) tinvoke('open_url',{ url }).catch(e=>toast('Could not open the link: '+e)); else window.open(url,'_blank','noopener'); }
+let linkPop=null;
+function closeLinkPop(){ document.querySelector('.lpop')?.remove(); linkPop=null; }
+function showLinkPop(rich, a, range, edit){
+  closeLinkPop(); linkPop={ rich, a, range }; const r=(a||range).getBoundingClientRect(), url=a?a.getAttribute('href'):'';
+  const el=document.createElement('div'); el.className='lpop';
+  el.innerHTML = a && !edit
+    ? `<button class="lp-url" data-lp="open" title="Open ${esc(url)}">${esc(url.replace(/^mailto:/,''))}</button><button class="btn sm" data-lp="open">Open</button><button class="btn sm" data-lp="edit">Edit</button><button class="btn sm danger" data-lp="remove">Remove</button>`
+    : `<input class="field" placeholder="Paste a link, e.g. example.com" value="${esc(url)}" aria-label="Link address"><button class="btn sm soul" data-lp="save">${a?'Save':'Add link'}</button>${a?'<button class="btn sm danger" data-lp="remove">Remove</button>':''}`;
+  document.body.appendChild(el);
+  const w=el.offsetWidth, h=el.offsetHeight; el.style.left=clamp(r.left,8,innerWidth-w-8)+'px'; el.style.top=(r.bottom+h+12<innerHeight ? r.bottom+6 : r.top-h-6)+'px';
+  const inp=el.querySelector('input'); if(inp){ inp.focus(); inp.select(); }
+}
+function linkFromSelection(rich){
+  const sel=getSelection(); if(!sel.rangeCount){ toast('Select the words you want to turn into a link'); return; } const range=sel.getRangeAt(0);
+  if(!rich.contains(range.commonAncestorContainer)){ toast('Select the words you want to turn into a link'); return; }
+  const n=range.startContainer.nodeType===3?range.startContainer.parentElement:range.startContainer, a=n.closest?.('a:not(.loc)');
+  if(a && rich.contains(a)) return showLinkPop(rich,a,range,true);
+  if(range.collapsed){ toast('Select the words you want to turn into a link'); return; }
+  showLinkPop(rich,null,range.cloneRange(),true);
+}
+function lpAction(kind){
+  const L=linkPop; if(!L) return; const { rich, a }=L;
+  if(kind==='open'){ openWeb(a.getAttribute('href')); closeLinkPop(); return; }
+  if(kind==='edit'){ showLinkPop(rich,a,L.range,true); return; }
+  if(kind==='remove'){ a.replaceWith(...a.childNodes); closeLinkPop(); richChanged(rich); toast('Link removed', true); return; }
+  if(kind==='save'){ const url=normUrl(document.querySelector('.lpop input')?.value); if(!url){ toast('Paste a link first'); return; }
+    if(a) a.setAttribute('href',url);
+    else { const was=rich.contentEditable; rich.focus(); const sel=getSelection(); sel.removeAllRanges(); sel.addRange(L.range); document.execCommand('createLink', false, url);
+      rich.querySelectorAll('a[href]:not(.loc)').forEach(x=>{ x.setAttribute('target','_blank'); x.setAttribute('rel','noopener'); }); sel.collapseToEnd(); }
+    closeLinkPop(); richChanged(rich); toast('Link added. Click it to open, edit or remove', true); }
+}
+document.addEventListener('click', e=>{
+  const lp=e.target.closest?.('[data-lp]'); if(lp){ e.preventDefault(); e.stopPropagation(); lpAction(lp.dataset.lp); return; }
+  if(linkPop && !e.target.closest?.('.lpop')) closeLinkPop();
+  const a=e.target.closest?.('.rich a[href]:not(.loc)'); if(!a) return;
+  e.preventDefault(); e.stopPropagation(); if(e.ctrlKey||e.metaKey){ openWeb(a.getAttribute('href')); return; }
+  showLinkPop(a.closest('.rich'),a,null,false);
+}, true);
+document.addEventListener('keydown', e=>{
+  if(e.target.closest?.('.lpop')){ if(e.key==='Enter'){ e.preventDefault(); lpAction('save'); } if(e.key==='Escape'){ e.preventDefault(); closeLinkPop(); } return; }
+  const rich=e.target.closest?.('.rich'); if(rich && (e.ctrlKey||e.metaKey) && e.code==='KeyK'){ e.preventDefault(); e.stopPropagation(); linkFromSelection(rich); }
+}, true);
+// checklist lines: a line that lost its box stops being a checklist line, and the box is always first
+function fixTodos(ed){ ed.querySelectorAll('.todo').forEach(b=>{ const cbs=b.querySelectorAll(':scope>.cb'); if(!cbs.length){ b.classList.remove('todo'); if(!b.className) b.removeAttribute('class'); return; }
+  cbs.forEach((c,i)=>{ if(i) c.remove(); }); if(b.firstChild!==cbs[0]) b.insertBefore(cbs[0], b.firstChild); }); }
+// note width: drag the right edge to span more or fewer columns
+document.addEventListener('pointerdown', e=>{
+  const h=e.target.closest?.('.note-rs'); if(!h) return; e.preventDefault(); const card=h.closest('.note'), grid=card.closest('.notes'), n=state.notes.find(x=>x.id===h.dataset.nrs); if(!n||!grid) return;
+  const cols=getComputedStyle(grid).gridTemplateColumns.split(' ').length, colW=(grid.clientWidth+10)/cols, sx=e.clientX, w0=card.getBoundingClientRect().width; let span=n.span||1;
+  const mv=ev=>{ span=clamp(Math.round((w0+ev.clientX-sx+10)/colW),1,Math.min(4,cols)); card.style.gridColumn=`span ${span}`; };
+  const up=()=>{ removeEventListener('pointermove',mv); removeEventListener('pointerup',up); if(span!==(n.span||1)){ tracked('note width', ()=>{ n.span=span; }); save(); } };
+  addEventListener('pointermove',mv); addEventListener('pointerup',up);
+});
+
+/* ================= boards: ideas (mind map nodes), connections and notes on the canvas ================= */
+const NODE_COLS=['#2b3550','#3d5a3f','#5a3d3d','#4a3d5a','#5a523d','#2f5560','#e9e4d8'];
+function addNode(p, text, fromId){ const b=BB(); if(!b) return; const it={ id:uid(), type:'node', text:text||'', color:'', cx:p.x, cy:p.y, w:170, h:38, rot:0, op:1 };
+  b.items.push(it); if(fromId) (b.edges ||= []).push({ id:uid(), a:fromId, b:it.id }); BS.sel=new Set([it.id]); BS.edge=null; commit(); setTimeout(()=>editNode(it.id),30); return it; }
+function addChild(fromId){ const b=BB(), f=bitem(fromId); if(!f) return; const kidsIds=(b.edges||[]).filter(e=>e.a===fromId).map(e=>e.b), ks=kidsIds.map(bitem).filter(Boolean);
+  const x=f.cx+f.w/2+90+85, y = ks.length ? Math.max(...ks.map(k=>k.cy+k.h/2))+16+19 : f.cy; addNode({ x, y }, '', fromId); }
+function editNode(id){ const el=$('#bdWorld')?.querySelector(`.bi[data-id="${id}"] .bn-t`), it=bitem(id); if(!el||!it) return; const before=it.text||'';
+  el.contentEditable='plaintext-only'; if(el.contentEditable!=='plaintext-only') el.contentEditable='true'; el.focus(); const r=document.createRange(); r.selectNodeContents(el); const s=getSelection(); s.removeAllRanges(); s.addRange(r);
+  const done=(keep, then)=>{ el.removeEventListener('blur',onBlur); el.removeEventListener('keydown',onKey); el.contentEditable='false'; const t=keep?el.textContent.replace(/\s+\n/g,'\n').trim():before;
+    if(t!==before) tracked('edit idea', ()=>{ it.text=t; }); else el.textContent=before; commit(); then?.(); };
+  const onBlur=()=>done(true); const onKey=e=>{ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); done(true); } else if(e.key==='Escape'){ e.preventDefault(); done(false); } else if(e.key==='Tab'){ e.preventDefault(); done(true, ()=>addChild(id)); } e.stopPropagation(); };
+  el.addEventListener('blur',onBlur); el.addEventListener('keydown',onKey); }
+function editNote(id){ const it=bitem(id), el=$('#bdWorld')?.querySelector(`.bi[data-id="${id}"] .bnote-r`); if(!it||!el||!state.notes.find(n=>n.id===it.noteId)) return;
+  el.contentEditable='true'; el.closest('.bi').classList.add('editing'); el.focus(); caretToEnd(el);
+  const off=()=>{ el.contentEditable='false'; el.closest('.bi')?.classList.remove('editing'); el.removeEventListener('blur',off); const n=state.notes.find(x=>x.id===it.noteId); if(n) el.dataset.v=String(n.updatedAt||n.createdAt); commit(); };
+  el.addEventListener('blur',off); }
+function addNoteCard(noteId, p){ const b=BB(); const it={ id:uid(), type:'note', noteId, cx:p.x, cy:p.y, w:280, h:120, rot:0, op:1 }; b.items.push(it); BS.sel=new Set([it.id]); return it; }
+function newNoteOnBoard(p){ const n={ id:uid(), html:'', text:'', cat:state.ui.noteCatNew||'', createdAt:now(), updatedAt:now() }; state.notes.unshift(n); const it=addNoteCard(n.id,p); commit(); setTimeout(()=>editNote(it.id),40); }
+function placeNoteDialog(p){
+  $('#dlg').dataset.mode='placenote'; const onBoard=new Set(BB().items.filter(i=>i.type==='note').map(i=>i.noteId));
+  const list=()=>{ const q=($('#pnQ')?.value||'').toLowerCase(); return notesSorted().filter(n=>!q || (n.text||'').toLowerCase().includes(q)).slice(0,60).map(n=>{ const c=CAT(n.cat);
+    return `<button class="pn-item" data-act="pn-place" data-id="${n.id}"><span>${c?c.emoji+' ':''}${esc((n.text||'Empty note').slice(0,90))}</span>${onBoard.has(n.id)?'<small>already here</small>':''}</button>`; }).join('') || '<p class="empty-note">No notes match.</p>'; };
+  BS.placeAt=p; $('#dlgBody').innerHTML=`<h2>Place a note on the board</h2><p class="hint" style="margin-top:6px">The card stays the same note: change it here or in Notes and both update.</p><input class="field" id="pnQ" placeholder="Search notes" style="width:100%;margin:8px 0"><div class="pn-list" id="pnList">${list()}</div>`;
+  if(!$('#dlg').open) $('#dlg').showModal(); $('#pnQ').addEventListener('input', ()=>{ $('#pnList').innerHTML=list(); }); $('#pnQ').focus();
+}
+function edgePath(A,B){ const a=itemAABB(A), b=itemAABB(B), ac={ x:(a.x1+a.x2)/2, y:(a.y1+a.y2)/2 }, bc={ x:(b.x1+b.x2)/2, y:(b.y1+b.y2)/2 }, dx=bc.x-ac.x, dy=bc.y-ac.y;
+  if(Math.abs(dx)>=Math.abs(dy)){ const s=Math.sign(dx)||1, p1={ x:s>0?a.x2:a.x1, y:ac.y }, p2={ x:s>0?b.x1:b.x2, y:bc.y }, k=Math.max(30,Math.abs(p2.x-p1.x)/2); return `M${p1.x} ${p1.y} C${p1.x+s*k} ${p1.y} ${p2.x-s*k} ${p2.y} ${p2.x} ${p2.y}`; }
+  const s=Math.sign(dy)||1, p1={ x:ac.x, y:s>0?a.y2:a.y1 }, p2={ x:bc.x, y:s>0?b.y1:b.y2 }, k=Math.max(30,Math.abs(p2.y-p1.y)/2); return `M${p1.x} ${p1.y} C${p1.x} ${p1.y+s*k} ${p2.x} ${p2.y-s*k} ${p2.x} ${p2.y}`; }
+function drawEdges(){ const b=BB(), w=$('#bdWorld'); if(!b||!w) return; let svg=w.querySelector('#bdEdges');
+  if(!svg){ svg=document.createElementNS('http://www.w3.org/2000/svg','svg'); svg.id='bdEdges'; svg.setAttribute('class','bd-edges'); } if(w.firstChild!==svg) w.prepend(svg);
+  const by=Object.fromEntries(b.items.map(i=>[i.id,i])); b.edges=(b.edges||[]).filter(e=>by[e.a]&&by[e.b]);
+  svg.innerHTML=b.edges.map(e=>{ const d=edgePath(by[e.a],by[e.b]); return `<g class="be ${BS.edge===e.id?'sel':''}" data-edge="${e.id}"><path class="be-hit" d="${d}"/><path class="be-l" d="${d}" ${e.color?`style="stroke:${e.color}"`:''}/></g>`; }).join('')+(BS.tmpEdge?`<path class="be-tmp" d="${BS.tmpEdge}"/>`:''); }
+function arrangeMindMap(){
+  const b=BB(), L=selItems(); if(!L.length){ toast('Select the central idea first'); return; } const root=L[0], adj={}; (b.edges||[]).forEach(e=>{ (adj[e.a] ||= []).push(e.b); (adj[e.b] ||= []).push(e.a); });
+  const by=Object.fromEntries(b.items.map(i=>[i.id,i])), kidsOf={}, seen=new Set([root.id]), order=[root.id], depth={ [root.id]:0 };
+  for(let i=0;i<order.length;i++){ const id=order[i]; (adj[id]||[]).forEach(n=>{ if(seen.has(n)) return; seen.add(n); (kidsOf[id] ||= []).push(n); depth[n]=depth[id]+1; order.push(n); }); }
+  if(order.length<2){ toast('Connect some ideas to it first'); return; }
+  const maxD=Math.max(...Object.values(depth)), colW=[]; order.forEach(id=>{ const d=depth[id]; colW[d]=Math.max(colW[d]||0, by[id].w); });
+  const colX=[root.cx]; for(let d=1; d<=maxD; d++) colX[d]=colX[d-1]+colW[d-1]/2+80+colW[d]/2;
+  const gap=18, H={}, hOf=id=>{ const ks=kidsOf[id]||[]; const own=by[id].h; if(!ks.length) return H[id]=own; return H[id]=Math.max(own, ks.reduce((a,k)=>a+hOf(k),0)+gap*(ks.length-1)); }; hOf(root.id);
+  snap('arrange mind map'); const place=(id,top)=>{ const it=by[id], ks=kidsOf[id]||[]; it.cx=colX[depth[id]]+(it.w-colW[depth[id]])/2*0; it.cy=top+H[id]/2; let y=top+(H[id]-(ks.reduce((a,k)=>a+H[k],0)+gap*Math.max(0,ks.length-1)))/2; ks.forEach(k=>{ place(k,y); y+=H[k]+gap; }); };
+  place(root.id, root.cy-H[root.id]/2); commit(); toast('Arranged as a mind map');
 }
 
 /* ================= local links: files and folders on disk ================= */
@@ -4058,7 +4259,7 @@ function insertChips(paths, kind){
   document.execCommand('insertHTML', false, paths.map(p=>chipHtml(makeLink(p,kind))).join(' ')); richChanged(t.ed); decorateChips(); linkTarget=null;
 }
 document.addEventListener('click', e=>{
-  if(!DESK) return; const a=e.target.closest?.('a[href]'); if(!a || a.classList.contains('loc')) return;
+  if(!DESK) return; const a=e.target.closest?.('a[href]'); if(!a || a.classList.contains('loc') || a.closest('.rich')) return;
   const url=a.getAttribute('href')||''; if(!/^https?:\/\//i.test(url)) return;
   e.preventDefault(); e.stopPropagation(); tinvoke('open_url',{ url }).catch(err=>toast('Could not open the link: '+err));
 }, true);
@@ -4146,7 +4347,7 @@ function openUpdate(){
 
 /* ================= desktop (Tauri) ================= */
 // Everything here is inert in the browser; in the desktop app it adds file storage, tray, mini timer and more.
-const APP_VER='1.8.1';
+const APP_VER='1.9.0';
 const DESK = !!(window.__TAURI__ && window.__TAURI__.core);
 const tinvoke = (cmd,args,opts) => window.__TAURI__.core.invoke(cmd,args,opts);
 const fileName = p => String(p||'').split(/[\\/]/).pop();
