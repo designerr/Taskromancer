@@ -3444,7 +3444,7 @@ function bindStage(){
   st.addEventListener('dragleave', ()=>st.classList.remove('dropping'));
   st.addEventListener('drop', e=>{ if(dragging) return; e.preventDefault(); e.stopPropagation(); st.classList.remove('dropping');
     const files=[...(e.dataTransfer?.files||[])].filter(f=>f.type.startsWith('image/'));
-    const at=bToWorld(e.clientX,e.clientY); if(files.length) addBoardImages(files, at); else { const u=dropUrl(e.dataTransfer); if(u) addBoardUrl(u, at); else toast('That drop had no image in it'); } });
+    const at=bToWorld(e.clientX,e.clientY), cands=dropCandidates(e.dataTransfer); if(cands.length && cands.some(u=>/^https?:/i.test(u))) addBoardUrls(cands, at, files); else if(files.length) addBoardImages(files, at); else if(cands.length) addBoardUrls(cands, at); else toast('That drop had no image in it'); });
 }
 let viewSaveT=null;
 function syncView(){ const b=BB(), w=$('#bdWorld'); w.style.transform=`translate(${b.view.x}px,${b.view.y}px) scale(${b.view.z})`; w.style.setProperty('--iz',1/b.view.z); clearTimeout(viewSaveT); viewSaveT=setTimeout(save,600); }
@@ -3544,21 +3544,57 @@ function cropDrag(d,p,e){
 // images dragged from a browser arrive as a link, so we fetch the file (in the desktop app, without the browser's cross-site limits)
 function sniffType(u){ if(u[0]===0x89&&u[1]===0x50) return 'image/png'; if(u[0]===0xFF&&u[1]===0xD8) return 'image/jpeg'; if(u[0]===0x47&&u[1]===0x49&&u[2]===0x46) return 'image/gif';
   if(u[0]===0x52&&u[1]===0x49&&u[8]===0x57&&u[9]===0x45) return 'image/webp'; if(u[0]===0x42&&u[1]===0x4D) return 'image/bmp'; if(u[4]===0x66&&u[5]===0x74&&u[6]===0x79&&u[7]===0x70) return 'image/avif'; return ''; }
-function dropUrl(dt){
-  const html=dt.getData('text/html')||'', m=html.match(/<img[^>]+src\s*=\s*["']([^"']+)["']/i), dec=x=>x.replace(/&amp;/g,'&');
-  const uri=(dt.getData('text/uri-list')||'').split(/\r?\n/).find(l=>l && !l.startsWith('#')), txt=(dt.getData('text/plain')||'').trim();
-  return [m&&dec(m[1]), uri, txt].filter(Boolean).find(u=>/^(https?:\/\/|data:image\/)/i.test(u)) || '';
+// sites show small previews; these rules point at the full-size file behind them (tried first, previews are the fallback)
+function upgradeImageUrl(u){
+  const out=[]; try{ const url=new URL(u), h=url.hostname, path=url.pathname, swap=(re,to)=>{ const v=u.replace(re,to); if(v!==u) out.push(v); };
+    if(/(^|\.)pinimg\.com$/.test(h)){ const m=path.match(/^\/(?:\d+x\d*|originals)\/(.+)$/); if(m){ out.push(`${url.origin}/originals/${m[1]}`); out.push(`${url.origin}/1200x/${m[1]}`); out.push(`${url.origin}/736x/${m[1]}`); } }
+    if(h==='pbs.twimg.com'){ const v=new URL(u); v.searchParams.set('name','orig'); out.push(v.href); v.searchParams.set('name','4096x4096'); out.push(v.href); }
+    if(h==='preview.redd.it') out.push('https://i.redd.it'+path);
+    if(/artstation\.com$/.test(h)){ swap(/\/(?:smaller_square|small_square|micro_square|small|medium|large)\//,'/4k/'); swap(/\/(?:smaller_square|small_square|micro_square|small|medium)\//,'/large/'); }
+    if(/behance\.net$/.test(h)){ swap(/\/project_modules\/[^/]+\//,'/project_modules/source/'); swap(/\/project_modules\/[^/]+\//,'/project_modules/max_3840/'); swap(/\/project_modules\/[^/]+\//,'/project_modules/1400/'); }
+    if(h==='upload.wikimedia.org' && path.includes('/thumb/')) out.push(url.origin+path.replace('/thumb/','/').replace(/\/[^/]+$/,''));
+    if(/googleusercontent\.com$|ggpht\.com$/.test(h)) swap(/=[swh]\d+[^/?#]*$/,'=s0');
+    if(/(^|\.)(dribbble\.com|unsplash\.com|pexels\.com|cdninstagram\.com)$/.test(h) && url.search && !/cdninstagram/.test(h)) out.push(url.origin+path);
+  }catch{}
+  out.push(u); return out;
 }
-async function addBoardUrl(url, at){
-  toast('Fetching the image…');
-  try{
-    if(/^data:/i.test(url)){ const bl=await (await fetch(url)).blob(); return addBoardImages([new File([bl],'dropped image',{ type:bl.type })], at); }
-    let buf; if(DESK) buf=await tinvoke('fetch_image',{ url }); else { const r=await fetch(url); if(!r.ok) throw new Error('HTTP '+r.status); buf=await r.arrayBuffer(); }
-    const u8=new Uint8Array(buf), type=sniffType(u8); if(!type) throw new Error('that link is not a picture');
-    let name='image'; try{ name=decodeURIComponent(url.split(/[?#]/)[0].split('/').pop())||'image'; }catch{}
-    await addBoardImages([new File([u8], name, { type })], at);
-  }catch(e){ hideToast(); toast(DESK ? `Could not download it (${e?.message||e}). Copy the image and paste it with Ctrl+V instead` : 'The browser blocked that download. Copy the image and paste it with Ctrl+V, or use the desktop app'); }
+function dropCandidates(dt){
+  const html=dt.getData('text/html')||'', uri=(dt.getData('text/uri-list')||'').split(/\r?\n/).filter(l=>l && !l.startsWith('#')), txt=(dt.getData('text/plain')||'').trim(), cand=[];
+  // Google results carry the original address in imgurl=
+  [...html.matchAll(/imgurl=([^&"'\s]+)/g)].forEach(m=>{ try{ cand.push(decodeURIComponent(m[1])); }catch{} });
+  uri.forEach(u=>{ try{ const q=new URL(u).searchParams.get('imgurl'); if(q) cand.push(q); }catch{} });
+  const doc=new DOMParser().parseFromString(html,'text/html'), img=doc.querySelector('img');
+  // srcset lists every size the site has: biggest first
+  (img?.getAttribute('srcset')||'').split(/,\s+(?=\S)/).map(x=>x.trim().split(/\s+/)).filter(x=>x[0]).map(([u,w])=>({ u, w:parseFloat(w)||0 })).sort((a,b)=>b.w-a.w).forEach(x=>cand.push(x.u));
+  ['data-src','data-original','data-full','data-large-src'].forEach(a=>{ const v=img?.getAttribute(a); if(v) cand.push(v); });
+  [img?.closest('a')?.getAttribute('href'), ...uri].filter(Boolean).forEach(u=>{ if(/\.(jpe?g|png|gif|webp|avif)(\?|#|$)/i.test(u)) cand.push(u); });
+  if(img?.getAttribute('src')) cand.push(img.getAttribute('src'));
+  uri.forEach(u=>cand.push(u)); if(/^https?:\/\/\S+$/.test(txt)) cand.push(txt);
+  const out=[]; cand.map(u=>u.replace(/&amp;/g,'&')).filter(u=>/^(https?:\/\/|data:image\/)/i.test(u)).forEach(u=>upgradeImageUrl(u).forEach(x=>{ if(!out.includes(x)) out.push(x); }));
+  return out;
 }
+function dropUrl(dt){ return dropCandidates(dt)[0]||''; }
+async function fetchImageBytes(url){
+  if(/^data:/i.test(url)){ const bl=await (await fetch(url)).blob(); return new Uint8Array(await bl.arrayBuffer()); }
+  let buf; if(DESK) buf=await tinvoke('fetch_image',{ url }); else { const r=await fetch(url); if(!r.ok) throw new Error('HTTP '+r.status); buf=await r.arrayBuffer(); }
+  return new Uint8Array(buf);
+}
+// tries the full-size versions first and keeps the first one that really is a picture
+async function addBoardUrls(list, at, fallbackFiles){
+  toast('Fetching the best version of the image…'); let lastErr=null;
+  for(const url of list){
+    try{ const u8=await fetchImageBytes(url), type=sniffType(u8); if(!type) throw new Error('not a picture');
+      let name='image'; try{ name=/^data:/i.test(url)?'dropped image':decodeURIComponent(url.split(/[?#]/)[0].split('/').pop())||'image'; }catch{}
+      await addBoardImages([new File([u8], name, { type })], at);
+      const it=BB()?.items[BB().items.length-1]; if(it?.nw) toast(`Added at ${it.nw}×${it.nh}${it.nw*it.nh<250000?'. That’s a preview size: open the image larger on the site first, then drag it':''}`);
+      return; }
+    catch(e){ lastErr=e; }
+  }
+  if(fallbackFiles?.length){ hideToast(); return addBoardImages(fallbackFiles, at); }
+  hideToast(); toast(DESK ? `Could not download it (${lastErr?.message||lastErr}). Copy the image and paste it with Ctrl+V instead` : 'The browser blocked that download. Copy the image and paste it with Ctrl+V, or use the desktop app');
+}
+function addBoardUrl(url, at){ return addBoardUrls(upgradeImageUrl(url), at); }
+
 async function imageMeta(blob){
   const bmp=await createImageBitmap(blob); const c=document.createElement('canvas'); c.width=c.height=24; const g=c.getContext('2d'); g.drawImage(bmp,0,0,24,24);
   const px=g.getImageData(0,0,24,24).data; let r=0,gg=0,bl=0; for(let i=0;i<px.length;i+=4){ r+=px[i]; gg+=px[i+1]; bl+=px[i+2]; } const n=px.length/4; r/=n*255; gg/=n*255; bl/=n*255;
@@ -4347,7 +4383,7 @@ function openUpdate(){
 
 /* ================= desktop (Tauri) ================= */
 // Everything here is inert in the browser; in the desktop app it adds file storage, tray, mini timer and more.
-const APP_VER='1.9.0';
+const APP_VER='1.9.1';
 const DESK = !!(window.__TAURI__ && window.__TAURI__.core);
 const tinvoke = (cmd,args,opts) => window.__TAURI__.core.invoke(cmd,args,opts);
 const fileName = p => String(p||'').split(/[\\/]/).pop();
