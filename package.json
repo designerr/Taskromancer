@@ -1,7 +1,7 @@
 {
   "name": "taskromancer",
   "private": true,
-  "version": "1.9.1",
+  "version": "2.1.0",
   "scripts": {
     "tauri": "tauri"
   },

@@ -209,6 +209,42 @@ fn paths_exist(paths: Vec<String>) -> Vec<bool> {
 }
 
 /// Names in a folder with a flag for sub-folders, used to turn a course folder into a checklist.
+/// Every image in a folder and its subfolders (two levels), for picking random references.
+#[tauri::command]
+fn list_images(folder: String) -> Result<Vec<String>, String> {
+    fn walk(dir: &Path, depth: u8, out: &mut Vec<String>) {
+        if let Ok(rd) = fs::read_dir(dir) {
+            for e in rd.filter_map(|e| e.ok()) {
+                let p = e.path();
+                if p.is_dir() {
+                    if depth < 2 { walk(&p, depth + 1, out); }
+                } else if p.extension().and_then(|x| x.to_str()).map(|x| IMAGE_EXTS.contains(&x.to_lowercase().as_str())).unwrap_or(false) {
+                    out.push(p.to_string_lossy().to_string());
+                }
+            }
+        }
+    }
+    let root = PathBuf::from(&folder);
+    if !root.is_dir() {
+        return Err("folder not found".into());
+    }
+    let mut out = Vec::new();
+    walk(&root, 0, &mut out);
+    out.sort();
+    Ok(out)
+}
+
+/// Reads one image file (only image types) so the page can show it.
+#[tauri::command]
+fn read_image(path: String) -> Result<tauri::ipc::Response, String> {
+    let p = PathBuf::from(&path);
+    let ok = p.extension().and_then(|x| x.to_str()).map(|x| IMAGE_EXTS.contains(&x.to_lowercase().as_str())).unwrap_or(false);
+    if !ok {
+        return Err("not an image file".into());
+    }
+    Ok(tauri::ipc::Response::new(fs::read(&p).map_err(err)?))
+}
+
 #[tauri::command]
 fn list_dir(path: String) -> Result<Vec<(String, bool)>, String> {
     let mut out: Vec<(String, bool)> = fs::read_dir(&path)
@@ -639,7 +675,9 @@ pub fn run() {
             set_fullscreen,
             open_board_window,
             close_board_window,
-            set_board_on_top
+            set_board_on_top,
+            list_images,
+            read_image
         ])
         .run(tauri::generate_context!())
         .expect("error while running Taskromancer");

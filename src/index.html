@@ -278,6 +278,53 @@ dialog h2{font:500 20px var(--f-px);margin:0;color:var(--bone)}
 .toast.show{display:flex}
 .toast button{font:500 14px var(--f-px);color:var(--soul)}
 
+/* ---------- v22: top line prompt, drawings counter ---------- */
+.topline{display:flex;align-items:center;gap:4px;min-width:0;flex:1;justify-content:center}
+.quote.prm{max-width:min(720px,60vw);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-style:normal}
+.tl-done{width:24px;height:24px;font-size:13px;color:var(--soul);border:1px solid var(--edge)}
+.tl-done:hover{background:color-mix(in srgb,var(--soul) 15%,transparent)}
+.drawn{margin:10px 0 6px;padding:12px 14px;background:color-mix(in srgb,var(--near) 8%,var(--card));border:1px solid color-mix(in srgb,var(--near) 45%,var(--edge))}
+.dr-top{display:flex;align-items:center;gap:6px}.dr-top .field{width:110px}
+.dr-n{flex:1;font-size:15px}.dr-n b{font:700 24px var(--f-num);color:var(--bone)}
+.dr-bar{height:8px;background:var(--well);margin:8px 0 4px}.dr-bar i{display:block;height:100%;background:var(--near)}
+.dr-log{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.dr-log span{font-size:11.5px;color:var(--muted);padding:2px 6px;background:var(--well)}
+.dl-hab{display:flex;flex-direction:column;gap:4px}.dl-hab .field{max-width:320px}
+
+/* ---------- v21: formulas, deck library, daily prompts ---------- */
+.fchips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.fchip{display:inline-flex;border:2px solid var(--abyss);box-shadow:inset 0 0 0 1px var(--edge);background:var(--card)}
+.fchip>button{padding:5px 9px;font-size:13px;color:var(--text)}
+.fchip .fq{padding:5px 7px;border-left:1px solid var(--edge);color:var(--muted)}
+.fchip .fq svg{width:14px;height:14px}
+.fchip.on{box-shadow:inset 0 0 0 1px var(--soul)}.fchip.on>button:first-child{color:var(--soul)}
+.fedit{display:flex;flex-direction:column;gap:8px;padding:10px;background:var(--well);border:1px solid var(--edge)}
+.fe-head{display:flex;gap:6px;align-items:center}.fe-head .field{flex:1;font-weight:600}.fe-head .fe-emo{flex:none;width:46px;text-align:center}
+.slots{display:flex;flex-direction:column;gap:4px}
+.slot{display:grid;grid-template-columns:18px minmax(0,1fr) minmax(0,1.1fr) auto 28px;gap:6px;align-items:center;padding:4px 6px;background:var(--card);border:1px solid var(--edge)}
+.slot .field{padding:4px 7px;font-size:13px;min-width:0}
+.slot .sl-src{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left}
+.slot.drop-above{box-shadow:inset 0 3px 0 var(--soul)}.slot.drop-below{box-shadow:inset 0 -3px 0 var(--soul)}
+.fe-add{display:flex;gap:6px}.fe-add select{flex:1}
+.fe-tpl{display:flex;flex-direction:column;gap:4px;font-size:12.5px;color:var(--muted)}
+.fe-tpl small{color:var(--dim)}.fe-tpl textarea{font-size:13px;resize:vertical}
+.fe-tpl .chips button{font-size:11.5px;padding:2px 7px}
+.libbar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.deck .used{font-size:11.5px;color:var(--muted);white-space:nowrap}
+.brief{display:flex;align-items:flex-start;gap:6px;padding:10px 12px;margin-bottom:10px;background:color-mix(in srgb,var(--soul) 10%,var(--card));border:1px solid color-mix(in srgb,var(--soul) 40%,var(--edge));font-size:15px;line-height:1.45}
+.brief span{flex:1}
+.imgtoks{display:flex;flex-wrap:wrap;gap:8px}
+.tok.timg{flex-direction:column;padding:4px;align-items:stretch}
+.tok.timg img{display:block;max-width:180px;max-height:140px;object-fit:contain;background:var(--well);min-width:60px;min-height:40px}
+.tok.timg .ti-bar{display:flex;justify-content:center;gap:2px}
+.daily{padding:10px 12px;margin-bottom:14px;border:2px solid var(--abyss);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--near) 55%,var(--edge));background:color-mix(in srgb,var(--near) 7%,var(--card))}
+.daily.done{box-shadow:inset 0 0 0 1px var(--soul)}
+.dl-head{display:flex;align-items:center;gap:10px}
+.dl-head b{font:500 15px var(--f-px);color:var(--bone)}
+.dl-text{margin:8px 0;font-size:15.5px;line-height:1.45;color:var(--text)}
+.dl-imgs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}.dl-imgs img{max-height:110px;max-width:160px;object-fit:contain;background:var(--well)}
+.dl-acts{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.dl-cfg{margin:8px 0;display:flex;flex-direction:column;gap:6px}
+
 /* ---------- v20: links, checklists, note width, ideas and notes on boards ---------- */
 .rich a[href]:not(.loc){color:var(--arcane);text-decoration:underline;text-underline-offset:2px;cursor:pointer}
 .lpop{position:fixed;z-index:90;display:flex;align-items:center;gap:6px;padding:6px;background:var(--stone2);border:2px solid var(--abyss);box-shadow:inset 0 0 0 1px var(--edge-hi),0 10px 24px #000a;max-width:min(460px,92vw)}
@@ -740,7 +787,8 @@ dialog .hint{margin:0 0 8px}
 dialog{max-height:88vh;overflow:auto}
 
 /* ---------- v7: randomizer, checklists, note menu ---------- */
-.rnd-grid{display:grid;grid-template-columns:minmax(280px,360px) minmax(0,1fr);gap:22px;align-items:start}
+.rnd-grid{display:grid;grid-template-columns:minmax(340px,38%) minmax(0,1fr);gap:22px;align-items:start}
+@media (max-width:900px){ .rnd-grid{grid-template-columns:1fr} }
 .formula{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px;margin-bottom:12px}
 .formula select{grid-column:1/-1}
 .formula:has(.ib) select{grid-column:1}
@@ -1005,7 +1053,7 @@ select.field option,select.catsel option{background:var(--card);color:var(--text
   <div class="brand" id="brand"></div>
   <span class="today" id="today"></span>
   <div class="pill" id="pill" aria-label="Timer"></div>
-  <button class="quote" id="quote" data-act="quote-next" title="Click for another phrase"></button><button class="ib" id="quoteEdit" data-act="quote-edit" aria-label="Edit phrases" title="Edit phrases"></button>
+  <span class="topline" id="topline"><button class="quote" id="quote" data-act="quote-next" title="Click for another phrase"></button><button class="ib tl-done" id="promptDone" data-act="prompt-done" title="I drew it" aria-label="Mark the daily prompt as done" hidden>✓</button></span><button class="ib" id="quoteEdit" data-act="quote-edit" aria-label="Edit phrases" title="Edit phrases"></button>
   <span class="sync" id="sync">Saved on this device</span>
   <button class="btn sm soul" id="updBtn" data-act="upd-open" style="display:none">Update</button>
   <button class="ib desk-only" data-act="mini-open" id="miniBtn" aria-label="Mini timer" title="Mini timer, always on top"></button>
@@ -1190,7 +1238,7 @@ function normalize(s){
   { const d=sessDefaults(), x=s.sess||{}; o.sess=Object.assign(d,x); o.sess.cfg=Object.assign(sessDefaults().cfg,x.cfg||{}); o.sess.run=Object.assign(sessDefaults().run,x.run||{});
     if(!Array.isArray(o.sess.presets)) o.sess.presets=[]; if(!Array.isArray(o.sess.log)) o.sess.log=[]; }
   { const d=rndDefaults(); o.rnd=Object.assign(d, s.rnd||{}); ['decks','formulas','history','favs'].forEach(k=>{ if(!Array.isArray(o.rnd[k])) o.rnd[k]=[]; });
-    if(!o.rnd.results || typeof o.rnd.results!=='object') o.rnd.results={}; o.rnd.decks.forEach(d=>{ if(!Array.isArray(d.items)) d.items=[]; d.amount=Math.max(1,+d.amount||1); if(d.active==null) d.active=true; }); }
+    if(!o.rnd.results || typeof o.rnd.results!=='object') o.rnd.results={}; o.rnd.decks.forEach(d=>{ if(!Array.isArray(d.items)) d.items=[]; d.amount=Math.max(1,+d.amount||1); if(d.active==null) d.active=true; }); migrateFormulas(o.rnd); }
   if((o.notesV||0)<2){ o.notes.forEach(n=>{ if(n.html==null) n.html=textToHtml(n.text||''); });
     o.quests.forEach(q=>{ if(q.note && !/<\/?(b|i|u|s|br|div|p|ul|li|img|strong|em)\b/i.test(q.note)) q.note=textToHtml(q.note); }); o.notesV=2; }
   [...o.notes].sort((a,b)=>(b.createdAt||0)-(a.createdAt||0)).forEach((n,i)=>{ if(typeof n.order!=='number') n.order=i; n.pinned=!!n.pinned; if(n.text==null) n.text=htmlToText(n.html); });
@@ -1307,8 +1355,8 @@ function rndDefaults(){ return { decks:[], results:{}, layout:'line', formulas:[
 const R = () => state.rnd;
 const RND_SOUNDS=[['generate_dice','🎲 Dice roll'],['generate_arcade_block','🧱 Arcade block'],['generate_cash_register','🛒 Cash register'],['generate_soft_chime','✨ Soft chime'],['generate_arcade_confirm','🟢 Arcade confirm']];
 function sfx(key){ const r=R(); if(r.muted) return; try{ const a=new Audio(SFX[key]); a.volume=clamp(+r.volume||0); a.play().catch(()=>{}); }catch{} }
-const D = id => R().decks.find(d=>d.id===id);
-const activeDecks = () => R().decks.filter(d=>d.active!==false);
+const D = id => activeDecks().find(d=>d.id===id) || R().decks.find(d=>d.id===id);
+const activeDecks = () => curSlots().map(slotView).filter(Boolean);
 const WORD_RE=/[\p{L}\p{N}'’-]+/gu;
 const wordsOf = t => new Set((t.toLowerCase().match(WORD_RE)||[]));
 const same = (a,b) => a.trim().toLowerCase()===b.trim().toLowerCase();
@@ -1330,17 +1378,22 @@ function rollDeck(d){
 }
 function pushHistory(){ const r=R(); r.history=r.history.slice(0, r.hpos+1); r.history.push({ at:now(), results:JSON.parse(JSON.stringify(r.results)) }); if(r.history.length>30) r.history.shift(); r.hpos=r.history.length-1; }
 function rollAll(silent, refreshed){
-  if(DESK && !refreshed && R().decks.some(d=>d.path && d.active!==false)){ refreshLinkedDecks().then(()=>rollAll(silent,true)); return true; }
-  const ds=activeDecks(); if(!ds.length){ sfx('missing'); toast('Add a deck and tick it to roll'); return false; }
-  ds.forEach(rollDeck); pushHistory(); if(!silent) sfx(R().sound); commit(); flashMix(); if(DESK && R().imgAuto && R().imgFolder) randomImage(); return true;
+  const ds=activeDecks(); if(!ds.length){ sfx('missing'); toast(FM()?'Add decks to this formula, then roll':'Make a formula first'); return false; }
+  if(DESK && !refreshed && ds.some(d=>d.path)){ refreshLinkedDecks().then(()=>rollAll(silent,true)); return true; }
+  ds.filter(d=>d.kind!=='img').forEach(rollDeck);
+  const finish=()=>{ pushHistory(); if(!silent) sfx(R().sound); commit(); flashMix(); if(DESK && R().imgAuto && R().imgFolder) randomImage(); };
+  const imgs=ds.filter(d=>d.kind==='img'); if(imgs.length && DESK) rollImageSlots(imgs, R().results).then(finish); else finish();
+  return true;
 }
 function flashMix(){ document.querySelectorAll('.tok').forEach((el,i)=>{ el.style.animationDelay=(i*25)+'ms'; el.classList.add('pop'); }); }
 function rerollTok(did,i){ const d=D(did), list=R().results[did]; if(!d||!list||!list[i]||list[i].locked) return;
+  if(d.kind==='img'){ folderImages(d.folder).then(all=>{ const used=new Set(list.map(t=>t.img)), pool=all.filter(p=>!used.has(p)); if(!pool.length){ sfx('missing'); toast('No other images in that folder'); return; } const p=pool[Math.floor(Math.random()*pool.length)]; list[i]={ t:fileName(p), img:p, locked:false }; pushHistory(); sfx(R().sound); commit(); }); return; }
   const c=pickToken(d, list.filter((_,k)=>k!==i)); if(c==null){ sfx('missing'); toast('No clean alternative left in this deck'); return; }
   list[i]={ t:c, locked:false }; pushHistory(); sfx(R().sound); commit(); }
-function addTok(did){ const d=D(did); if(!d) return; const list=R().results[did]||(R().results[did]=[]);
+function addTok(did){ const d=D(did); if(!d) return; const list=R().results[did]||(R().results[did]=[]); const slot=curSlots().find(x=>x.id===did);
+  if(d.kind==='img'){ pickImages({ ...d, amount:list.length+1 }, list).then(out=>{ R().results[did]=out; if(slot) slot.amount=out.length; pushHistory(); sfx(R().sound); commit(); }); return; }
   const c=pickToken(d, list); if(c==null){ sfx('missing'); toast('No clean extra token left in this deck'); return; }
-  list.push({ t:c, locked:false }); d.amount=list.length; pushHistory(); sfx(R().sound); commit(); }
+  list.push({ t:c, locked:false }); if(slot) slot.amount=list.length; pushHistory(); sfx(R().sound); commit(); }
 const tokText = t => t.replace(/-/g,' ');
 function mixText(sep){ sep=sep??R().sep; return activeDecks().flatMap(d=>(R().results[d.id]||[]).map(x=>tokText(x.t))).join(sep); }
 function mixGroups(){ return activeDecks().map(d=>({ d, toks:R().results[d.id]||[] })).filter(g=>g.toks.length); }
@@ -1362,20 +1415,12 @@ function viewRnd(){
   const hist = r.history.length ? `${r.hpos+1}/${r.history.length}` : '';
   return `<div class="rnd-grid">
   <section class="decks">
-    <div class="plate"><h2>Decks</h2><span class="right">
-      <button class="btn sm" data-act="rnd-import" title="Import .txt files, tokens split by commas or new lines">Import .txt</button>
-      <button class="btn sm" data-act="deck-new">${IC.plus}Deck</button></span></div>
-    <div class="formula">
-      <select class="field" data-rndf aria-label="Formula"><option value="">${r.formulas.length?'Pick a formula…':'No formulas yet'}</option>${r.formulas.map(f=>`<option value="${f.id}" ${f.id===r.curFormula?'selected':''}>${esc(f.name)}</option>`).join('')}</select>
-      ${fm?`<button class="ib" data-act="formula-del" data-id="${fm.id}" title="Delete formula" aria-label="Delete formula">${IC.trash}</button>`:''}
-      <input class="field" id="formulaName" placeholder="${fm?esc(fm.name):'Formula name'}" autocomplete="off" aria-label="Formula name">
-      <button class="btn sm" data-act="formula-save" title="Save ticked decks, their order and amounts">Save</button>
-    </div>
-    ${r.decks.length ? `<div class="deck-list">${r.decks.map(deckCard).join('')}</div>`
-      : `<div class="empty"><b>No decks yet</b>Import .txt files (tokens split by commas or new lines) or start a new deck and paste tokens into it.<div class="btns"><button class="btn sm" data-act="rnd-demo">Load example decks</button></div></div>`}
+    <div class="plate"><div class="seg" role="group" aria-label="Randomizer panel"><button data-act="rnd-tab" data-id="f" aria-pressed="${(state.ui.rndTab||'f')==='f'}">Formulas ${r.formulas.length}</button><button data-act="rnd-tab" data-id="l" aria-pressed="${state.ui.rndTab==='l'}">Deck library ${r.decks.length}</button></div></div>
+    ${(state.ui.rndTab||'f')==='f' ? formulaPanel() : libraryPanel()}
   </section>
   <section class="mix">
-    <div class="plate"><h2>${T.mix}</h2><span class="right">
+    ${dailyCard()}
+    <div class="plate"><h2>${fm?`${esc(fm.emoji)} ${esc(fm.name)}`:T.mix}</h2><span class="right">
       <button class="ib" data-act="hist" data-id="-1" ${r.hpos>0?'':'disabled'} aria-label="Previous roll" title="Previous roll">${IC.left}</button><span class="sub hpos">${hist}</span>
       <button class="ib" data-act="hist" data-id="1" ${r.hpos<r.history.length-1?'':'disabled'} aria-label="Next roll" title="Next roll">${IC.right}</button></span></div>
     <div class="rollrow">
@@ -1389,14 +1434,17 @@ function viewRnd(){
       <select class="field" data-rnd="sep" aria-label="Separator for Copy all">${[['; ','a; b'],[', ','a, b'],['\n','one per line'],[' ','a b']].map(([v,l])=>`<option value="${esc(v)}" ${r.sep===v?'selected':''}>${l}</option>`).join('')}</select>
       <button class="btn sm" data-act="rnd-copyall" ${mixGroups().length?'':'disabled'}>${IC.copy}Copy all</button>
     </div>
-    <div class="results ${r.layout}">${groups.length ? groups.map(d=>{ const toks=r.results[d.id]||[]; return `<div class="rg">
+    ${(()=>{ const bt=briefFrom(fm, r.results); return bt && mixGroups().length ? `<div class="brief"><span>${esc(bt)}</span><button class="ib" data-act="brief-copy" title="Copy the brief" aria-label="Copy the brief">${IC.copy}</button><button class="ib" data-act="brief-board" title="Open it on a board, with the images" aria-label="Open on a board">${IC.expand}</button></div>` : ''; })()}
+    <div class="results ${r.layout}">${groups.length ? groups.map(d=>{ const toks=r.results[d.id]||[];
+      if(d.kind==='img') return `<div class="rg"><div class="rg-head"><span>🖼 ${esc(d.name)}</span><button class="ib" data-act="tok-add" data-id="${d.id}" title="One more image" aria-label="Add image">${IC.plus}</button></div><div class="toks imgtoks">${toks.length?toks.map((x,i)=>`<span class="tok timg ${x.locked?'locked':''}"><img src="${esc(imgUrl(x.img))}" alt="" title="${esc(x.t)}"><span class="ti-bar"><button class="ti" data-act="tok-reroll" data-id="${d.id}" data-sub="${i}" title="Another image" aria-label="Another image">${IC.reload}</button><button class="ti" data-act="tok-lock" data-id="${d.id}" data-sub="${i}" aria-pressed="${x.locked}" title="${x.locked?'Unlock':'Lock'}" aria-label="Lock">${x.locked?IC.lock:IC.unlock}</button><button class="ti" data-act="tok-open" data-id="${d.id}" data-sub="${i}" title="Open in viewer" aria-label="Open">${IC.expand}</button><button class="ti" data-act="tok-del" data-id="${d.id}" data-sub="${i}" title="Remove" aria-label="Remove">${IC.x}</button></span></span>`).join(''):'<span class="sub">not rolled yet</span>'}</div></div>`;
+      return `<div class="rg">
         <div class="rg-head"><span>${esc(d.name)}</span><button class="ib" data-act="tok-add" data-id="${d.id}" title="Add one more token" aria-label="Add token">${IC.plus}</button></div>
         <div class="toks">${toks.length ? toks.map((x,i)=>`<span class="tok ${x.locked?'locked':''}">
           <button class="tt" data-act="tok-reroll" data-id="${d.id}" data-sub="${i}" title="${x.locked?'Locked':'Click to reroll'}">${esc(x.t)}</button>
           <button class="ti" data-act="tok-lock" data-id="${d.id}" data-sub="${i}" aria-pressed="${x.locked}" title="${x.locked?'Unlock':'Lock, rolls keep it'}" aria-label="Lock">${x.locked?IC.lock:IC.unlock}</button>
           <button class="ti" data-act="tok-copy" data-id="${d.id}" data-sub="${i}" title="Copy" aria-label="Copy">${IC.copy}</button>
           <button class="ti" data-act="tok-del" data-id="${d.id}" data-sub="${i}" title="Remove" aria-label="Remove">${IC.x}</button></span>`).join(r.layout==='line'?'<span class="semi">;</span>':'') : '<span class="sub">not rolled yet</span>'}</div></div>`; }).join('')
-      : `<div class="empty-note">Tick at least one deck on the left, then Roll.</div>`}</div>
+      : `<div class="empty-note">${fm?'Add decks to this formula on the left, then Roll.':'Make a formula on the left, then Roll.'}</div>`}</div>
     <div class="toolbar mixacts">
       <button class="btn sm" data-act="rnd-note" ${mixGroups().length?'':'disabled'}>${IC.note}Save to notes</button>
       <button class="btn sm" data-act="rnd-quest" ${mixGroups().length?'':'disabled'}>${IC.sword}Make a quest</button>
@@ -1414,12 +1462,12 @@ function viewRnd(){
 }
 function deckCard(d){
   const editing=state.ui.deckEdit===d.id;
-  return `<div class="deck ${d.active===false?'off':''}" data-did="${d.id}">
+  return `<div class="deck" data-did="${d.id}">
     <div class="deck-row">
       <span class="grip" draggable="true" data-drag="d:${d.id}" title="Drag to reorder">⠿</span>
-      <button class="box ${d.active!==false?'on':''}" data-act="deck-active" data-id="${d.id}" aria-label="Include in the roll" title="Include in the roll">${PX.check}</button>
       <input class="deck-name" data-deck-name="${d.id}" value="${esc(d.name)}" aria-label="Deck name">
-      <span class="stepper"><button data-act="deck-amt" data-id="${d.id}" data-sub="-1" aria-label="Fewer">−</button><input data-deck-amt="${d.id}" value="${d.amount}" inputmode="numeric" aria-label="Amount"><button data-act="deck-amt" data-id="${d.id}" data-sub="1" aria-label="More">+</button></span>
+      ${(()=>{ const fs=R().formulas.filter(f=>f.slots.some(x=>x.deck===d.id)); return `<span class="used" title="${esc(fs.map(f=>f.name).join(', '))}">${fs.length?`in ${fs.length} formula${fs.length>1?'s':''}`:'unused'}</span>`; })()}
+      <button class="ib" data-act="deck-tofm" data-id="${d.id}" title="Add to the current formula" aria-label="Add to the current formula">${IC.plus}</button>
     </div>
     <div class="deck-meta"><span class="sub">${d.items.length} tokens</span>${d.path?`<span class="linked" title="Reads from ${esc(d.path)}">${IC.link}${esc(fileName(d.path))}</span>`:''}<span style="flex:1"></span>
       <button class="ib" data-act="deck-edit" data-id="${d.id}" title="Edit tokens" aria-label="Edit tokens" aria-expanded="${editing}">${IC.dots}</button>
@@ -1429,14 +1477,7 @@ function deckCard(d){
     ${editing?`<textarea class="field deck-items" data-deck-items="${d.id}" rows="7" aria-label="Tokens, one per line or comma separated">${esc(d.items.join('\n'))}</textarea><p class="tip" style="margin:4px 0 0">One token per line, or separated by commas.</p>`:''}
   </div>`;
 }
-function loadFormula(f){
-  const r=R(), missing=f.decks.filter(x=>!D(x.deckId)).length;
-  r.decks.forEach(d=>d.active=false);
-  const order=[]; f.decks.forEach(x=>{ const d=D(x.deckId); if(d){ d.active=true; d.amount=x.amount; order.push(d); } });
-  r.decks=[...order, ...r.decks.filter(d=>!order.includes(d))];
-  if(f.layout) r.layout=f.layout; r.curFormula=f.id;
-  if(missing){ sfx('missing'); toast(`${missing} deck${missing>1?'s are':' is'} gone from “${f.name}”, skipped`); }
-}
+function loadFormula(f){ R().curFormula=f.id; }
 const RND_DEMO=[['Subject','fox, lighthouse keeper, clockwork owl, street musician, old knight, frog wizard, beekeeper, robot gardener, ghost cat, mountain hermit, astronaut, tea merchant'],
   ['Mood','melancholic, cheerful, mysterious, tense, cozy, triumphant, eerie, peaceful, chaotic, dreamy'],
   ['Setting','rainy rooftop, sunken library, night market, misty forest, desert ruins, snowy village, space station, candle-lit tavern, floating islands, abandoned mall'],
@@ -1846,7 +1887,15 @@ function quotePool(){ const Qs=state.quotes, a=Qs.active;
   return Qs.lists.filter(l=>l.theme===(state.ui.theme||'necro') || l.id==='q-general').flatMap(l=>l.items); }
 let curQuote='';
 function pickQuote(){ const pool=quotePool().filter(Boolean); if(!pool.length){ curQuote=''; } else { let q, k=0; do{ q=pool[Math.floor(Math.random()*pool.length)]; }while(pool.length>1 && q===curQuote && ++k<8); curQuote=q; } renderQuote(); }
-function renderQuote(){ const el=$('#quote'); if(!el) return; el.textContent = curQuote ? `“${curQuote}”` : 'Add phrases to show here'; el.classList.toggle('empty',!curQuote); }
+let topShowing='phrase';
+function topPrompt(){ const dy=state.rnd?.daily; return dy && dy.day===today() ? dy.variants?.[dy.pick] : null; }
+function renderQuote(){ const el=$('#quote'); if(!el) return; const mode=state.ui.topLine||'phrase', tl=$('#topline'), dn=$('#promptDone'), qe=$('#quoteEdit');
+  const v=topPrompt(), dy=state.rnd?.daily; tl.style.display = mode==='none' ? 'none' : ''; qe.style.display = mode==='none'||mode==='prompt' ? 'none' : '';
+  let show = mode==='prompt' ? 'prompt' : mode==='both' ? topShowing : 'phrase'; if(show==='prompt' && (!v || (mode==='both' && dy?.done))) show='phrase';
+  if(mode==='prompt' && !v){ el.textContent = (state.rnd?.formulas||[]).length ? '🎯 Today’s prompt is waiting in the Randomizer' : '🎯 Make a formula in the Randomizer for daily prompts'; el.classList.add('empty','prm'); el.title='Open the Randomizer'; dn.hidden=true; return; }
+  if(show==='prompt'){ el.textContent = dy.done ? `🎯 Done today ✓ · ${v.emoji} ${v.name}` : `🎯 ${v.text}`; el.title = `${v.emoji} ${v.name}: ${v.text}\nClick to open it`; el.classList.toggle('empty',!!dy.done); el.classList.add('prm'); dn.hidden=!!dy.done; return; }
+  el.classList.remove('prm'); dn.hidden=true; el.title='Click for another phrase'; el.textContent = curQuote ? `“${curQuote}”` : 'Add phrases to show here'; el.classList.toggle('empty',!curQuote); }
+setInterval(()=>{ if((state.ui.topLine||'phrase')==='both'){ topShowing = topShowing==='phrase' ? 'prompt' : 'phrase'; renderQuote(); } }, 150000);
 function openQuotes(){
   const Qs=state.quotes, ui=state.ui; if(!Qs.lists.find(l=>l.id===ui.qEdit)) ui.qEdit=Qs.lists[0]?.id||null; const L=Qs.lists.find(l=>l.id===ui.qEdit);
   $('#dlgBody').innerHTML=`<h2>Phrases</h2><p class="hint" style="margin-top:6px">The phrase in the top bar changes when you click it. Pick which list it draws from, and edit any list below.</p>
@@ -1966,7 +2015,9 @@ function renderTabs(){
 function renderBoard(){
   const t=state.ui.tab;
   if(t==='boards'){ renderBoardsTab(); return; }
-  if(t==='atlas'){ closeBoardMenu(); renderAtlasTab(); return; } $('#board').dataset.view=t; closeBoardMenu();
+  if(t==='atlas'){ closeBoardMenu(); renderAtlasTab(); return; }
+  if(t==='rnd' && (!R().daily || (!R().formulas.length && R().decks.length))) migrateFormulas(R());
+  if(t==='rnd' && R().formulas.length) setTimeout(()=>{ const dy=R().daily; if(dy.day!==today() || !dy.variants.length) dailyEnsure(); },50); $('#board').dataset.view=t; closeBoardMenu();
   $('#board').innerHTML = t==='campaigns' ? viewCampaigns() : t==='time' ? viewTime() : t==='report' ? viewReport() : t==='notes' ? viewNotes() : t==='rnd' ? viewRnd() : t==='lib' ? viewLibrary() : t==='stats' ? viewStats() : t==='habits' ? viewHabits() : viewBoard();
   document.querySelectorAll('textarea.note-text').forEach(autosize);
   layoutNotes(); decorateChips();
@@ -2597,7 +2648,7 @@ const A_ = {
   toggle: ()=> state.timer.state==='running' ? pause() : play(),
   rtab: (el,id)=>{ state.ui.ritualTab=id; commit(); },
   theme: (el,id)=>{ state.ui.theme=id; applyTheme(); if(state.quotes.active==='auto') pickQuote(); commit(); openSettings(); },
-  'quote-next': ()=> pickQuote(),
+  'quote-next': (...a)=>{ if($('#quote')?.classList.contains('prm')){ state.ui.tab='rnd'; state.ui.dailyCfg=false; commit(); return; } (()=> pickQuote())(...a); },
   'quote-edit': ()=> openQuotes(),
   'q-pick': (el,id)=>{ state.ui.qEdit=id; openQuotes(); },
   'q-new': ()=>{ const l={ id:uid(), name:'My phrases', theme:null, items:[] }; state.quotes.lists.push(l); state.ui.qEdit=l.id; save(); openQuotes(); document.querySelector(`[data-qname="${l.id}"]`)?.select(); },
@@ -2607,14 +2658,14 @@ const A_ = {
   'q-restore': ()=>{ snap(); const own=state.quotes.lists.filter(l=>!l.id.startsWith('q-')); state.quotes.lists=[...quoteDefaults(), ...own]; save(); pickQuote(); openQuotes(); toast('Built-in lists restored', true); },
   'tab-vis': (el,k)=>{ const h=state.ui.hiddenTabs; if(h.includes(k)) state.ui.hiddenTabs=h.filter(x=>x!==k); else { if(tabOrder().length<=1) return; h.push(k); } commit(); openSettings(); },
   'rnd-roll': ()=> rollAll(),
-  'rnd-random': ()=>{ const r=R(), fs=r.formulas; sfx('generate_arcade_block');
+  'rnd-random': ()=>{ const r=R(), fs=r.formulas.filter(f=>f.slots.length); sfx('generate_arcade_block');
     if(fs.length){ loadFormula(fs[Math.floor(Math.random()*fs.length)]); rollAll(true); toast(`Formula “${r.formulas.find(f=>f.id===r.curFormula)?.name}”`); return; }
     const pool=r.decks.filter(d=>d.items.length); if(!pool.length){ sfx('missing'); toast('Add a deck first'); return; }
     const pickN=1+Math.floor(Math.random()*Math.min(pool.length,4)), chosen=new Set(shuffle([...pool]).slice(0,pickN));
-    r.decks.forEach(d=>d.active=chosen.has(d)); r.curFormula=''; rollAll(true);
+    newFormula('Random mix', r.decks.filter(d=>chosen.has(d)).map(d=>({ id:uid(), kind:'deck', deck:d.id, amount:1+Math.floor(Math.random()*3), label:'' }))); rollAll(true);
     toast(`Random decks: ${r.decks.filter(d=>chosen.has(d)).map(d=>d.name).join(', ')}`); },
   'rnd-import': ()=>{ if(DESK) return deskImportDecks(); rndReload=null; $('#txtFile').click(); },
-  'rnd-demo': ()=>{ RND_DEMO.forEach(([n,t],i)=>R().decks.push({ id:uid(), name:n, items:parseTokens(t), amount:i===3?1:(i===0?2:1), active:true })); commit(); },
+  'rnd-demo': ()=>{ const ds=RND_DEMO.map(([n,t],i)=>({ id:uid(), name:n, items:parseTokens(t), amount:i===3?1:(i===0?2:1), active:true })); R().decks.push(...ds); newFormula('Example', ds.map(d=>({ id:uid(), kind:'deck', deck:d.id, amount:d.amount, label:'' }))); state.ui.rndTab='f'; commit(); },
   'deck-new': ()=>{ const d={ id:uid(), name:'New deck', items:[], amount:1, active:true }; R().decks.push(d); state.ui.deckEdit=d.id; commit(); document.querySelector(`[data-deck-items="${d.id}"]`)?.focus(); },
   'deck-active': (el,id)=>{ const d=D(id); d.active = d.active===false; R().curFormula=''; commit(); },
   'deck-amt': (el,id,n)=>{ const d=D(id); d.amount=Math.max(1,d.amount+ +n); R().curFormula=''; commit(); },
@@ -2623,7 +2674,7 @@ const A_ = {
     if(d && d.path){ try{ const [text,mt]=await tinvoke('read_text',{ path:d.path }); d.items=parseTokens(text); d.mtime=mt; commit(); toast(`Reloaded “${d.name}”`); return; }catch{ sfx('missing'); toast('That file is gone, pick it again'); } }
     deskImportDecks(id); },
   'deck-export': (el,id)=>{ const d=D(id); saveFile(`${d.name.replace(/[\\/:*?"<>|]+/g,'_')}.txt`, d.items.join('\n'), 'text/plain'); },
-  'deck-del': (el,id)=>{ snap(); const d=D(id); R().decks=R().decks.filter(x=>x!==d); delete R().results[id]; commit(); toast(`Deck “${d.name}” deleted`, true); },
+  'deck-del': (el,id)=>{ const d=R().decks.find(x=>x.id===id); const n=R().formulas.filter(f=>f.slots.some(x=>x.deck===id)).length; if(!arm(el, n?`Used in ${n}! Delete?`:'Delete?')) return; snap(); R().decks=R().decks.filter(x=>x!==d); delete R().results[id]; commit(); toast(`Deck “${d.name}” deleted`, true); },
   'formula-save': ()=>{ const r=R(), inp=$('#formulaName'); let name=(inp?.value||'').trim(); const cur=r.formulas.find(f=>f.id===r.curFormula);
     if(!name && cur) name=cur.name; if(!name){ inp?.focus(); toast('Name the formula first'); return; }
     const ds=activeDecks(); if(!ds.length){ sfx('missing'); toast('Tick at least one deck'); return; }
@@ -2645,9 +2696,9 @@ const A_ = {
   'tok-copy': async (el,id,i)=>{ const x=R().results[id]?.[+i]; if(x && await copyText(tokText(x.t))){ sfx('copy'); toast(`Copied “${tokText(x.t)}”`); } },
   'tok-del': (el,id,i)=>{ const list=R().results[id]; if(!list) return; list.splice(+i,1); const d=D(id); if(d) d.amount=Math.max(1,list.length); sfx('lock_off'); commit(); },
   'tok-add': (el,id)=> addTok(id),
-  'rnd-note': ()=>{ const g=mixGroups(); if(!g.length) return; const html=g.map(x=>`<b>${esc(x.d.name)}:</b> ${x.toks.map(t=>esc(tokText(t.t))).join('; ')}`).join('<br>');
+  'rnd-note': ()=>{ const g=mixGroups(); if(!g.length) return; const fm=FM(), bt=briefFrom(fm,R().results); const html=(fm&&bt?`<b>${esc(fm.emoji)} ${esc(fm.name)}:</b> ${esc(bt)}<br>`:'')+g.filter(x=>x.d.kind!=='img').map(x=>`<b>${esc(x.d.name)}:</b> ${x.toks.map(t=>esc(tokText(t.t))).join('; ')}`).join('<br>');
     const min=state.notes.reduce((a,n)=>Math.min(a,n.order),0); state.notes.push({ id:uid(), html, text:htmlToText(html), cat:state.cats[0]?.id||'', pinned:false, order:min-1, createdAt:now(), updatedAt:now() }); commit(); toast('Saved to Notes'); },
-  'rnd-quest': ()=>{ const t=mixText('; '); if(!t) return; openMakeQuest({ html:'', text:t, lines:mixGroups().flatMap(g=>g.toks.map(x=>tokText(x.t))), from:'mix' }); },
+  'rnd-quest': ()=>{ const t=briefFrom(FM(),R().results)||mixText('; '); if(!t) return; openMakeQuest({ html:'', text:t, lines:mixGroups().flatMap(g=>g.toks.map(x=>tokText(x.t))), from:'mix' }); },
   'rnd-session': ()=>{ if(!rollAll()) return; state.ui.ritualTab='sessions'; if(state.sess.run.state!=='running') sessToggle(); else commit(); },
   'sess-toggle': sessToggle,
   'sess-skip': ()=> sessAdvance(true),
@@ -2770,6 +2821,11 @@ const A_ = {
   'mark-del': (el,id)=>{ const m=MP(); snap(); m.marks=m.marks.filter(k=>k.id!==id); commit(); },
   'hex-loot': (el,id,e)=>{ const m=MP(), h=m?.hexes.find(x=>x.id===id); if(!h) return; snap(); if(h.looted && h.loot){ m.inv[h.loot.e]=Math.max(0,(m.inv[h.loot.e]||0)-h.loot.n); h.looted=false; } h.loot = e ? { e, n:h.loot?.n||1 } : null; reconcileLoot(m,false); commit(); },
   'ach-open': ()=> openAch(),
+  'prompt-done': ()=>{ if(!topPrompt()) return; A_['daily-done'](); },
+  'top-line': (el,m)=>{ state.ui.topLine=m; topShowing = m==='prompt' ? 'prompt' : 'phrase'; save(); renderQuote(); openSettings(); if(m!=='phrase' && m!=='none' && state.rnd?.formulas?.length) dailyEnsure(); },
+  'draw-add': (el,n)=>{ const dy=R().daily; dy.drawn=Math.max(0,(dy.drawn||0)+ +n); save(); checkAch(); openAch(); },
+  'draw-edit': ()=>{ state.ui.drawEdit=true; openAch(); setTimeout(()=>{ $('#drawSet')?.focus(); $('#drawSet')?.select(); },20); },
+  'draw-set': ()=>{ const v=Math.max(0,Math.round(+$('#drawSet').value)||0); R().daily.drawn=v; state.ui.drawEdit=false; save(); checkAch(); openAch(); },
   'log-del': (el,id)=>{ const d=state.ui.reportDay||today(); snap(); const en=logEntry(id,d); if(!en) return; bumpDays(en.q,en.d,-en.ms); state.log=state.log.filter(x=>x!==en); commit(); toast(`${fmtHM(en.ms)} removed`, true); },
   'log-back': (el,id)=>{ const d=state.ui.reportDay||today(); snap(); const en=logEntry(id,d); if(!en) return; bumpDays(en.q,en.d,-en.ms); state.log=state.log.filter(x=>x!==en);
     const start=en.s||startOfIso(en.d)+9*3600e3; state.pending.push({ id:uid(), ms:en.ms, start, end:en.e||start+en.ms, day:en.d }); state.pending.sort((a,b)=>a.start-b.start); commit(); toast(`${fmtHM(en.ms)} is back in the harvest`, true); },
@@ -2787,6 +2843,32 @@ const A_ = {
   'hab-tap': (el,id,d)=>{ const h=HAB(id); if(!h) return; if(h.type==='num'){ state.ui.habEdit=id+'|'+d; commit(); const i=document.querySelector(`[data-habnum="${id}|${d}"]`); i?.focus(); i?.select(); return; }
     h.log ||= {}; const v=h.log[d]; if(v===1) h.log[d]=0; else h.log[d]=1; save(); renderBoard(); checkAch(); },
   'merge-notes': ()=> $('#mergeFile').click(),
+  'rnd-tab': (el,t)=>{ state.ui.rndTab=t; commit(); if(t==='l') scanDeckFolder(true); },
+  'f-pick': (el,id)=>{ R().curFormula=id; commit(); },
+  'f-quick': (el,id)=>{ R().curFormula=id; rollAll(); },
+  'f-new': ()=>{ newFormula('New formula'); commit(); setTimeout(()=>{ const i=document.querySelector('[data-fe="name"]'); i?.focus(); i?.select(); },30); },
+  'f-dup': ()=>{ const f=FM(); if(!f) return; const c=JSON.parse(JSON.stringify(f)); c.id=uid(); c.name=f.name+' copy'; c.slots.forEach(x=>x.id=uid()); R().formulas.push(c); R().curFormula=c.id; commit(); toast('Duplicated'); },
+  'f-del': (el)=>{ const f=FM(); if(!f || !arm(el,'Delete?')) return; R().formulas=R().formulas.filter(x=>x!==f); R().curFormula=R().formulas[0]?.id||''; commit(); toast(`Formula “${f.name}” deleted`, true); },
+  'sl-amt': (el,id,n)=>{ const sl=curSlots().find(x=>x.id===id); if(sl){ sl.amount=clamp((sl.amount||1)+ +n,1,50); commit(); } },
+  'sl-del': (el,id)=>{ const f=FM(); f.slots=f.slots.filter(x=>x.id!==id); delete R().results[id]; commit(); },
+  'sl-addimg': async ()=>{ const dir=await tinvoke('pick_folder').catch(()=>null); if(!dir) return; const f=FM(); if(!f) return; tracked('image folder', ()=>{ f.slots.push({ id:uid(), kind:'img', folder:normP(dir), amount:1, label:'' }); }); imgLists.delete(normP(dir)); commit(); },
+  'sl-folder': async (el,id)=>{ const dir=await tinvoke('pick_folder').catch(()=>null); if(!dir) return; const sl=curSlots().find(x=>x.id===id); if(sl){ tracked('image folder', ()=>{ sl.folder=normP(dir); }); imgLists.delete(sl.folder); commit(); } },
+  'tpl-ins': (el,_,name)=>{ const ta=document.querySelector('[data-fe="template"]'); if(!ta) return; const pos=ta.selectionStart??ta.value.length, ins=`{${name}}`; ta.value=ta.value.slice(0,pos)+ins+ta.value.slice(ta.selectionEnd??pos); const f=FM(); f.template=ta.value; save(); ta.focus(); ta.selectionStart=ta.selectionEnd=pos+ins.length; },
+  'deck-tofm': (el,id)=>{ let f=FM(); if(!f) f=newFormula('New formula'); f.slots.push({ id:uid(), kind:'deck', deck:id, amount:1, label:'' }); commit(); toast(`Added to “${f.name}”`); },
+  'deck-folder': async ()=>{ const dir=await tinvoke('pick_folder').catch(()=>null); if(!dir) return; R().deckFolder=normP(dir); commit(); scanDeckFolder(); },
+  'deck-rescan': ()=> scanDeckFolder(),
+  'tok-open': (el,id,i)=>{ const x=R().results[id]?.[+i]; if(x?.img) tinvoke('open_path',{ path:x.img }).catch(()=>toast('Could not open it')); },
+  'brief-copy': async ()=>{ const t=briefFrom(FM(),R().results); if(t && await copyText(t)){ sfx('copy'); toast('Brief copied'); } },
+  'brief-board': ()=>{ const f=FM(); if(!f) return; promptToBoard(`${f.emoji} ${f.name}`, briefFrom(f,R().results), imgPathsFrom(f,R().results)); },
+  'daily-cfg': ()=>{ state.ui.dailyCfg=!state.ui.dailyCfg; commit(); },
+  'daily-f': (el,id)=>{ const f=R().formulas.find(x=>x.id===id); if(f){ f.daily=!f.daily; commit(); } },
+  'daily-get': ()=> dailyEnsure(true),
+  'daily-reroll': ()=>{ const dy=R().daily; if(dy.variants.length>=3 || dy.done) return; dailyEnsure(true); },
+  'daily-pick': (el,i)=>{ R().daily.pick=+i; commit(); },
+  'daily-mix': ()=>{ const v=R().daily.variants[R().daily.pick]; if(!v) return; R().curFormula=v.fid; R().results=JSON.parse(JSON.stringify(v.results)); pushHistory(); commit(); },
+  'daily-board': ()=>{ const v=R().daily.variants[R().daily.pick]; if(v) promptToBoard(`🎯 ${fmtDate(today())} · ${v.emoji} ${v.name}`, v.text, v.imgs); },
+  'daily-done': ()=>{ const dy=R().daily, v=dy.variants[dy.pick]; if(!v) return; if(dy.done){ dy.done=false; dy.total=Math.max(0,(dy.total||0)-1); dy.drawn=Math.max(0,(dy.drawn||0)-1); dailyHabit(false); commit(); renderQuote(); toast('Unmarked'); return; }
+    dy.done=true; dy.total=(dy.total||0)+1; dy.drawn=(dy.drawn||0)+1; dy.log.unshift({ d:today(), fid:v.fid, text:v.text }); dy.log=dy.log.slice(0,1000); dailyJournal(v); dailyHabit(true); commit(); renderQuote(); toast(`Done! ${dy.drawn} drawings so far, written into your “Daily prompts” note`); },
   'hide-done': ()=>{ state.ui.hideDone=!state.ui.hideDone; commit(); },
   crypt: ()=>{ state.ui.crypt=!state.ui.crypt; commit(); },
   'p-collapse': (el,id)=>{ const p=P(id); p.collapsed=!p.collapsed; commit(); },
@@ -2930,6 +3012,8 @@ document.addEventListener('input', e=>{
   if(d.habnum!==undefined) return;
   if(d.logms!==undefined) return;
   if(d.bdname!==undefined){ const b=BB(); if(b){ b.name=el.value; save(); } return; }
+  if(d.fe){ const f=FM(); if(f){ f[d.fe]= d.fe==='emoji' ? firstGrapheme(el.value) : el.value; save(); } return; }
+  if(d.slLabel!==undefined){ const sl=curSlots().find(x=>x.id===d.slLabel); if(sl){ sl.label=el.value; save(); } return; }
   if(d.mpname!==undefined){ const m=MP(); if(m){ m.name=el.value; save(); } return; }
   if(d.marknote!==undefined){ const k=MP()?.marks.find(x=>x.id===d.marknote); if(k){ k.note=el.value; save(); } return; }
   if(d.routenote!==undefined){ const [rid,hid]=d.routenote.split('|'), rt=MP()?.routes.find(r=>r.id===rid); if(rt){ (rt.notes ||= {})[hid]=el.value; save(); } return; }
@@ -2973,6 +3057,12 @@ function onChange(e){
   if(d.hexlootn!==undefined){ const m=MP(), h=m?.hexes.find(x=>x.id===d.hexlootn); if(h && h.loot){ snap(); const n=clamp(Math.round(+el.value)||1,1,999); if(h.looted){ m.inv[h.loot.e]=Math.max(0,(m.inv[h.loot.e]||0)-h.loot.n)+n; } h.loot.n=n; softCommit(); } return; }
   if(d.hexattach!==undefined){ const m=MP(), h=m?.hexes.find(x=>x.id===d.hexattach), qid=el.value; if(h && qid){ snap(); m.hexes.forEach(x=>{ x.quests=(x.quests||[]).filter(i=>i!==qid); }); (h.quests ||= []).push(qid); softCommit(); } return; }
   if(d.hexemo!==undefined){ const h=MP()?.hexes.find(x=>x.id===d.hexemo); if(h){ h.emoji=firstGrapheme(el.value); softCommit(); } return; }
+  if(d.fe){ softCommit(); return; }
+  if(d.slLabel!==undefined){ softCommit(); return; }
+  if(d.dailyHabit!==undefined){ R().daily.habit=el.value; softCommit(); return; }
+  if(d.slDeck!==undefined){ const sl=curSlots().find(x=>x.id===d.slDeck); if(sl && el.value){ sl.deck=el.value; delete R().results[sl.id]; softCommit(); } return; }
+  if(d.slAmt!==undefined){ const sl=curSlots().find(x=>x.id===d.slAmt); if(sl){ sl.amount=clamp(Math.round(+el.value)||1,1,50); softCommit(); } return; }
+  if(d.slAdd!==undefined){ if(el.value){ let f=FM(); if(!f) f=newFormula('New formula'); f.slots.push({ id:uid(), kind:'deck', deck:el.value, amount:1, label:'' }); softCommit(); } return; }
   if(d.bdsel!==undefined){ state.ui.boardId=el.value; BS.sel.clear(); BS.crop=null; $('#board').dataset.view=''; softCommit(); return; }
   if(d.bdname!==undefined){ const b=BB(); if(b && !el.value.trim()) b.name='Untitled board'; softCommit(); return; }
   if(d.bdlink!==undefined){ const b=BB(); if(b){ b.link=el.value; softCommit(); toast(el.value?'Attached':'Detached'); } return; }
@@ -3024,6 +3114,7 @@ document.addEventListener('keydown', e=>{
   if(e.key==='Enter' && (ae?.dataset?.lname!==undefined || ae?.dataset?.stepedit!==undefined || ae?.dataset?.rootpath!==undefined || ae?.dataset?.rootname!==undefined)){ e.preventDefault(); ae.blur(); return; }
   if(e.key==='Escape' && ae?.dataset?.stepedit!==undefined){ e.preventDefault(); state.ui.stepEdit=null; ae.value=''; commit(); return; }
   if(e.key==='Enter' && ae?.dataset?.logms!==undefined){ e.preventDefault(); ae.blur(); return; }
+  if(e.key==='Enter' && ae?.id==='drawSet'){ e.preventDefault(); A_['draw-set'](); return; }
   if(e.key==='Enter' && ae?.dataset?.habnum!==undefined){ e.preventDefault(); ae.blur(); return; }
   if(e.key==='Escape' && ae?.dataset?.habnum!==undefined){ e.preventDefault(); state.ui.habEdit=null; commit(); return; }
   if(e.key==='Enter' && ae?.id==='chipPath'){ e.preventDefault(); A_['chip-insert'](); return; }
@@ -3234,6 +3325,7 @@ function dropTarget(node){
       const cr=node.closest('#crypt'); if(cr && !q.parentId) return { el:cr, type:'freeze' };
     } else { const bd=node.closest('#boardDrop'); if(bd && q.frozen && !P(q.projectId)?.frozen) return { el:bd, type:'thaw' }; }
   }
+  if(kind==='z'){ const row=node.closest('.slot[data-sid]'); return row && row.dataset.sid!==id ? { el:row, type:'zsort', id:row.dataset.sid } : null; }
   if(kind==='h'){ const row=node.closest('.hg-row[data-hid]'); return row && row.dataset.hid!==id ? { el:row, type:'hsort', id:row.dataset.hid } : null; }
   if(kind==='s'){ const card=node.closest('.step[data-sid]'), g=state.goals.find(x=>x.items.some(i=>i.id===id)); return card && g && card.dataset.gid===g.id && card.dataset.sid!==id ? { el:card, type:'step', id:card.dataset.sid, gid:g.id } : null; }
   if(kind==='l'){ const pn=node.closest('#ritual,#harvest'); return pn && pn.id!==id ? { el:pn, type:'panel', id:pn.id } : null; }
@@ -3250,13 +3342,13 @@ const clearHi = () => document.querySelectorAll('.drop-hi,.drop-before,.drop-aft
 document.addEventListener('dragstart', e=>{
   const el=e.target.closest?.('[data-drag]'); if(!el) return;
   const [kind,id]=el.dataset.drag.split(':'); dragging={kind,id};
-  e.dataTransfer.effectAllowed='copyMove'; e.dataTransfer.setData('text/plain', kind==='q'?Q(id)?.title||'':kind==='p'?P(id)?.name||'':kind==='n'||kind==='t'||kind==='d'||kind==='l'||kind==='s'||kind==='h'?'':'time'); if(kind==='n'){ const card=el.closest('.note'); try{ e.dataTransfer.setDragImage(card,20,20); }catch{} }
+  e.dataTransfer.effectAllowed='copyMove'; e.dataTransfer.setData('text/plain', kind==='q'?Q(id)?.title||'':kind==='p'?P(id)?.name||'':kind==='n'||kind==='t'||kind==='d'||kind==='l'||kind==='s'||kind==='h'||kind==='z'?'':'time'); if(kind==='n'){ const card=el.closest('.note'); try{ e.dataTransfer.setDragImage(card,20,20); }catch{} }
   el.closest('.q,.chunk,.frozen,.project,.note,.deck')?.classList.add('dragging');
   document.body.classList.add('is-dragging', 'drag-'+kind);
 });
-document.addEventListener('dragend', ()=>{ dragging=null; clearHi(); document.querySelectorAll('.dragging').forEach(x=>x.classList.remove('dragging')); document.body.classList.remove('is-dragging','drag-c','drag-q','drag-p','drag-n','drag-t','drag-d','drag-l','drag-s','drag-h'); });
+document.addEventListener('dragend', ()=>{ dragging=null; clearHi(); document.querySelectorAll('.dragging').forEach(x=>x.classList.remove('dragging')); document.body.classList.remove('is-dragging','drag-c','drag-q','drag-p','drag-n','drag-t','drag-d','drag-l','drag-s','drag-h','drag-z'); });
 document.addEventListener('dragover', e=>{ const t=dropTarget(e.target); clearHi(); if(t){ e.preventDefault(); e.dataTransfer.dropEffect = t.type==='give'||t.type==='strip'||t.type==='chunk' ? 'copy' : 'move'; if(t.type==='note'||t.type==='tab'){ const r=t.el.getBoundingClientRect(); t.el.classList.add(e.clientX<r.left+r.width/2?'drop-before':'drop-after'); }
-  else if(t.type==='deck'||t.type==='step'||t.type==='qsort'||t.type==='hsort'||t.type==='psort'){ const r=t.el.getBoundingClientRect(); t.el.classList.add(e.clientY<r.top+r.height/2?'drop-above':'drop-below'); } else t.el.classList.add('drop-hi'); }
+  else if(t.type==='deck'||t.type==='step'||t.type==='qsort'||t.type==='hsort'||t.type==='psort'||t.type==='zsort'){ const r=t.el.getBoundingClientRect(); t.el.classList.add(e.clientY<r.top+r.height/2?'drop-above':'drop-below'); } else t.el.classList.add('drop-hi'); }
   else if(!dragging && e.dataTransfer?.types?.includes('Files') && e.target.closest?.('.rich')) e.preventDefault(); });
 document.addEventListener('drop', e=>tracked('move', ()=>onDrop(e)));
 function onDrop(e){
@@ -3274,6 +3366,7 @@ function onDrop(e){
   else if(t.type==='deck'){ const r=t.el.getBoundingClientRect(), ds=R().decks, dd=D(id); ds.splice(ds.indexOf(dd),1); ds.splice(ds.indexOf(D(t.id))+(e.clientY<r.top+r.height/2?0:1),0,dd); R().curFormula=''; commit(); }
   else if(t.type==='tab'){ const r=t.el.getBoundingClientRect(), o=tabOrder(true).filter(k=>k!==id); o.splice(o.indexOf(t.id)+(e.clientX<r.left+r.width/2?0:1),0,id); state.ui.tabOrder=o; commit(); }
   else if(t.type==='psort'){ const r=t.el.getBoundingClientRect(), before=e.clientY<r.top+r.height/2, ps=state.projects, pp=P(id); snap(); ps.splice(ps.indexOf(pp),1); ps.splice(ps.indexOf(P(t.id))+(before?0:1),0,pp); commit(); }
+  else if(t.type==='zsort'){ const r=t.el.getBoundingClientRect(), before=e.clientY<r.top+r.height/2, sl=FM().slots, a=sl.find(x=>x.id===id); sl.splice(sl.indexOf(a),1); sl.splice(sl.findIndex(x=>x.id===t.id)+(before?0:1),0,a); commit(); }
   else if(t.type==='hsort'){ const r=t.el.getBoundingClientRect(), before=e.clientY<r.top+r.height/2, hs=state.habits, hh=HAB(id); hs.splice(hs.indexOf(hh),1); hs.splice(hs.indexOf(HAB(t.id))+(before?0:1),0,hh); commit(); }
   else if(t.type==='qsort'){ const r=t.el.getBoundingClientRect(), before=e.clientY<r.top+r.height/2, q=Q(id), tg=Q(t.id); snap();
     if(!q.parentId && tg.projectId!==q.projectId){ moveQuestToProject(q, tg.projectId); }
@@ -3297,6 +3390,8 @@ function openSettings(){
     <div class="dlg-row"><button class="sflag" data-act="layout-swap" aria-pressed="${!!ui.swap}"><span class="box ${ui.swap?'on':''}">${PX.check}</span>Timer on the right</button>
       <button class="sflag" data-act="layout-scene" aria-pressed="${!ui.hideScene}"><span class="box ${!ui.hideScene?'on':''}">${PX.check}</span>Show the scene</button>
       <button class="btn sm" data-act="layout-reset">Reset layout</button></div>
+    <h3 class="dh">Top line</h3><p class="hint">What the line at the top of the window shows. The daily prompt comes from your Randomizer formulas.</p>
+    <div class="seg" role="group" aria-label="Top line">${[['phrase','Phrase'],['prompt','Daily prompt'],['both','Both, taking turns'],['none','Nothing']].map(([k,l])=>`<button data-act="top-line" data-id="${k}" aria-pressed="${(ui.topLine||'phrase')===k}">${l}</button>`).join('')}</div>
     <h3 class="dh">Day</h3>
     <label class="goalset">Daily limit <input class="field" type="number" min="1" max="16" step="0.5" data-ui="dayGoal" value="${dayGoalH()}" aria-label="Daily limit in hours"> hours <span>The scene slowly turns to night (to dawn, for the necromancer) as your timed hours reach this.</span></label>
     <h3 class="dh">Data</h3><p class="hint">Everything saves automatically. A backup file lets you move your data to the desktop version later.</p>
@@ -4042,6 +4137,13 @@ const ACH = [
   ['days7','📅','Regular','Open Taskromancer on 7 different days', s=>(s.stats.days||[]).length>=7],
   ['camp','🎯','Strategist','Complete every step of a campaign', s=>s.goals.some(g=>g.items.length && g.items.every(i=>i.done))],
   ['habit7','🔥','On a roll','Keep a habit going 7 days in a row', s=>s.habits.some(h=>habStreaks(h).some(x=>x.len>=7))],
+  ['daily1','🎯','First drawing','Your first drawing on the counter', s=>(s.rnd.daily?.drawn||0)>=1],
+  ['daily3','🖌️','Warming up','3 drawings', s=>(s.rnd.daily?.drawn||0)>=3],
+  ['daily5','🎨','Sketchbook','5 drawings', s=>(s.rnd.daily?.drawn||0)>=5],
+  ['daily10','🖼️','Gallery wall','10 drawings, gaps are fine', s=>(s.rnd.daily?.drawn||0)>=10],
+  ['daily100','🏛️','Museum','100 drawings', s=>(s.rnd.daily?.drawn||0)>=100],
+  ['daily250','🗿','Old master','250 drawings', s=>(s.rnd.daily?.drawn||0)>=250],
+  ['daily365','📅','A year of drawings','365 drawings', s=>(s.rnd.daily?.drawn||0)>=365],
   ['secret','🕹️','Old school','Find the secret code', s=>!!s.stats.konami]
 ];
 function checkAch(){
@@ -4051,7 +4153,13 @@ function checkAch(){
 }
 function openAch(){
   $('#dlg').dataset.mode='ach'; const A=state.ach||{}, n=ACH.filter(a=>A[a[0]]).length;
-  $('#dlgBody').innerHTML=`<h2>Achievements</h2><p class="hint" style="margin-top:6px">${n} of ${ACH.length} unlocked. Nothing here punishes you, they only celebrate.</p>
+  const dy=state.rnd?.daily||{}, drawn=dy.drawn||0, steps=[1,3,5,10,100,250,365,500,1000], next=steps.find(x=>x>drawn)||drawn+100, prev=[0,...steps].filter(x=>x<=drawn).pop()||0, nextName=(ACH.find(a=>a[0]==='daily'+next)||[])[2];
+  const drawBlock=`<div class="drawn"><div class="dr-top"><span class="dr-n">🎨 <b>${drawn}</b> drawings</span>
+      ${state.ui.drawEdit?`<input class="field" type="number" min="0" id="drawSet" value="${drawn}" aria-label="Drawings so far"><button class="btn sm soul" data-act="draw-set">Save</button>`:`<button class="ib" data-act="draw-add" data-id="-1" aria-label="One less" title="One less">${IC.minus}</button><button class="ib" data-act="draw-add" data-id="1" aria-label="One more" title="I drew something else today">${IC.plus}</button><button class="ib" data-act="draw-edit" aria-label="Set the number" title="Set the number, e.g. drawings you made before">${IC.pen}</button>`}</div>
+    <div class="dr-bar"><i style="width:${Math.min(100,((drawn-prev)/Math.max(1,next-prev))*100).toFixed(1)}%"></i></div>
+    <p class="sub">${drawn} / ${next}${nextName?` → “${esc(nextName)}”`:''}. Daily prompts you finish add here; + counts anything else you draw; ✎ sets a starting number.</p>
+    ${(dy.log||[]).length?`<div class="dr-log">${dy.log.slice(0,6).map(x=>{ const f=state.rnd.formulas.find(y=>y.id===x.fid); return `<span title="${esc(x.text)}">${fmtDate(x.d)} · ${f?esc(f.emoji)+' '+esc(f.name):'prompt'}</span>`; }).join('')}</div>`:''}</div>`;
+  $('#dlgBody').innerHTML=`<h2>Achievements</h2>${drawBlock}<p class="hint" style="margin-top:6px">${n} of ${ACH.length} unlocked. Nothing here punishes you, they only celebrate.</p>
     <div class="achgrid">${ACH.map(([id,ic,t,d])=>{ const at=A[id], hidden=id==='secret'&&!at; return `<div class="ach ${at?'got':''}"><span class="aic">${at?ic:'🔒'}</span><div><b>${hidden?'???':t}</b><small>${hidden?'Some codes never get old':d}</small>${at?`<em>${new Date(at).toLocaleDateString('en-GB',{ day:'numeric', month:'short', year:'numeric' })}</em>`:''}</div></div>`; }).join('')}</div>`;
   if(!$('#dlg').open) $('#dlg').showModal();
 }
@@ -4106,6 +4214,137 @@ function boardWinMainListen(){
   ev.listen('board-req', e=>{ boardWinId=e.payload.id; lastWinBoard=''; boardWinMainSync(); });
   ev.listen('board-push', e=>{ const b=e.payload.board, i=state.boards.findIndex(x=>x.id===b.id); if(i<0) return; mergeNotes(e.payload.notes); lastWinBoard=JSON.stringify([b,boardNotes(b)]); state.boards[i]=b; save(); if(state.ui.tab==='boards' && state.ui.boardId===b.id) syncBoard(); });
   ev.listen('board-closed', ()=>{ boardWinId=null; });
+}
+
+/* ================= randomizer formulas: recipes of slots over a library of decks ================= */
+// A formula is a list of slots. Each slot points at a deck from the library (or an image folder) with its own amount and label.
+// Rolling uses the current formula only; removing a slot never touches the deck.
+const FM = () => R().formulas.find(f=>f.id===R().curFormula) || null;
+const curSlots = () => FM()?.slots || [];
+function slotView(sl){
+  if(sl.kind==='img') return { id:sl.id, kind:'img', name:sl.label||fileName(sl.folder||'')||'Images', folder:sl.folder, amount:sl.amount||1, items:[] };
+  const d=R().decks.find(x=>x.id===sl.deck); return d ? { id:sl.id, kind:'deck', name:sl.label||d.name, items:d.items, amount:sl.amount||1, deckId:d.id, path:d.path } : null;
+}
+function newFormula(name, slots){ const f={ id:uid(), name:name||'New formula', emoji:'🎲', slots:slots||[], template:'', daily:true }; R().formulas.push(f); R().curFormula=f.id; return f; }
+function migrateFormulas(r){
+  r.formulas=(r.formulas||[]).map(f=>f.slots ? f : { id:f.id||uid(), name:f.name||'Formula', emoji:'🎲', template:'', daily:true, slots:(f.decks||[]).map(x=>({ id:uid(), kind:'deck', deck:x.deckId, amount:x.amount||1, label:'' })) });
+  r.formulas.forEach(f=>{ f.slots ||= []; f.slots.forEach(s=>{ s.id ||= uid(); s.kind ||= 'deck'; s.amount=Math.max(1,+s.amount||1); }); if(f.daily==null) f.daily=true; f.emoji ||= '🎲'; });
+  if(!r.formulas.length && r.decks.length){ const act=r.decks.filter(d=>d.active!==false); r.formulas.push({ id:uid(), name:'My mix', emoji:'🎲', template:'', daily:true, slots:act.map(d=>({ id:uid(), kind:'deck', deck:d.id, amount:d.amount||1, label:'' })) }); }
+  if(!r.formulas.some(f=>f.id===r.curFormula)) r.curFormula=r.formulas[0]?.id||'';
+  r.daily ||= {}; const dy=r.daily; dy.variants ||= []; dy.log ||= []; dy.total ||= 0; if(dy.pick==null) dy.pick=0; if(dy.drawn==null) dy.drawn=dy.total;
+}
+const joinNice = a => a.length<=1 ? (a[0]||'') : a.slice(0,-1).join(', ')+' and '+a[a.length-1];
+// the one-sentence brief: the formula's template with {Slot label} filled in, or a plain "Label: a, b" list
+function briefFrom(f, results){
+  if(!f) return ''; const vs=f.slots.map(slotView).filter(Boolean), by={};
+  vs.forEach(v=>{ by[v.name.toLowerCase()]=(results[v.id]||[]).filter(t=>!t.img).map(t=>tokText(t.t)); });
+  const tpl=(f.template||'').trim();
+  if(tpl) return tpl.replace(/\{([^}]+)\}/g,(m,k)=>{ const v=by[k.trim().toLowerCase()]; return v&&v.length ? joinNice(v) : '…'; });
+  return vs.filter(v=>v.kind!=='img' && (results[v.id]||[]).length).map(v=>`${v.name}: ${joinNice(by[v.name.toLowerCase()])}`).join('. ');
+}
+const imgPathsFrom = (f, results) => f ? f.slots.filter(s=>s.kind==='img').flatMap(s=>(results[s.id]||[]).map(t=>t.img).filter(Boolean)) : [];
+// images on disk: listed once per folder, shown through blob URLs
+const imgLists=new Map(), imgUrls=new Map();
+async function folderImages(folder){ if(!DESK||!folder) return []; if(!imgLists.has(folder)) imgLists.set(folder, await tinvoke('list_images',{ folder }).catch(()=>[])); return imgLists.get(folder); }
+async function pickImages(view, keep){ const all=await folderImages(view.folder); const taken=new Set(keep.map(t=>t.img)); const pool=all.filter(p=>!taken.has(p));
+  const out=[...keep]; while(out.length<view.amount && pool.length){ const p=pool.splice(Math.floor(Math.random()*pool.length),1)[0]; out.push({ t:fileName(p), img:p, locked:false }); } return out; }
+function imgUrl(path){ if(imgUrls.has(path)) return imgUrls.get(path); imgUrls.set(path,'');
+  tinvoke('read_image',{ path }).then(buf=>{ imgUrls.set(path, URL.createObjectURL(new Blob([buf]))); if(['rnd'].includes(state.ui.tab)) renderBoard(); }).catch(()=>{}); return ''; }
+async function rollImageSlots(views, results){ for(const v of views){ const cur=results[v.id]||[]; results[v.id]=await pickImages(v, cur.filter(t=>t.locked)); } }
+// roll a formula on its own (for daily prompts), without touching the current mix
+async function rollFormulaAlone(f){
+  const res={}; const vs=f.slots.map(slotView).filter(Boolean);
+  vs.filter(v=>v.kind==='deck').forEach(v=>{ const out=[]; for(let i=0;i<v.amount;i++){ const c=pickToken(v,out); if(c!=null) out.push({ t:c, locked:false }); } res[v.id]=out; });
+  if(DESK) await rollImageSlots(vs.filter(v=>v.kind==='img'), res);
+  return res;
+}
+/* ----- daily prompts ----- */
+const dailyPool = () => R().formulas.filter(f=>f.daily && f.slots.some(s=>s.kind==='deck' ? R().decks.some(d=>d.id===s.deck && d.items.length) : true));
+async function dailyVariant(){ const pool=dailyPool(); if(!pool.length) return null; const f=pool[Math.floor(Math.random()*pool.length)], results=await rollFormulaAlone(f);
+  return { fid:f.id, name:f.name, emoji:f.emoji, text:briefFrom(f,results), results, imgs:imgPathsFrom(f,results) }; }
+let dailyBusy=false;
+async function dailyEnsure(force){ return dailyEnsure_(force).then(()=>renderQuote()); }
+async function dailyEnsure_(force){
+  const dy=R().daily; if(dailyBusy) return; if(dy.day===today() && dy.variants.length && !force) return;
+  if(dy.day!==today()){ dy.day=today(); dy.variants=[]; dy.pick=0; dy.done=false; }
+  if(dy.variants.length>=3) return; dailyBusy=true; const v=await dailyVariant(); dailyBusy=false; if(!v) return; dy.variants.push(v); dy.pick=dy.variants.length-1; save(); if(state.ui.tab==='rnd') renderBoard();
+}
+function dailyCard(){
+  const r=R(), dy=r.daily, pool=dailyPool(); if(!r.formulas.length) return '';
+  const v=dy.day===today() ? dy.variants[dy.pick] : null, left=3-(dy.day===today()?dy.variants.length:0);
+  const settings=state.ui.dailyCfg ? `<div class="dl-cfg"><span class="sub">Formulas that can show up in the daily prompt:</span><div class="chips wrap">${r.formulas.map(f=>`<button data-act="daily-f" data-id="${f.id}" aria-pressed="${!!f.daily}">${esc(f.emoji)} ${esc(f.name)}</button>`).join('')}</div>
+      <label class="dl-hab"><span class="sub">When I mark it done, also tick the habit</span><select class="field" data-daily-habit aria-label="Habit to tick"><option value="">— don’t tick a habit —</option>${state.habits.filter(h=>!h.archived).map(h=>`<option value="${h.id}" ${dy.habit===h.id?'selected':''}>${h.emoji?esc(h.emoji)+' ':''}${esc(h.name)}</option>`).join('')}</select></label>
+      <span class="sub">The top bar can show the prompt instead of the phrase: Settings → Top line.</span></div>` : '';
+  return `<div class="daily ${dy.done&&v?'done':''}"><div class="dl-head"><b>🎯 Today’s prompt</b>${v?`<span class="sub">${esc(v.emoji)} ${esc(v.name)}</span>`:''}<span style="flex:1"></span>
+      <button class="linkish sub" data-act="ach-open" title="Drawings counter and achievements">🎨 ${dy.drawn||0} drawn</button><button class="ib" data-act="daily-cfg" aria-pressed="${!!state.ui.dailyCfg}" title="Pick which formulas the daily prompt uses" aria-label="Daily prompt settings">${IC.gear}</button></div>
+    ${settings}
+    ${!pool.length ? `<p class="sub">Turn on at least one formula with decks for the daily prompt (⚙).</p>`
+      : !v ? `<button class="btn soul sm" data-act="daily-get">${PX.dice}Get today’s prompt</button>`
+      : `<p class="dl-text">${esc(v.text||'—')}</p>${v.imgs.length?`<div class="dl-imgs">${v.imgs.map(p=>`<img src="${esc(imgUrl(p))}" alt="" title="${esc(fileName(p))}">`).join('')}</div>`:''}
+        <div class="dl-acts">${dy.variants.length>1?`<div class="seg" role="group" aria-label="Pick a variant">${dy.variants.map((x,i)=>`<button data-act="daily-pick" data-id="${i}" aria-pressed="${dy.pick===i}">${i+1}</button>`).join('')}</div>`:''}
+          <button class="btn sm" data-act="daily-reroll" ${left<=0||dy.done?'disabled':''} title="Up to three options a day">↻ Another (${Math.max(0,left)} left)</button>
+          <button class="btn sm" data-act="daily-mix">Open in the mix</button>
+          <button class="btn sm" data-act="daily-board">Open on a board</button>
+          <span style="flex:1"></span>
+          <button class="btn sm ${dy.done?'':'soul'}" data-act="daily-done">${dy.done?'✓ Done today':'Mark as done'}</button></div>`}
+  </div>`;
+}
+// optional: ticking the daily prompt also ticks a habit (and unticking undoes only what we ticked)
+function dailyHabit(on){ const dy=R().daily, h=state.habits.find(x=>x.id===dy.habit); if(!h) return; h.log ||= {}; const d=today();
+  if(on){ if(!(h.log[d]>=1)){ h.log[d]=h.type==='num'?(+h.target||1):1; dy.habitSet=d; } } else if(dy.habitSet===d){ h.log[d]=0; dy.habitSet=''; } }
+function dailyJournal(v){
+  const r=R(); let n=state.notes.find(x=>x.id===r.daily.noteId);
+  if(!n){ n={ id:uid(), html:'<b>🎯 Daily prompts</b>', text:'', cat:'', pinned:false, order:state.notes.reduce((a,x)=>Math.min(a,x.order||0),0)-1, createdAt:now(), updatedAt:now() }; state.notes.push(n); r.daily.noteId=n.id; }
+  const line=`<div>${fmtDate(today())} · ${esc(v.emoji)} ${esc(v.name)}: ${esc(v.text)} ✓</div>`;
+  n.html=n.html.replace(/^(<b>🎯 Daily prompts<\/b>)/, `$1${line}`); if(!n.html.includes(line)) n.html+=line; n.text=htmlToText(n.html); n.updatedAt=now();
+}
+// put a prompt on a board: the images plus the brief as an idea card
+async function promptToBoard(title, text, imgs){
+  let b=state.boards.find(x=>x.name==='🎲 Prompts'); if(!b){ b={ id:uid(), name:'🎲 Prompts', items:[], view:{ x:0, y:0, z:1 }, gray:false, link:'' }; state.boards.push(b); }
+  state.ui.boardId=b.id; const xs=b.items.map(itemAABB); const x0=xs.length?Math.max(...xs.map(a=>a.x2))+160:0, y0=xs.length?Math.min(...xs.map(a=>a.y1)):0;
+  const node={ id:uid(), type:'node', text:`${title}\n${text}`, color:'', cx:x0+190, cy:y0+40, w:380, h:60, rot:0, op:1 }; b.items.push(node);
+  state.ui.tab='boards'; $('#board').dataset.view=''; commit();
+  if(imgs.length && DESK){ const files=[]; for(const p of imgs){ try{ const buf=await tinvoke('read_image',{ path:p }); const u8=new Uint8Array(buf); files.push(new File([u8], fileName(p), { type:sniffType(u8)||'image/png' })); }catch{} }
+    if(files.length) await addBoardImages(files, { x:x0, y:y0+150 }); }
+  BS.sel=new Set(b.items.filter(i=>i.id===node.id || (i.added && i.added>now()-60000)).map(i=>i.id)); fitAll(); BS.sel.clear(); drawSel();
+}
+/* ----- formula editor (left panel) ----- */
+function formulaPanel(){
+  const r=R(), f=FM();
+  const chips=`<div class="fchips">${r.formulas.map(x=>`<span class="fchip ${x.id===r.curFormula?'on':''}"><button data-act="f-pick" data-id="${x.id}">${esc(x.emoji)} ${esc(x.name)}</button><button class="fq" data-act="f-quick" data-id="${x.id}" title="Roll this formula" aria-label="Roll ${esc(x.name)}">${PX.dice}</button></span>`).join('')}<button class="btn sm" data-act="f-new">${IC.plus}Formula</button></div>`;
+  if(!f) return chips+`<div class="empty"><b>No formula yet</b>A formula is a recipe: which decks to roll and how many tokens from each. Make one, then add decks from your library.</div>`;
+  const opts = sel => r.decks.map(d=>`<option value="${d.id}" ${d.id===sel?'selected':''}>${esc(d.name)} (${d.items.length})</option>`).join('');
+  return chips+`<div class="fedit">
+    <div class="fe-head"><input class="field fe-emo" data-fe="emoji" value="${esc(f.emoji||'')}" aria-label="Formula icon"><input class="field" data-fe="name" value="${esc(f.name)}" aria-label="Formula name">
+      <button class="ib" data-act="f-dup" title="Duplicate this formula" aria-label="Duplicate">${IC.copy}</button><button class="ib" data-act="f-del" title="Delete this formula" aria-label="Delete formula">${IC.trash}</button></div>
+    <div class="slots">${f.slots.map(sl=>{ const v=slotView(sl); return `<div class="slot" data-sid="${sl.id}"><span class="grip" draggable="true" data-drag="z:${sl.id}" title="Drag to reorder">⠿</span>
+        <input class="field sl-label" data-sl-label="${sl.id}" value="${esc(sl.label||'')}" placeholder="${esc(v?.name||'Label')}" aria-label="Slot label">
+        ${sl.kind==='img' ? `<button class="btn sm sl-src" data-act="sl-folder" data-id="${sl.id}" title="${esc(sl.folder||'')}">🖼 ${esc(fileName(sl.folder||'')||'Pick folder')}</button>`
+          : `<select class="field sl-src" data-sl-deck="${sl.id}" aria-label="Deck">${v?'':'<option value="">Deck missing</option>'}${opts(sl.deck)}</select>`}
+        <span class="stepper"><button data-act="sl-amt" data-id="${sl.id}" data-sub="-1" aria-label="Fewer">−</button><input data-sl-amt="${sl.id}" value="${sl.amount}" inputmode="numeric" aria-label="Amount"><button data-act="sl-amt" data-id="${sl.id}" data-sub="1" aria-label="More">+</button></span>
+        <button class="ib" data-act="sl-del" data-id="${sl.id}" title="Take it out of this formula (the deck stays in the library)" aria-label="Remove from formula">${IC.x}</button></div>`; }).join('') || '<p class="sub">No decks in this formula yet.</p>'}</div>
+    <div class="fe-add"><select class="field" data-sl-add aria-label="Add a deck"><option value="">+ Add a deck from the library…</option>${opts('')}</select>${DESK?`<button class="btn sm" data-act="sl-addimg" title="A folder of pictures: each roll picks random images from it">${IC.plus}Image folder</button>`:''}</div>
+    <label class="fe-tpl"><span>Brief template <small>use {${esc(f.slots[0] ? (slotView(f.slots[0])?.name||'Label') : 'Label')}} for a slot; leave empty for a plain list</small></span>
+      <textarea class="field" data-fe="template" rows="2" placeholder="${esc(f.slots.length ? `${f.slots.map(s=>'{'+(slotView(s)?.name||'?')+'}').join(', ')}` : 'A {Building type} made of {Material}')}">${esc(f.template||'')}</textarea>
+      <span class="chips wrap">${f.slots.map(s=>slotView(s)).filter(Boolean).filter(v=>v.kind!=='img').map(v=>`<button data-act="tpl-ins" data-sub="${esc(v.name)}">{${esc(v.name)}}</button>`).join('')}</span></label>
+    <button class="sflag" data-act="daily-f" data-id="${f.id}" aria-pressed="${!!f.daily}"><span class="box ${f.daily?'on':''}">${PX.check}</span>Can show up as the daily prompt</button>
+  </div>`;
+}
+function libraryPanel(){
+  const r=R();
+  return `<div class="libbar">${DESK?`<span class="sub" title="${esc(r.deckFolder||'')}">${r.deckFolder?`Folder: <b>${esc(fileName(r.deckFolder))}</b>`:'No decks folder'}</span><button class="btn sm" data-act="deck-folder">${r.deckFolder?'Change':'Set folder'}</button>${r.deckFolder?`<button class="btn sm" data-act="deck-rescan" title="Pick up new and changed .txt files">Rescan</button>`:''}`:''}
+    <span style="flex:1"></span><button class="btn sm" data-act="rnd-import" title="Import .txt files, tokens split by commas or new lines">Import .txt</button><button class="btn sm" data-act="deck-new">${IC.plus}Deck</button></div>
+    ${r.decks.length ? `<div class="deck-list lib">${r.decks.map(deckCard).join('')}</div>`
+      : `<div class="empty"><b>No decks yet</b>Import .txt files (tokens split by commas or new lines)${DESK?', point at a folder of them,':''} or start a new deck and paste tokens into it.<div class="btns"><button class="btn sm" data-act="rnd-demo">Load example decks</button></div></div>`}`;
+}
+async function scanDeckFolder(quiet){
+  const r=R(); if(!DESK||!r.deckFolder) return; const list=await tinvoke('list_dir',{ path:r.deckFolder }).catch(()=>null); if(!list){ if(!quiet) toast('Could not read the decks folder'); return; }
+  let added=0, upd=0; const sep=r.deckFolder.includes('/')&&!r.deckFolder.includes('\\')?'/':'\\';
+  for(const [name,isDir] of list){ if(isDir || !/\.txt$/i.test(name)) continue; const path=r.deckFolder.replace(/[\\/]+$/,'')+sep+name; let d=r.decks.find(x=>x.path===path);
+    const m=await tinvoke('file_mtime',{ path }).catch(()=>0); if(d && d.mtime===m) continue;
+    try{ const [text,mt]=await tinvoke('read_text',{ path }); const items=parseTokens(text); if(!items.length) continue;
+      if(d){ d.items=items; d.mtime=mt; upd++; } else { r.decks.push({ id:uid(), name:name.replace(/\.txt$/i,''), items, amount:1, active:true, path, mtime:mt }); added++; } }catch{} }
+  if(added||upd){ commit(); } if(!quiet || added) toast(added||upd ? `${added?`${added} new deck${added>1?'s':''}`:''}${added&&upd?', ':''}${upd?`${upd} updated`:''}` : 'Decks are up to date');
 }
 
 /* ================= web links in rich text, Telegram style ================= */
@@ -4383,7 +4622,7 @@ function openUpdate(){
 
 /* ================= desktop (Tauri) ================= */
 // Everything here is inert in the browser; in the desktop app it adds file storage, tray, mini timer and more.
-const APP_VER='1.9.1';
+const APP_VER='2.1.0';
 const DESK = !!(window.__TAURI__ && window.__TAURI__.core);
 const tinvoke = (cmd,args,opts) => window.__TAURI__.core.invoke(cmd,args,opts);
 const fileName = p => String(p||'').split(/[\\/]/).pop();
@@ -4451,7 +4690,8 @@ async function deskImportDecks(replaceId){
 }
 async function refreshLinkedDecks(){
   let changed=0, missing=0;
-  for(const d of R().decks){ if(!d.path || d.active===false) continue;
+  const used=new Set(activeDecks().map(v=>v.deckId));
+  for(const d of R().decks){ if(!d.path || !used.has(d.id)) continue;
     const m=await tinvoke('file_mtime',{ path:d.path }).catch(()=>0); if(!m){ missing++; continue; }
     if(m!==d.mtime){ try{ const [text,mt]=await tinvoke('read_text',{ path:d.path }); const items=parseTokens(text); if(items.length){ d.items=items; d.mtime=mt; changed++; } }catch{} } }
   if(missing){ sfx('missing'); toast(`${missing} linked file${missing>1?'s were':' was'} not found, using the last copy`); }
@@ -4507,7 +4747,7 @@ function tick(){
   if(ticks%240===0 && state.ui.tab==='campaigns' && !/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName) && !document.activeElement?.isContentEditable && !$('#dlg').open) renderBoard();
 }
 $('#quoteEdit').innerHTML=IC.dots; $('#compactBtn').innerHTML=IC.compress; $('#miniBtn').innerHTML=IC.mini; applyTheme(); pickQuote(); renderAll(); updUndo(); setInterval(tick, 250);
-if(BOARDWIN) boardWinInit(); else { markDay(); if(DESK) deskInit(); }
+if(BOARDWIN) boardWinInit(); else { markDay(); if(DESK) deskInit(); setTimeout(()=>{ if(['prompt','both'].includes(state.ui.topLine) && state.rnd?.formulas?.length){ if(state.rnd.daily) dailyEnsure(); } renderQuote(); },1500); }
 </script>
 </body>
 </html>
