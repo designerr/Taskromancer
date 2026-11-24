@@ -1,6 +1,6 @@
 [package]
 name = "taskromancer"
-version = "2.1.0"
+version = "2.2.0"
 description = "Taskromancer: time and quest tracker"
 edition = "2021"
 
@@ -31,3 +31,6 @@ codegen-units = 1
 lto = true
 opt-level = "s"
 strip = true
+
+[target.'cfg(windows)'.dependencies]
+windows-sys = { version = "0.59", features = ["Win32_UI_Input_KeyboardAndMouse", "Win32_System_SystemInformation"] }

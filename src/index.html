@@ -278,10 +278,44 @@ dialog h2{font:500 20px var(--f-px);margin:0;color:var(--bone)}
 .toast.show{display:flex}
 .toast button{font:500 14px var(--f-px);color:var(--soul)}
 
+/* ---------- v23: setup, palette, nudges, contrast, calm ---------- */
+.setup-presets{display:flex;gap:6px;margin:10px 0}
+.setup-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:6px}
+.setup-item{display:flex;align-items:flex-start;gap:10px;padding:9px 10px;background:var(--card);border:1px solid var(--edge);cursor:pointer}
+.setup-item:has(input:checked){border-color:var(--soul);background:color-mix(in srgb,var(--soul) 8%,var(--card))}
+.setup-item input{margin-top:3px;accent-color:var(--soul)}
+.si-ic{font-size:20px;line-height:1}
+.setup-item b{display:block;font-size:14px}.setup-item small{display:block;color:var(--muted);font-size:12.5px}
+.setup-themes{display:flex;flex-wrap:wrap;gap:6px}
+.stheme{display:flex;align-items:center;gap:6px;padding:5px 10px;border:1px solid var(--edge);background:var(--card);font-size:13px}
+.stheme i{width:14px;height:14px;background:linear-gradient(135deg,var(--b) 50%,var(--a) 50%);border:1px solid #0008}
+.stheme[aria-pressed="true"]{border-color:var(--soul)}
+.pal-wrap{position:fixed;inset:0;z-index:120;background:#0007;display:flex;justify-content:center;align-items:flex-start;padding-top:12vh}
+.pal{width:min(640px,92vw);background:var(--stone2);border:2px solid var(--abyss);box-shadow:inset 0 0 0 1px var(--edge-hi),0 20px 50px #000c;padding:10px;display:flex;flex-direction:column;gap:6px}
+.pal>.field{font-size:16px;padding:10px 12px}
+.pal-list{max-height:52vh;overflow:auto;display:flex;flex-direction:column}
+.pal-it{display:grid;grid-template-columns:26px minmax(0,1fr) auto auto;gap:8px;align-items:center;padding:7px 8px;text-align:left;font-size:14px;color:var(--text)}
+.pal-it.on,.pal-it:hover{background:var(--stone3)}
+.pal-it small{color:var(--dim);font-size:11.5px}
+.pi-l{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.pi-alt{padding:0 6px;border:1px solid var(--edge);font-size:12px}
+.pal-foot{font-size:11.5px;color:var(--dim)}
+.nudge{position:fixed;right:18px;bottom:18px;z-index:110;display:flex;align-items:center;gap:8px;flex-wrap:wrap;max-width:min(560px,92vw);padding:10px 12px;background:var(--stone2);border:2px solid var(--abyss);box-shadow:inset 0 0 0 1px var(--soul-dim),0 12px 30px #000a;font-size:13.5px}
+.away-opts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
+.away-opts .btn{display:flex;flex-direction:column;align-items:flex-start;gap:3px;padding:10px;text-align:left;height:auto}
+.away-opts small{color:var(--muted);font-weight:400;font-size:12px}
+.cloud{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:6px 0 10px}.cloud label{display:flex;align-items:center;gap:4px;font-size:13px}.cloud .field{width:64px}
+body.hc{--text:#ffffff;--muted:#d8dde8;--dim:#b4bccc;--edge:#7c869c;--edge-hi:#b8c0d2;--bone:#ffffff}
+body.hc .sub,body.hc .hint,body.hc small{color:#d8dde8}
+body.hc .field{border-color:#9aa3b8}
+body.hc :focus-visible{outline:2px solid #fff!important;outline-offset:2px}
+body.calm *,body.calm *::before,body.calm *::after{animation-play-state:paused!important;transition:none!important}
+
 /* ---------- v22: top line prompt, drawings counter ---------- */
 .topline{display:flex;align-items:center;gap:4px;min-width:0;flex:1;justify-content:center}
 .quote.prm{max-width:min(720px,60vw);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-style:normal}
 .tl-done{width:24px;height:24px;font-size:13px;color:var(--soul);border:1px solid var(--edge)}
+.tl-done[hidden]{display:none!important}
 .tl-done:hover{background:color-mix(in srgb,var(--soul) 15%,transparent)}
 .drawn{margin:10px 0 6px;padding:12px 14px;background:color-mix(in srgb,var(--near) 8%,var(--card));border:1px solid color-mix(in srgb,var(--near) 45%,var(--edge))}
 .dr-top{display:flex;align-items:center;gap:6px}.dr-top .field{width:110px}
@@ -308,7 +342,9 @@ dialog h2{font:500 20px var(--f-px);margin:0;color:var(--bone)}
 .fe-tpl{display:flex;flex-direction:column;gap:4px;font-size:12.5px;color:var(--muted)}
 .fe-tpl small{color:var(--dim)}.fe-tpl textarea{font-size:13px;resize:vertical}
 .fe-tpl .chips button{font-size:11.5px;padding:2px 7px}
-.libbar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.libbar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:8px;position:sticky;top:0;z-index:5;padding:6px 0;background:var(--stone)}
+.libq{width:100%;margin-bottom:8px}
+.slot.off{opacity:.5}.slot.off .stepper input{color:var(--muted)}
 .deck .used{font-size:11.5px;color:var(--muted);white-space:nowrap}
 .brief{display:flex;align-items:flex-start;gap:6px;padding:10px 12px;margin-bottom:10px;background:color-mix(in srgb,var(--soul) 10%,var(--card));border:1px solid color-mix(in srgb,var(--soul) 40%,var(--edge));font-size:15px;line-height:1.45}
 .brief span{flex:1}
@@ -1356,7 +1392,7 @@ const R = () => state.rnd;
 const RND_SOUNDS=[['generate_dice','🎲 Dice roll'],['generate_arcade_block','🧱 Arcade block'],['generate_cash_register','🛒 Cash register'],['generate_soft_chime','✨ Soft chime'],['generate_arcade_confirm','🟢 Arcade confirm']];
 function sfx(key){ const r=R(); if(r.muted) return; try{ const a=new Audio(SFX[key]); a.volume=clamp(+r.volume||0); a.play().catch(()=>{}); }catch{} }
 const D = id => activeDecks().find(d=>d.id===id) || R().decks.find(d=>d.id===id);
-const activeDecks = () => curSlots().map(slotView).filter(Boolean);
+const activeDecks = () => curSlots().filter(s=>(s.amount??1)>0).map(slotView).filter(Boolean);
 const WORD_RE=/[\p{L}\p{N}'’-]+/gu;
 const wordsOf = t => new Set((t.toLowerCase().match(WORD_RE)||[]));
 const same = (a,b) => a.trim().toLowerCase()===b.trim().toLowerCase();
@@ -1370,6 +1406,7 @@ function pickToken(deck, others){
 }
 function parseTokens(text){ return String(text||'').split(/[,\n\r]+/).map(x=>x.trim()).filter(Boolean); }
 function rollDeck(d){
+  applyLocks(curSlots().find(x=>x.id===d.id), R().results);
   const cur=R().results[d.id]||[], n=Math.max(d.amount, cur.filter(x=>x.locked).length);
   const slots=[]; for(let i=0;i<n;i++) slots.push(cur[i]&&cur[i].locked ? cur[i] : null);
   cur.forEach((x,i)=>{ if(i>=n && x.locked) slots.push(x); });
@@ -1991,7 +2028,7 @@ function renderHarvest(){
     ${P_.length ? `<div class="chunks">${P_.map(c=>`
       <div class="chunk ${selChunks.has(c.id)?'sel':''} ${A&&A.ids.includes(c.id)?'insplit':''}" draggable="true" data-drag="c:${c.id}" data-cid="${c.id}" title="Drag onto a quest to give it all of this time">
         <button class="box" data-act="chunk-sel" data-id="${c.id}" aria-label="Select">${PX.check}</button>
-        <button class="chunk-main" data-act="chunk-sel" data-id="${c.id}"><span class="dur">${fmtClock(c.ms)}</span><span class="when">${c.day!==today()?fmtDate(c.day)+', ':''}${fmtTime(c.start)}–${fmtTime(c.end)}</span></button>
+        <button class="chunk-main" data-act="chunk-sel" data-id="${c.id}"><span class="dur">${fmtClock(c.ms)}</span><span class="when">${c.day!==today()?fmtDate(c.day)+', ':''}${fmtTime(c.start)}–${fmtTime(c.end)}${c.away?' · away':''}</span></button>
         <button class="btn sm" data-act="split-one" data-id="${c.id}">Split</button>
         <button class="ib" data-act="chunk-del" data-id="${c.id}" aria-label="Discard this time" title="Discard">${IC.trash}</button>
       </div>`).join('')}</div>
@@ -2666,7 +2703,7 @@ const A_ = {
     toast(`Random decks: ${r.decks.filter(d=>chosen.has(d)).map(d=>d.name).join(', ')}`); },
   'rnd-import': ()=>{ if(DESK) return deskImportDecks(); rndReload=null; $('#txtFile').click(); },
   'rnd-demo': ()=>{ const ds=RND_DEMO.map(([n,t],i)=>({ id:uid(), name:n, items:parseTokens(t), amount:i===3?1:(i===0?2:1), active:true })); R().decks.push(...ds); newFormula('Example', ds.map(d=>({ id:uid(), kind:'deck', deck:d.id, amount:d.amount, label:'' }))); state.ui.rndTab='f'; commit(); },
-  'deck-new': ()=>{ const d={ id:uid(), name:'New deck', items:[], amount:1, active:true }; R().decks.push(d); state.ui.deckEdit=d.id; commit(); document.querySelector(`[data-deck-items="${d.id}"]`)?.focus(); },
+  'deck-new': ()=>{ const d={ id:uid(), name:'New deck', items:[], amount:1, active:true }; R().decks.unshift(d); state.ui.deckEdit=d.id; state.ui.deckQ=''; commit(); const c=document.querySelector(`.deck[data-did="${d.id}"]`); c?.scrollIntoView({ block:'nearest' }); const n=c?.querySelector('[data-deck-name]'); n?.focus(); n?.select(); },
   'deck-active': (el,id)=>{ const d=D(id); d.active = d.active===false; R().curFormula=''; commit(); },
   'deck-amt': (el,id,n)=>{ const d=D(id); d.amount=Math.max(1,d.amount+ +n); R().curFormula=''; commit(); },
   'deck-edit': (el,id)=>{ state.ui.deckEdit = state.ui.deckEdit===id ? null : id; commit(); },
@@ -2683,7 +2720,7 @@ const A_ = {
     if(ex) Object.assign(ex,data); else r.formulas.push({ id:uid(), ...data });
     r.curFormula=(ex||r.formulas[r.formulas.length-1]).id; commit(); toast(ex?`Formula “${name}” updated`:`Formula “${name}” saved`); },
   'formula-del': (el,id)=>{ snap(); const f=R().formulas.find(x=>x.id===id); R().formulas=R().formulas.filter(x=>x!==f); R().curFormula=''; commit(); toast(`Formula “${f.name}” deleted`, true); },
-  hist: (el,n)=>{ const r=R(), i=clamp(r.hpos+ +n,0,r.history.length-1); if(i===r.hpos) return; r.hpos=i; r.results=JSON.parse(JSON.stringify(r.history[i].results)); commit(); },
+  hist: (el,n)=>{ const r=R(), i=clamp(r.hpos+ +n,0,r.history.length-1); if(i===r.hpos) return; r.hpos=i; r.results=JSON.parse(JSON.stringify(r.history[i].results)); applyAllLocks(); commit(); },
   'rnd-fav': ()=>{ const r=R(); r.favs.unshift({ text:mixText('; '), results:JSON.parse(JSON.stringify(r.results)), at:now() }); r.favs=r.favs.slice(0,40); commit(); toast('Kept'); },
   'fav-load': (el,i)=>{ const f=R().favs[+i]; if(!f) return; R().results=JSON.parse(JSON.stringify(f.results)); pushHistory(); commit(); },
   'fav-del': (el,i)=>{ snap(); R().favs.splice(+i,1); commit(); },
@@ -2692,9 +2729,9 @@ const A_ = {
   'rnd-mute': ()=>{ R().muted=!R().muted; commit(); },
   'rnd-overlap': ()=>{ R().noOverlap=!R().noOverlap; commit(); },
   'tok-reroll': (el,id,i)=> rerollTok(id,+i),
-  'tok-lock': (el,id,i)=>{ const x=R().results[id]?.[+i]; if(!x) return; x.locked=!x.locked; sfx(x.locked?'lock_on':'lock_off'); commit(); },
+  'tok-lock': (el,id,i)=>{ const x=R().results[id]?.[+i]; if(!x) return; x.locked=!x.locked; const sl=curSlots().find(s=>s.id===id); if(sl){ sl.locks=(sl.locks||[]).filter(k=>k!==lockKey(x)); if(x.locked) sl.locks.push(lockKey(x)); } sfx(x.locked?'lock_on':'lock_off'); commit(); },
   'tok-copy': async (el,id,i)=>{ const x=R().results[id]?.[+i]; if(x && await copyText(tokText(x.t))){ sfx('copy'); toast(`Copied “${tokText(x.t)}”`); } },
-  'tok-del': (el,id,i)=>{ const list=R().results[id]; if(!list) return; list.splice(+i,1); const d=D(id); if(d) d.amount=Math.max(1,list.length); sfx('lock_off'); commit(); },
+  'tok-del': (el,id,i)=>{ const list=R().results[id]; if(!list) return; const x=list.splice(+i,1)[0]; const sl=curSlots().find(s=>s.id===id); if(sl){ if(x) sl.locks=(sl.locks||[]).filter(k=>k!==lockKey(x)); sl.amount=list.length; } sfx('lock_off'); commit(); },
   'tok-add': (el,id)=> addTok(id),
   'rnd-note': ()=>{ const g=mixGroups(); if(!g.length) return; const fm=FM(), bt=briefFrom(fm,R().results); const html=(fm&&bt?`<b>${esc(fm.emoji)} ${esc(fm.name)}:</b> ${esc(bt)}<br>`:'')+g.filter(x=>x.d.kind!=='img').map(x=>`<b>${esc(x.d.name)}:</b> ${x.toks.map(t=>esc(tokText(t.t))).join('; ')}`).join('<br>');
     const min=state.notes.reduce((a,n)=>Math.min(a,n.order),0); state.notes.push({ id:uid(), html, text:htmlToText(html), cat:state.cats[0]?.id||'', pinned:false, order:min-1, createdAt:now(), updatedAt:now() }); commit(); toast('Saved to Notes'); },
@@ -2844,12 +2881,12 @@ const A_ = {
     h.log ||= {}; const v=h.log[d]; if(v===1) h.log[d]=0; else h.log[d]=1; save(); renderBoard(); checkAch(); },
   'merge-notes': ()=> $('#mergeFile').click(),
   'rnd-tab': (el,t)=>{ state.ui.rndTab=t; commit(); if(t==='l') scanDeckFolder(true); },
-  'f-pick': (el,id)=>{ R().curFormula=id; commit(); },
+  'f-pick': (el,id)=>{ R().curFormula=id; applyAllLocks(); commit(); },
   'f-quick': (el,id)=>{ R().curFormula=id; rollAll(); },
   'f-new': ()=>{ newFormula('New formula'); commit(); setTimeout(()=>{ const i=document.querySelector('[data-fe="name"]'); i?.focus(); i?.select(); },30); },
   'f-dup': ()=>{ const f=FM(); if(!f) return; const c=JSON.parse(JSON.stringify(f)); c.id=uid(); c.name=f.name+' copy'; c.slots.forEach(x=>x.id=uid()); R().formulas.push(c); R().curFormula=c.id; commit(); toast('Duplicated'); },
   'f-del': (el)=>{ const f=FM(); if(!f || !arm(el,'Delete?')) return; R().formulas=R().formulas.filter(x=>x!==f); R().curFormula=R().formulas[0]?.id||''; commit(); toast(`Formula “${f.name}” deleted`, true); },
-  'sl-amt': (el,id,n)=>{ const sl=curSlots().find(x=>x.id===id); if(sl){ sl.amount=clamp((sl.amount||1)+ +n,1,50); commit(); } },
+  'sl-amt': (el,id,n)=>{ const sl=curSlots().find(x=>x.id===id); if(sl){ sl.amount=clamp((sl.amount??1)+ +n,0,50); if(!sl.amount) toast('Off for now: kept in the formula, left out of rolls', true); commit(); } },
   'sl-del': (el,id)=>{ const f=FM(); f.slots=f.slots.filter(x=>x.id!==id); delete R().results[id]; commit(); },
   'sl-addimg': async ()=>{ const dir=await tinvoke('pick_folder').catch(()=>null); if(!dir) return; const f=FM(); if(!f) return; tracked('image folder', ()=>{ f.slots.push({ id:uid(), kind:'img', folder:normP(dir), amount:1, label:'' }); }); imgLists.delete(normP(dir)); commit(); },
   'sl-folder': async (el,id)=>{ const dir=await tinvoke('pick_folder').catch(()=>null); if(!dir) return; const sl=curSlots().find(x=>x.id===id); if(sl){ tracked('image folder', ()=>{ sl.folder=normP(dir); }); imgLists.delete(sl.folder); commit(); } },
@@ -2865,10 +2902,25 @@ const A_ = {
   'daily-get': ()=> dailyEnsure(true),
   'daily-reroll': ()=>{ const dy=R().daily; if(dy.variants.length>=3 || dy.done) return; dailyEnsure(true); },
   'daily-pick': (el,i)=>{ R().daily.pick=+i; commit(); },
-  'daily-mix': ()=>{ const v=R().daily.variants[R().daily.pick]; if(!v) return; R().curFormula=v.fid; R().results=JSON.parse(JSON.stringify(v.results)); pushHistory(); commit(); },
+  'daily-mix': ()=>{ const v=R().daily.variants[R().daily.pick]; if(!v) return; R().curFormula=v.fid; R().results=JSON.parse(JSON.stringify(v.results)); applyAllLocks(); pushHistory(); commit(); },
   'daily-board': ()=>{ const v=R().daily.variants[R().daily.pick]; if(v) promptToBoard(`🎯 ${fmtDate(today())} · ${v.emoji} ${v.name}`, v.text, v.imgs); },
   'daily-done': ()=>{ const dy=R().daily, v=dy.variants[dy.pick]; if(!v) return; if(dy.done){ dy.done=false; dy.total=Math.max(0,(dy.total||0)-1); dy.drawn=Math.max(0,(dy.drawn||0)-1); dailyHabit(false); commit(); renderQuote(); toast('Unmarked'); return; }
     dy.done=true; dy.total=(dy.total||0)+1; dy.drawn=(dy.drawn||0)+1; dy.log.unshift({ d:today(), fid:v.fid, text:v.text }); dy.log=dy.log.slice(0,1000); dailyJournal(v); dailyHabit(true); commit(); renderQuote(); toast(`Done! ${dy.drawn} drawings so far, written into your “Daily prompts” note`); },
+  'setup-open': ()=> openSetup(),
+  'setup-preset': (el,k)=>{ const on=new Set(PRESETS[k]||[]); document.querySelectorAll('[data-feat]').forEach(x=>{ x.checked=on.has(x.dataset.feat); }); },
+  'setup-theme': (el,k)=>{ state.ui.theme=k; applyTheme(); renderAll(); document.querySelectorAll('.stheme').forEach(b=>b.setAttribute('aria-pressed', b.dataset.id===k)); },
+  'setup-done': ()=> setupDone(),
+  'nudge-start': (el,since)=>{ $('#nudge')?.remove(); play(); const t=state.timer, s0=+since; if(s0 && s0<now()){ t.runStart=s0; t.segStart=s0; } commit(); toast(s0?`Timer running since ${fmtTime(s0)}`:'Timer running'); },
+  'nudge-close': ()=>{ $('#nudge')?.remove(); },
+  'away': (el,kind,ft)=>{ const [f,t]=ft.split('|').map(Number); awayResolve(kind,f,t); },
+  'acc-contrast': ()=>{ state.ui.contrast=!state.ui.contrast; applyAccess(); save(); openSettings(); },
+  'acc-calm': ()=>{ state.ui.calm=!state.ui.calm; applyAccess(); save(); openSettings(); },
+  'acc-zoom': (el,z)=>{ state.ui.zoom=+z; applyAccess(); save(); openSettings(); },
+  'nudge-forgot': ()=>{ N().forgot=!N().forgot; save(); openSettings(); },
+  'nudge-away': ()=>{ N().away=!N().away; save(); openSettings(); },
+  'cloud-dir': async ()=>{ const dir=await tinvoke('pick_folder').catch(()=>null); if(!dir) return; state.ui.cloudDir=normP(dir); state.ui.cloudLast=''; save(); await cloudBackup(true); openSettings(); toast('First copy saved there'); },
+  'cloud-off': ()=>{ state.ui.cloudDir=''; save(); openSettings(); },
+  'cloud-now': async ()=>{ await cloudBackup(true); toast('Copy saved'); },
   'hide-done': ()=>{ state.ui.hideDone=!state.ui.hideDone; commit(); },
   crypt: ()=>{ state.ui.crypt=!state.ui.crypt; commit(); },
   'p-collapse': (el,id)=>{ const p=P(id); p.collapsed=!p.collapsed; commit(); },
@@ -3059,9 +3111,11 @@ function onChange(e){
   if(d.hexemo!==undefined){ const h=MP()?.hexes.find(x=>x.id===d.hexemo); if(h){ h.emoji=firstGrapheme(el.value); softCommit(); } return; }
   if(d.fe){ softCommit(); return; }
   if(d.slLabel!==undefined){ softCommit(); return; }
+  if(d.nudgeMin!==undefined){ N()[d.nudgeMin]=clamp(Math.round(+el.value)||10,2,240); save(); return; }
+  if(d.cloudKeep!==undefined){ state.ui.cloudKeep=clamp(Math.round(+el.value)||30,1,999); save(); return; }
   if(d.dailyHabit!==undefined){ R().daily.habit=el.value; softCommit(); return; }
   if(d.slDeck!==undefined){ const sl=curSlots().find(x=>x.id===d.slDeck); if(sl && el.value){ sl.deck=el.value; delete R().results[sl.id]; softCommit(); } return; }
-  if(d.slAmt!==undefined){ const sl=curSlots().find(x=>x.id===d.slAmt); if(sl){ sl.amount=clamp(Math.round(+el.value)||1,1,50); softCommit(); } return; }
+  if(d.slAmt!==undefined){ const sl=curSlots().find(x=>x.id===d.slAmt); if(sl){ sl.amount=clamp(Math.round(+el.value)||0,0,50); softCommit(); } return; }
   if(d.slAdd!==undefined){ if(el.value){ let f=FM(); if(!f) f=newFormula('New formula'); f.slots.push({ id:uid(), kind:'deck', deck:el.value, amount:1, label:'' }); softCommit(); } return; }
   if(d.bdsel!==undefined){ state.ui.boardId=el.value; BS.sel.clear(); BS.crop=null; $('#board').dataset.view=''; softCommit(); return; }
   if(d.bdname!==undefined){ const b=BB(); if(b && !el.value.trim()) b.name='Untitled board'; softCommit(); return; }
@@ -3390,6 +3444,16 @@ function openSettings(){
     <div class="dlg-row"><button class="sflag" data-act="layout-swap" aria-pressed="${!!ui.swap}"><span class="box ${ui.swap?'on':''}">${PX.check}</span>Timer on the right</button>
       <button class="sflag" data-act="layout-scene" aria-pressed="${!ui.hideScene}"><span class="box ${!ui.hideScene?'on':''}">${PX.check}</span>Show the scene</button>
       <button class="btn sm" data-act="layout-reset">Reset layout</button></div>
+    <h3 class="dh">Setup</h3><div class="dlg-row"><button class="btn sm" data-act="setup-open">Run the setup again</button><span class="sub">pick which parts of the app you use; your data stays as it is</span></div>
+    <h3 class="dh">Gentle reminders</h3>${DESK?`<div class="sflags">
+      <button class="sflag" data-act="nudge-forgot" aria-pressed="${!!N().forgot}"><span class="box ${N().forgot?'on':''}">${PX.check}</span>Remind me when a quest is in focus but the timer is off</button>
+      <label class="goalset">after <input class="field" type="number" min="2" max="240" data-nudge-min="forgotMin" value="${N().forgotMin}"> minutes of work</label>
+      <button class="sflag" data-act="nudge-away" aria-pressed="${!!N().away}"><span class="box ${N().away?'on':''}">${PX.check}</span>Ask about time away while the timer runs</button>
+      <label class="goalset">away for <input class="field" type="number" min="2" max="240" data-nudge-min="awayMin" value="${N().awayMin}"> minutes or more</label></div>`:`<p class="hint">These need the desktop app, which can see whether you are at the computer.</p>`}
+    <h3 class="dh">Looks and reading</h3><div class="sflags">
+      <button class="sflag" data-act="acc-contrast" aria-pressed="${!!ui.contrast}"><span class="box ${ui.contrast?'on':''}">${PX.check}</span>Higher contrast (works with every theme)</button>
+      <button class="sflag" data-act="acc-calm" aria-pressed="${!!ui.calm}"><span class="box ${ui.calm?'on':''}">${PX.check}</span>Calm: no animations</button></div>
+    ${DESK?`<div class="toolbar" style="margin:8px 0">Interface size<div class="seg" role="group" aria-label="Interface size">${[90,100,110,120,130].map(z=>`<button data-act="acc-zoom" data-id="${z}" aria-pressed="${(ui.zoom||100)===z}">${z}%</button>`).join('')}</div></div>`:`<p class="hint">Interface size: use your browser zoom (Ctrl + / Ctrl −).</p>`}
     <h3 class="dh">Top line</h3><p class="hint">What the line at the top of the window shows. The daily prompt comes from your Randomizer formulas.</p>
     <div class="seg" role="group" aria-label="Top line">${[['phrase','Phrase'],['prompt','Daily prompt'],['both','Both, taking turns'],['none','Nothing']].map(([k,l])=>`<button data-act="top-line" data-id="${k}" aria-pressed="${(ui.topLine||'phrase')===k}">${l}</button>`).join('')}</div>
     <h3 class="dh">Day</h3>
@@ -3405,7 +3469,7 @@ function openSettings(){
     </div>
     ${desktopSettings()}
     <h3 class="dh">Keys</h3>
-    <div class="keys"><kbd>Space</kbd><span>Play / pause the timer on the open tab</span><kbd>C</kbd><span>Cut, the timer keeps going from zero</span><kbd>S</kbd><span>Stop, harvest and halt</span><kbd>A</kbd><span>Split all harvested time</span><kbd>R</kbd><span>Roll, on the Randomizer tab</span><kbd>?</kbd><span>On Boards: the ? button lists canvas controls</span><kbd>Esc</kbd><span>Close the splitter or a menu</span><kbd>Ctrl Z</kbd><span>Undo the last change</span><kbd>Ctrl Alt Z</kbd><span>Redo (Ctrl+Shift+Z and Ctrl+Y work too)</span></div>
+    <div class="keys"><kbd>Space</kbd><span>Play / pause the timer on the open tab</span><kbd>C</kbd><span>Cut, the timer keeps going from zero</span><kbd>S</kbd><span>Stop, harvest and halt</span><kbd>A</kbd><span>Split all harvested time</span><kbd>R</kbd><span>Roll, on the Randomizer tab</span><kbd>?</kbd><span>On Boards: the ? button lists canvas controls</span><kbd>Esc</kbd><span>Close the splitter or a menu</span><kbd>Ctrl K</kbd><span>Find anything or run any action; Alt+Enter saves the text as a note, Shift+Enter as a quest</span><kbd>Ctrl Z</kbd><span>Undo the last change</span><kbd>Ctrl Alt Z</kbd><span>Redo (Ctrl+Shift+Z and Ctrl+Y work too)</span></div>
     <div class="dlg-foot"><span class="sum">Taskromancer ${APP_VER}${DESK?', desktop':''}</span><button class="btn" data-act="dlg-close">Close</button></div>`;
   if(!$('#dlg').open) $('#dlg').showModal();
 }
@@ -4216,31 +4280,180 @@ function boardWinMainListen(){
   ev.listen('board-closed', ()=>{ boardWinId=null; });
 }
 
+/* ================= comfort: first-run setup, Ctrl+K palette, timer nudges, away time, access, cloud copies ================= */
+const FEATURES = [
+  ['time','⏱','Time tracking','the timer, cut time and hand it out to tasks, day and week reports',['time']],
+  ['quests','🗡','Quests and projects','tasks with time estimates, sub-tasks, Jira links',['board']],
+  ['campaigns','🎯','Campaigns','long goals with a deadline and steps',['campaigns']],
+  ['habits','🔥','Habits','daily ticks, habit strength, streaks',['habits']],
+  ['notes','📜','Notes','checklists, pictures, links, a library of your files',['notes']],
+  ['boards','🖼','Boards','references like PureRef, mind maps, notes on a canvas',['boards']],
+  ['atlas','🗺','Atlas','a map of regions made of your tasks, fog of war, loot',['atlas']],
+  ['rnd','🎲','Randomizer and daily prompts','for artists: ideas from lists of words, a fresh brief every day',['rnd']]
+];
+function openSetup(){
+  const hid=new Set(state.ui.hiddenTabs||[]), on=f=>f[4].every(t=>!hid.has(t));
+  $('#dlg').dataset.mode='setup';
+  $('#dlgBody').innerHTML=`<h2>Welcome to Taskromancer</h2><p class="hint" style="margin-top:6px">What would you like to use it for? Pick as many as you like. You can change this any time in Settings, nothing you already have gets deleted.</p>
+    <div class="setup-presets"><button class="btn sm" data-act="setup-preset" data-id="simple">Keep it simple</button><button class="btn sm" data-act="setup-preset" data-id="artist">I draw</button><button class="btn sm" data-act="setup-preset" data-id="all">Everything</button></div>
+    <div class="setup-list">${FEATURES.map(f=>`<label class="setup-item"><input type="checkbox" data-feat="${f[0]}" ${on(f)?'checked':''}><span class="si-ic">${f[1]}</span><span><b>${f[2]}</b><small>${f[3]}</small></span></label>`).join('')}</div>
+    <h3 class="dh">Look</h3><div class="setup-themes">${Object.entries(THEMES).map(([k,t])=>`<button class="stheme" data-act="setup-theme" data-id="${k}" aria-pressed="${state.ui.theme===k}" style="--a:${t.pal.soul};--b:${t.pal.bg}"><i></i>${esc(t.name)}</button>`).join('')}</div>
+    <label class="goalset" style="margin-top:12px">A comfortable working day <input class="field" type="number" min="1" max="16" step="0.5" id="setupGoal" value="${dayGoalH()}"> hours <span>After this the scene turns to evening, a quiet hint to stop.</span></label>
+    <div class="dlg-foot"><span class="sum"></span><button class="btn soul" data-act="setup-done">Start</button></div>`;
+  if(!$('#dlg').open) $('#dlg').showModal();
+}
+const PRESETS={ simple:['time','quests','notes'], artist:['time','quests','notes','habits','boards','rnd'], all:FEATURES.map(f=>f[0]) };
+function setupDone(){
+  const picked=[...document.querySelectorAll('[data-feat]')].filter(x=>x.checked).map(x=>x.dataset.feat);
+  if(!picked.length){ toast('Pick at least one'); return; }
+  const show=new Set(FEATURES.filter(f=>picked.includes(f[0])).flatMap(f=>f[4]));
+  state.ui.hiddenTabs=TABS.map(t=>t[0]).filter(k=>!show.has(k)); if(!show.size) state.ui.hiddenTabs=[];
+  const g=+$('#setupGoal').value; if(g>=1 && g<=16) state.ui.dayGoal=g;
+  state.ui.onboarded=true; if(state.ui.hiddenTabs.includes(state.ui.tab)) state.ui.tab=tabOrder()[0]||'board';
+  $('#dlg').close(); commit(); toast('All set. Ctrl+K finds anything and runs any action');
+}
+
+/* ----- Ctrl+K: find anything, run any action, or jot a note or a quest ----- */
+let palSel=0, palItems=[];
+function palCommands(){
+  const go=t=>()=>{ state.ui.tab=t; commit(); };
+  const c=[
+    ['⏯','Start or pause the timer','Space', ()=> state.timer.state==='running' ? pause() : play()],
+    ['✂','Cut the time','C', ()=>cut(false)], ['■','Stop and harvest','S', ()=>cut(true)],
+    ['📜','New note','', ()=>{ state.ui.tab='notes'; commit(); setTimeout(()=>document.querySelector('[data-rich=composer]')?.focus(),60); }],
+    ['📅','Time: yesterday','', ()=>{ state.ui.tab='time'; state.ui.statRange='day'; state.ui.reportDay=addDays(today(),-1); commit(); }],
+    ['📈','Time: this week','', ()=>{ state.ui.tab='time'; state.ui.statRange='week'; state.ui.statOff=0; commit(); }],
+    ['🏆','Achievements','', ()=>openAch()], ['⚙','Settings','', ()=>openSettings()], ['✨','Run the setup again','', ()=>openSetup()],
+    ...TABS.filter(t=>!(state.ui.hiddenTabs||[]).includes(t[0])).map(t=>['→',`Go to ${t[1]}`,'',go(t[0])])
+  ];
+  (state.rnd?.formulas||[]).forEach(f=>c.push(['🎲',`Roll ${f.emoji} ${f.name}`,'', ()=>{ state.ui.tab='rnd'; R().curFormula=f.id; rollAll(); }]));
+  return c.map(([ic,label,key,run])=>({ ic, label, key, run, kind:'Action' }));
+}
+function palSearch(q){
+  q=q.trim().toLowerCase(); const out=[], has=s=>(s||'').toLowerCase().includes(q);
+  const cmds=palCommands().filter(c=>!q || has(c.label)); out.push(...cmds.slice(0, q?6:10));
+  if(!q) return out;
+  state.quests.filter(x=>has(x.title) && !P(x.projectId)?.frozen).slice(0,8).forEach(x=>out.push({ ic:x.done?'✓':'🗡', label:questLabel(x), kind:'Quest', run:()=>{ state.ui.tab='board'; const p=P(x.projectId); if(p) p.collapsed=false; commit(); setTimeout(()=>{ const r=document.querySelector(`.q-row[data-qid="${x.id}"]`); r?.scrollIntoView({ block:'center' }); r?.classList.add('flash'); setTimeout(()=>r?.classList.remove('flash'),1200); },60); }, alt:{ ic:'⏯', label:'Focus and start', run:()=>{ state.focus=x.id; play(); } } }));
+  state.notes.filter(n=>has(n.text)).slice(0,6).forEach(n=>out.push({ ic:'📜', label:(n.text||'').slice(0,80), kind:'Note', run:()=>A_['bd-open-note'](null,n.id) }));
+  state.boards.filter(b=>has(b.name)).forEach(b=>out.push({ ic:'🖼', label:b.name, kind:'Board', run:()=>{ state.ui.boardId=b.id; state.ui.tab='boards'; $('#board').dataset.view=''; commit(); } }));
+  state.maps.filter(m=>has(m.name)).forEach(m=>out.push({ ic:'🗺', label:m.name, kind:'Map', run:()=>{ state.ui.mapId=m.id; state.ui.tab='atlas'; $('#board').dataset.view=''; commit(); } }));
+  state.habits.filter(h=>has(h.name)).forEach(h=>out.push({ ic:'🔥', label:h.name, kind:'Habit', run:()=>{ state.ui.tab='habits'; state.ui.habitOpen=h.id; commit(); } }));
+  (state.rnd?.decks||[]).filter(d=>has(d.name)).slice(0,5).forEach(d=>out.push({ ic:'🃏', label:d.name, kind:'Deck', run:()=>{ state.ui.tab='rnd'; state.ui.rndTab='l'; state.ui.deckQ=d.name; commit(); } }));
+  return out;
+}
+function openPalette(){
+  if($('#pal')) return; const el=document.createElement('div'); el.id='pal'; el.className='pal-wrap';
+  el.innerHTML=`<div class="pal" role="dialog" aria-label="Find or run anything"><input class="field" id="palQ" placeholder="Find a quest, note, board… or type a command" autocomplete="off">
+    <div class="pal-list" id="palList" role="listbox"></div><div class="pal-foot">↑↓ choose · Enter open · <b>Alt+Enter</b> save the text as a note · <b>Shift+Enter</b> as a quest in Inbox · Esc close</div></div>`;
+  document.body.appendChild(el); el.addEventListener('mousedown', e=>{ if(e.target===el) closePalette(); });
+  const q=$('#palQ'); q.addEventListener('input', ()=>{ palSel=0; drawPalette(); }); q.focus(); palSel=0; drawPalette();
+}
+function closePalette(){ $('#pal')?.remove(); }
+function drawPalette(){ const q=$('#palQ').value; palItems=palSearch(q); palSel=clamp(palSel,0,Math.max(0,palItems.length-1));
+  $('#palList').innerHTML = palItems.length ? palItems.map((x,i)=>`<button class="pal-it ${i===palSel?'on':''}" data-pal="${i}" role="option" aria-selected="${i===palSel}"><span class="pi-ic">${esc(x.ic)}</span><span class="pi-l">${esc(x.label)}</span>${x.alt?`<span class="pi-alt" data-pal-alt="${i}" title="${esc(x.alt.label)}">${esc(x.alt.ic)}</span>`:''}<small>${x.key?esc(x.key):x.kind}</small></button>`).join('')
+    : `<p class="sub" style="padding:10px">Nothing found. Alt+Enter saves “${esc(q)}” as a note, Shift+Enter as a quest.</p>`;
+  $('#palList').querySelector('.on')?.scrollIntoView({ block:'nearest' }); }
+function palRun(i, alt){ const it=palItems[i]; if(!it) return; closePalette(); tracked(it.label, ()=> (alt&&it.alt ? it.alt.run : it.run)()); }
+function palCapture(asQuest){ const t=$('#palQ').value.trim(); if(!t) return; closePalette();
+  tracked(asQuest?'quick quest':'quick note', ()=>{
+    if(asQuest){ let p=state.projects.find(x=>x.name==='Inbox' && !x.frozen); if(!p){ p={ id:uid(), name:'Inbox', collapsed:false, frozen:false }; state.projects.unshift(p); } const { title, est }=parseQuestInput(t); state.quests.push(newQuest(p.id,null,title,est)); toast(`Quest added to Inbox`); }
+    else { const html=esc(t); state.notes.unshift({ id:uid(), html, text:t, cat:state.ui.noteCatNew||'', createdAt:now(), updatedAt:now() }); toast('Note saved'); } });
+  commit(); }
+document.addEventListener('click', e=>{ const a=e.target.closest?.('[data-pal-alt]'); if(a){ e.preventDefault(); e.stopPropagation(); palRun(+a.dataset.palAlt,true); return; } const b=e.target.closest?.('[data-pal]'); if(b){ e.preventDefault(); e.stopPropagation(); palRun(+b.dataset.pal); } }, true);
+document.addEventListener('keydown', e=>{
+  if($('#pal')){ if(e.key==='Escape'){ e.preventDefault(); closePalette(); return; }
+    if(e.key==='ArrowDown'||e.key==='ArrowUp'){ e.preventDefault(); palSel=clamp(palSel+(e.key==='ArrowDown'?1:-1),0,palItems.length-1); drawPalette(); return; }
+    if(e.key==='Enter'){ e.preventDefault(); e.stopPropagation(); if(e.altKey) palCapture(false); else if(e.shiftKey) palCapture(true); else palRun(palSel); return; }
+    return; }
+  if((e.ctrlKey||e.metaKey) && e.code==='KeyK' && !e.target.closest?.('.rich') && !$('#dlg').open){ e.preventDefault(); e.stopPropagation(); openPalette(); }
+}, true);
+
+/* ----- gentle timer nudges (desktop knows real activity; the web page only sees its own window) ----- */
+const N = () => state.ui.nudge ||= { forgot:true, forgotMin:10, away:true, awayMin:10 };
+let activeSince=null, lastNudge=0, awayFrom=null, lastPageInput=now();
+['mousemove','keydown','mousedown','wheel'].forEach(ev=>addEventListener(ev, ()=>{ lastPageInput=now(); }, { passive:true }));
+async function idleMs(){ if(DESK){ const s=await tinvoke('idle_secs').catch(()=>null); if(s!=null) return s*1000; } return now()-lastPageInput; }
+async function nudgeTick(){
+  if(BOARDWIN) return; const cfg=N(), idle=await idleMs(), t=state.timer, active=idle<90e3;
+  if(active){ if(!activeSince) activeSince=now()-idle; } else activeSince=null;
+  // forgot to start: a quest is in focus, you are clearly working, the timer is not running
+  if(cfg.forgot && DESK && t.state!=='running' && state.focus && Q(state.focus) && activeSince && now()-activeSince>=cfg.forgotMin*MIN && now()-lastNudge>30*MIN && !$('#nudge')){
+    lastNudge=now(); showNudge(activeSince); }
+  // away while the timer runs
+  if(cfg.away && DESK && t.state==='running'){ if(idle>=cfg.awayMin*MIN && !awayFrom) awayFrom=now()-idle;
+    if(awayFrom && active){ const from=awayFrom; awayFrom=null; if(now()-from>=cfg.awayMin*MIN) showAway(from, now()-idle); } }
+  else awayFrom=null;
+}
+setInterval(nudgeTick, 30000);
+function showNudge(since){
+  const q=Q(state.focus); if(!q) return; deskNotify('Taskromancer', `Working on “${q.title}”? The timer isn’t running.`);
+  const el=document.createElement('div'); el.id='nudge'; el.className='nudge';
+  el.innerHTML=`<span>⏱ Working on <b>${esc(q.title)}</b>? The timer isn’t running.</span><button class="btn sm soul" data-act="nudge-start" data-id="${since}">Start from ${fmtTime(since)}</button><button class="btn sm" data-act="nudge-start" data-id="0">Start now</button><button class="btn sm" data-act="nudge-close">Not now</button>`;
+  document.body.appendChild(el);
+}
+function showAway(from, to){
+  const mins=Math.round((to-from)/MIN); deskNotify('Taskromancer', `You were away ${mins} min. Was it work?`);
+  $('#dlg').dataset.mode='away';
+  $('#dlgBody').innerHTML=`<h2>You were away ${fmtHM(to-from)}</h2><p class="hint" style="margin-top:6px">No mouse or keyboard from ${fmtTime(from)} to ${fmtTime(to)} while the timer was running. What was that time?</p>
+    <div class="away-opts"><button class="btn" data-act="away" data-id="keep" data-sub="${from}|${to}"><b>Work</b><small>a call, reading, thinking: keep it</small></button>
+      <button class="btn" data-act="away" data-id="drop" data-sub="${from}|${to}"><b>Not work</b><small>drop it, the time before goes to the harvest</small></button>
+      <button class="btn" data-act="away" data-id="split" data-sub="${from}|${to}"><b>Some of both</b><small>harvest it as its own piece, split or delete it there</small></button></div>
+    <p class="sub">These checks can be switched off in Settings → Gentle reminders.</p>`;
+  if(!$('#dlg').open) $('#dlg').showModal();
+}
+// cut the running timer at the start of the away time; the away part is dropped or harvested separately
+function awayResolve(kind, from, to){
+  const t=state.timer; if(t.state!=='running' || kind==='keep'){ $('#dlg').close(); return; }
+  const total=elapsed(), awayMs=Math.min(total, Math.max(0,to-from)), workMs=Math.max(0,total-awayMs-(now()-to)), segStart=t.segStart||now()-total;
+  if(workMs>=1000) state.pending.push({ id:uid(), ms:workMs, start:segStart, end:from, day:isoDay(segStart) });
+  if(kind==='split' && awayMs>=1000) state.pending.push({ id:uid(), ms:awayMs, start:from, end:to, day:isoDay(from), away:true });
+  t.acc=0; t.runStart=to; t.segStart=to; state.pending.sort((a,b)=>a.start-b.start);
+  $('#dlg').close(); commit(); toast(kind==='drop' ? `${fmtHM(awayMs)} dropped, the timer keeps going` : 'The away time is in the harvest as its own piece');
+}
+
+/* ----- looks: contrast and calm motion are pure CSS; interface size is the window's own zoom ----- */
+function applyAccess(){ const ui=state.ui; document.body.classList.toggle('hc', !!ui.contrast); document.body.classList.toggle('calm', !!ui.calm);
+  try{ ui.calm ? $('#sceneSvg')?.pauseAnimations() : null; }catch{}
+  if(DESK && !BOARDWIN) tinvoke('set_zoom',{ scale:(ui.zoom||100)/100 }).catch(()=>{}); }
+
+/* ----- copies into a cloud folder (Google Drive, Dropbox, OneDrive…) ----- */
+async function cloudBackup(force){
+  const ui=state.ui; if(!DESK || !ui.cloudDir) return; if(!force && ui.cloudLast===today()) return;
+  const d=new Date(), stamp=`${isoDay()}-${pad(d.getHours())}${pad(d.getMinutes())}`;
+  try{ await tinvoke('cloud_backup',{ folder:ui.cloudDir, json:JSON.stringify(state), stamp, keep:Math.max(1,ui.cloudKeep||30) }); ui.cloudLast=today(); save(); }
+  catch(e){ if(force!=='quiet') toast('Cloud copy failed: '+e); }
+}
+
 /* ================= randomizer formulas: recipes of slots over a library of decks ================= */
 // A formula is a list of slots. Each slot points at a deck from the library (or an image folder) with its own amount and label.
 // Rolling uses the current formula only; removing a slot never touches the deck.
 const FM = () => R().formulas.find(f=>f.id===R().curFormula) || null;
 const curSlots = () => FM()?.slots || [];
 function slotView(sl){
-  if(sl.kind==='img') return { id:sl.id, kind:'img', name:sl.label||fileName(sl.folder||'')||'Images', folder:sl.folder, amount:sl.amount||1, items:[] };
-  const d=R().decks.find(x=>x.id===sl.deck); return d ? { id:sl.id, kind:'deck', name:sl.label||d.name, items:d.items, amount:sl.amount||1, deckId:d.id, path:d.path } : null;
+  if(sl.kind==='img') return { id:sl.id, kind:'img', name:sl.label||fileName(sl.folder||'')||'Images', folder:sl.folder, amount:sl.amount??1, items:[] };
+  const d=R().decks.find(x=>x.id===sl.deck); return d ? { id:sl.id, kind:'deck', name:sl.label||d.name, items:d.items, amount:sl.amount??1, deckId:d.id, path:d.path } : null;
 }
 function newFormula(name, slots){ const f={ id:uid(), name:name||'New formula', emoji:'🎲', slots:slots||[], template:'', daily:true }; R().formulas.push(f); R().curFormula=f.id; return f; }
 function migrateFormulas(r){
   r.formulas=(r.formulas||[]).map(f=>f.slots ? f : { id:f.id||uid(), name:f.name||'Formula', emoji:'🎲', template:'', daily:true, slots:(f.decks||[]).map(x=>({ id:uid(), kind:'deck', deck:x.deckId, amount:x.amount||1, label:'' })) });
-  r.formulas.forEach(f=>{ f.slots ||= []; f.slots.forEach(s=>{ s.id ||= uid(); s.kind ||= 'deck'; s.amount=Math.max(1,+s.amount||1); }); if(f.daily==null) f.daily=true; f.emoji ||= '🎲'; });
+  r.formulas.forEach(f=>{ f.slots ||= []; f.slots.forEach(s=>{ s.id ||= uid(); s.kind ||= 'deck'; s.amount=Math.max(0,s.amount==null?1:+s.amount||0); }); if(f.daily==null) f.daily=true; f.emoji ||= '🎲'; });
   if(!r.formulas.length && r.decks.length){ const act=r.decks.filter(d=>d.active!==false); r.formulas.push({ id:uid(), name:'My mix', emoji:'🎲', template:'', daily:true, slots:act.map(d=>({ id:uid(), kind:'deck', deck:d.id, amount:d.amount||1, label:'' })) }); }
   if(!r.formulas.some(f=>f.id===r.curFormula)) r.curFormula=r.formulas[0]?.id||'';
   r.daily ||= {}; const dy=r.daily; dy.variants ||= []; dy.log ||= []; dy.total ||= 0; if(dy.pick==null) dy.pick=0; if(dy.drawn==null) dy.drawn=dy.total;
 }
+const lockKey = x => x.img || x.t;
+function applyLocks(sl, results){ if(!sl?.locks?.length) return; const list=results[sl.id] ||= [];
+  sl.locks.forEach(k=>{ const ex=list.find(x=>lockKey(x)===k); if(ex) ex.locked=true; else list.unshift(sl.kind==='img' ? { t:fileName(k), img:k, locked:true } : { t:k, locked:true }); }); }
+const applyAllLocks = () => curSlots().forEach(sl=>applyLocks(sl, R().results));
 const joinNice = a => a.length<=1 ? (a[0]||'') : a.slice(0,-1).join(', ')+' and '+a[a.length-1];
 // the one-sentence brief: the formula's template with {Slot label} filled in, or a plain "Label: a, b" list
 function briefFrom(f, results){
   if(!f) return ''; const vs=f.slots.map(slotView).filter(Boolean), by={};
-  vs.forEach(v=>{ by[v.name.toLowerCase()]=(results[v.id]||[]).filter(t=>!t.img).map(t=>tokText(t.t)); });
-  const tpl=(f.template||'').trim();
-  if(tpl) return tpl.replace(/\{([^}]+)\}/g,(m,k)=>{ const v=by[k.trim().toLowerCase()]; return v&&v.length ? joinNice(v) : '…'; });
-  return vs.filter(v=>v.kind!=='img' && (results[v.id]||[]).length).map(v=>`${v.name}: ${joinNice(by[v.name.toLowerCase()])}`).join('. ');
+  vs.forEach(v=>{ by[v.name.toLowerCase()] = v.amount>0 ? (results[v.id]||[]).filter(t=>!t.img).map(t=>tokText(t.t)) : []; });
+  const val=k=>by[k.trim().toLowerCase()]||[], tpl=(f.template||'').trim();
+  if(tpl) return tpl.replace(/\[([^\]]*)\]/g,(m,inner)=>[...inner.matchAll(/\{([^}]+)\}/g)].every(x=>val(x[1]).length) ? inner : '')
+    .replace(/\{([^}]+)\}/g,(m,k)=>joinNice(val(k))).replace(/\s+([,.;:!?])/g,'$1').replace(/([,;:])\1+/g,'$1').replace(/\s{2,}/g,' ').replace(/^[\s,;:]+|[\s,;:]+$/g,'').trim();
+  return vs.filter(v=>v.kind!=='img' && v.amount>0 && (results[v.id]||[]).length).map(v=>`${v.name}: ${joinNice(by[v.name.toLowerCase()])}`).join('. ');
 }
 const imgPathsFrom = (f, results) => f ? f.slots.filter(s=>s.kind==='img').flatMap(s=>(results[s.id]||[]).map(t=>t.img).filter(Boolean)) : [];
 // images on disk: listed once per folder, shown through blob URLs
@@ -4250,11 +4463,11 @@ async function pickImages(view, keep){ const all=await folderImages(view.folder)
   const out=[...keep]; while(out.length<view.amount && pool.length){ const p=pool.splice(Math.floor(Math.random()*pool.length),1)[0]; out.push({ t:fileName(p), img:p, locked:false }); } return out; }
 function imgUrl(path){ if(imgUrls.has(path)) return imgUrls.get(path); imgUrls.set(path,'');
   tinvoke('read_image',{ path }).then(buf=>{ imgUrls.set(path, URL.createObjectURL(new Blob([buf]))); if(['rnd'].includes(state.ui.tab)) renderBoard(); }).catch(()=>{}); return ''; }
-async function rollImageSlots(views, results){ for(const v of views){ const cur=results[v.id]||[]; results[v.id]=await pickImages(v, cur.filter(t=>t.locked)); } }
+async function rollImageSlots(views, results){ for(const v of views){ applyLocks(FM()?.slots.find(x=>x.id===v.id) || R().formulas.flatMap(f=>f.slots).find(x=>x.id===v.id), results); const cur=results[v.id]||[]; results[v.id]=await pickImages(v, cur.filter(t=>t.locked)); } }
 // roll a formula on its own (for daily prompts), without touching the current mix
 async function rollFormulaAlone(f){
   const res={}; const vs=f.slots.map(slotView).filter(Boolean);
-  vs.filter(v=>v.kind==='deck').forEach(v=>{ const out=[]; for(let i=0;i<v.amount;i++){ const c=pickToken(v,out); if(c!=null) out.push({ t:c, locked:false }); } res[v.id]=out; });
+  vs.filter(v=>v.kind==='deck').forEach(v=>{ applyLocks(f.slots.find(x=>x.id===v.id), res); const out=(res[v.id]||[]).slice(0,Math.max(v.amount,0)); for(let i=out.length;i<v.amount;i++){ const c=pickToken(v,out); if(c!=null) out.push({ t:c, locked:false }); } res[v.id]=out; });
   if(DESK) await rollImageSlots(vs.filter(v=>v.kind==='img'), res);
   return res;
 }
@@ -4317,14 +4530,14 @@ function formulaPanel(){
   return chips+`<div class="fedit">
     <div class="fe-head"><input class="field fe-emo" data-fe="emoji" value="${esc(f.emoji||'')}" aria-label="Formula icon"><input class="field" data-fe="name" value="${esc(f.name)}" aria-label="Formula name">
       <button class="ib" data-act="f-dup" title="Duplicate this formula" aria-label="Duplicate">${IC.copy}</button><button class="ib" data-act="f-del" title="Delete this formula" aria-label="Delete formula">${IC.trash}</button></div>
-    <div class="slots">${f.slots.map(sl=>{ const v=slotView(sl); return `<div class="slot" data-sid="${sl.id}"><span class="grip" draggable="true" data-drag="z:${sl.id}" title="Drag to reorder">⠿</span>
+    <div class="slots">${f.slots.map(sl=>{ const v=slotView(sl); return `<div class="slot ${(sl.amount??1)===0?'off':''}" data-sid="${sl.id}" title="${(sl.amount??1)===0?'Off: set an amount above 0 to use it again':''}"><span class="grip" draggable="true" data-drag="z:${sl.id}" title="Drag to reorder">⠿</span>
         <input class="field sl-label" data-sl-label="${sl.id}" value="${esc(sl.label||'')}" placeholder="${esc(v?.name||'Label')}" aria-label="Slot label">
         ${sl.kind==='img' ? `<button class="btn sm sl-src" data-act="sl-folder" data-id="${sl.id}" title="${esc(sl.folder||'')}">🖼 ${esc(fileName(sl.folder||'')||'Pick folder')}</button>`
           : `<select class="field sl-src" data-sl-deck="${sl.id}" aria-label="Deck">${v?'':'<option value="">Deck missing</option>'}${opts(sl.deck)}</select>`}
         <span class="stepper"><button data-act="sl-amt" data-id="${sl.id}" data-sub="-1" aria-label="Fewer">−</button><input data-sl-amt="${sl.id}" value="${sl.amount}" inputmode="numeric" aria-label="Amount"><button data-act="sl-amt" data-id="${sl.id}" data-sub="1" aria-label="More">+</button></span>
         <button class="ib" data-act="sl-del" data-id="${sl.id}" title="Take it out of this formula (the deck stays in the library)" aria-label="Remove from formula">${IC.x}</button></div>`; }).join('') || '<p class="sub">No decks in this formula yet.</p>'}</div>
     <div class="fe-add"><select class="field" data-sl-add aria-label="Add a deck"><option value="">+ Add a deck from the library…</option>${opts('')}</select>${DESK?`<button class="btn sm" data-act="sl-addimg" title="A folder of pictures: each roll picks random images from it">${IC.plus}Image folder</button>`:''}</div>
-    <label class="fe-tpl"><span>Brief template <small>use {${esc(f.slots[0] ? (slotView(f.slots[0])?.name||'Label') : 'Label')}} for a slot; leave empty for a plain list</small></span>
+    <label class="fe-tpl"><span>Brief template <small>{Slot} puts in that slot’s tokens; [square brackets] around a part hide it when its slot is off or empty; leave empty for a plain list</small></span>
       <textarea class="field" data-fe="template" rows="2" placeholder="${esc(f.slots.length ? `${f.slots.map(s=>'{'+(slotView(s)?.name||'?')+'}').join(', ')}` : 'A {Building type} made of {Material}')}">${esc(f.template||'')}</textarea>
       <span class="chips wrap">${f.slots.map(s=>slotView(s)).filter(Boolean).filter(v=>v.kind!=='img').map(v=>`<button data-act="tpl-ins" data-sub="${esc(v.name)}">{${esc(v.name)}}</button>`).join('')}</span></label>
     <button class="sflag" data-act="daily-f" data-id="${f.id}" aria-pressed="${!!f.daily}"><span class="box ${f.daily?'on':''}">${PX.check}</span>Can show up as the daily prompt</button>
@@ -4334,7 +4547,8 @@ function libraryPanel(){
   const r=R();
   return `<div class="libbar">${DESK?`<span class="sub" title="${esc(r.deckFolder||'')}">${r.deckFolder?`Folder: <b>${esc(fileName(r.deckFolder))}</b>`:'No decks folder'}</span><button class="btn sm" data-act="deck-folder">${r.deckFolder?'Change':'Set folder'}</button>${r.deckFolder?`<button class="btn sm" data-act="deck-rescan" title="Pick up new and changed .txt files">Rescan</button>`:''}`:''}
     <span style="flex:1"></span><button class="btn sm" data-act="rnd-import" title="Import .txt files, tokens split by commas or new lines">Import .txt</button><button class="btn sm" data-act="deck-new">${IC.plus}Deck</button></div>
-    ${r.decks.length ? `<div class="deck-list lib">${r.decks.map(deckCard).join('')}</div>`
+    ${r.decks.length>6 ? `<input class="field libq" type="search" data-ui="deckQ" value="${esc(state.ui.deckQ||'')}" placeholder="Find a deck" aria-label="Find a deck">` : ''}
+    ${r.decks.length ? `<div class="deck-list lib">${r.decks.filter(d=>!state.ui.deckQ || d.name.toLowerCase().includes(state.ui.deckQ.toLowerCase())).map(deckCard).join('')}</div>`
       : `<div class="empty"><b>No decks yet</b>Import .txt files (tokens split by commas or new lines)${DESK?', point at a folder of them,':''} or start a new deck and paste tokens into it.<div class="btns"><button class="btn sm" data-act="rnd-demo">Load example decks</button></div></div>`}`;
 }
 async function scanDeckFolder(quiet){
@@ -4622,7 +4836,7 @@ function openUpdate(){
 
 /* ================= desktop (Tauri) ================= */
 // Everything here is inert in the browser; in the desktop app it adds file storage, tray, mini timer and more.
-const APP_VER='2.1.0';
+const APP_VER='2.2.0';
 const DESK = !!(window.__TAURI__ && window.__TAURI__.core);
 const tinvoke = (cmd,args,opts) => window.__TAURI__.core.invoke(cmd,args,opts);
 const fileName = p => String(p||'').split(/[\\/]/).pop();
@@ -4632,7 +4846,7 @@ function deskSave(immediate){
   const run=()=>tinvoke('save_state',{ json:JSON.stringify(state), day:isoDay(), hour:isoDay()+'-'+pad(new Date().getHours()) }).then(()=>setSync('Saved to disk')).catch(e=>setSync('Could not save: '+e));
   if(immediate) return run(); deskT=setTimeout(run,700); return Promise.resolve();
 }
-async function deskQuit(){ clearTimeout(deskT); try{ await deskSave(true); }catch{} tinvoke('quit_app'); }
+async function deskQuit(){ clearTimeout(deskT); try{ await deskSave(true); }catch{} try{ await cloudBackup('quiet'); }catch{} tinvoke('quit_app'); }
 const deskNotify = (title, body) => { if(DESK) tinvoke('notify',{ title, body }).catch(()=>{}); };
 async function deskInit(){
   document.body.classList.add('desk');
@@ -4640,8 +4854,11 @@ async function deskInit(){
   try{ const j=await tinvoke('load_state'); if(j) state=normalize(JSON.parse(j)); else if(!state.projects.length){ loadDemo(); first=true; } }
   catch(e){ toast('Could not read saved data: '+e); }
   deskLoaded=true; markDay();
-  state.ui.autostart = await tinvoke('get_autostart').catch(()=>false);
-  applyTheme(); pickQuote(); renderAll(); updUndo(); deskSave(true);
+  { const real=await tinvoke('get_autostart').catch(()=>false); if(state.ui.autostartWant==null) state.ui.autostartWant=!!real;
+    if(state.ui.autostartWant && !real){ await tinvoke('set_autostart',{ on:true }).catch(()=>{}); } state.ui.autostart = state.ui.autostartWant ? await tinvoke('get_autostart').catch(()=>true) : real; }
+  applyTheme(); applyAccess(); pickQuote(); renderAll(); updUndo(); deskSave(true);
+  if(!state.ui.onboarded){ if(first) setTimeout(openSetup,400); else state.ui.onboarded=true; }
+  setTimeout(()=>cloudBackup('quiet'), 8000);
   setTimeout(()=>checkUpdate(false), 5000);
   if(first) toast('Demo data is loaded so you can look around. Erase it in the menu ⚙, or load your backup there.');
   const ev=window.__TAURI__.event;
@@ -4664,6 +4881,7 @@ function openCloseDialog(){
 function desktopSettings(){
   if(!DESK) return ''; const ui=state.ui, ca=ui.closeAction||'ask';
   return `<h3 class="dh">Desktop</h3>
+    <div class="cloud"><span>Copies in a cloud folder</span>${ui.cloudDir?`<b title="${esc(ui.cloudDir)}">${esc(fileName(ui.cloudDir))}</b><label>keep the last <input class="field" type="number" min="1" max="999" data-cloud-keep value="${ui.cloudKeep||30}"> copies</label><button class="btn sm" data-act="cloud-now">Copy now</button><button class="btn sm" data-act="cloud-dir">Change</button><button class="ib" data-act="cloud-off" aria-label="Stop cloud copies" title="Stop making copies there">${IC.x}</button>`:`<button class="btn sm" data-act="cloud-dir">Pick a folder…</button><span class="sub">a Google Drive, Dropbox or OneDrive folder: a copy goes there once a day and when you quit</span>`}</div>
     <div class="sflags"><button class="sflag" data-act="desk-autostart" aria-pressed="${!!ui.autostart}"><span class="box ${ui.autostart?'on':''}">${PX.check}</span>Start Taskromancer when Windows starts</button></div>
     <div class="toolbar" style="margin:10px 0">When you close the window<div class="seg" role="group" aria-label="When you close the window">${[['ask','Ask'],['tray','Minimize to tray'],['quit','Quit']].map(([k,l])=>`<button data-act="close-action" data-id="${k}" aria-pressed="${ca===k}">${l}</button>`).join('')}</div></div>
     <div class="dlg-row"><button class="btn sm" data-act="upd-check">Check for updates</button><button class="btn sm" data-act="mini-open">Open mini timer</button><button class="btn sm" data-act="fullscreen">Full screen (F11)</button><button class="btn sm" data-act="data-folder">Open data folder</button></div>
@@ -4712,7 +4930,7 @@ function imageRow(){
     ${curImg?`<div class="refimg"><img src="${curImg.url}" alt="Random reference image"><div class="refbar"><span class="sub" title="${esc(curImg.path)}">${esc(fileName(curImg.path))}</span><span style="flex:1"></span><button class="btn sm" data-act="img-random">Another</button><button class="btn sm" data-act="img-open">Open in viewer</button><button class="ib" data-act="img-close" aria-label="Hide image">${IC.x}</button></div></div>`:''}`;
 }
 const DESK_ACTIONS = {
-  'desk-autostart': async ()=>{ state.ui.autostart = await tinvoke('set_autostart',{ on:!state.ui.autostart }).catch(e=>{ toast('Could not change autostart: '+e); return state.ui.autostart; }); save();
+  'desk-autostart': async ()=>{ state.ui.autostart = await tinvoke('set_autostart',{ on:!state.ui.autostart }).catch(e=>{ toast('Could not change autostart: '+e); return state.ui.autostart; }); state.ui.autostartWant=!!state.ui.autostart; save();
     $('#dlg').dataset.mode==='close' ? openCloseDialog() : openSettings(); },
   'close-remember': ()=>{ closeRemember=!closeRemember; openCloseDialog(); },
   'close-tray': ()=>{ if(closeRemember) state.ui.closeAction='tray'; save(); $('#dlg').close(); tinvoke('hide_main'); },
@@ -4746,7 +4964,8 @@ function tick(){
   if(DESK && ticks%2===0) pushMini();
   if(ticks%240===0 && state.ui.tab==='campaigns' && !/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName) && !document.activeElement?.isContentEditable && !$('#dlg').open) renderBoard();
 }
-$('#quoteEdit').innerHTML=IC.dots; $('#compactBtn').innerHTML=IC.compress; $('#miniBtn').innerHTML=IC.mini; applyTheme(); pickQuote(); renderAll(); updUndo(); setInterval(tick, 250);
+$('#quoteEdit').innerHTML=IC.dots; $('#compactBtn').innerHTML=IC.compress; $('#miniBtn').innerHTML=IC.mini; applyTheme(); applyAccess(); pickQuote(); renderAll(); updUndo(); setInterval(tick, 250);
+if(!DESK && !BOARDWIN && !state.ui.onboarded){ if(!state.quests.length && !state.notes.length) setTimeout(openSetup,500); else { state.ui.onboarded=true; save(); } }
 if(BOARDWIN) boardWinInit(); else { markDay(); if(DESK) deskInit(); setTimeout(()=>{ if(['prompt','both'].includes(state.ui.topLine) && state.rnd?.formulas?.length){ if(state.rnd.daily) dailyEnsure(); } renderQuote(); },1500); }
 </script>
 </body>

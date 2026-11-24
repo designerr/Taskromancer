@@ -245,6 +245,50 @@ fn read_image(path: String) -> Result<tauri::ipc::Response, String> {
     Ok(tauri::ipc::Response::new(fs::read(&p).map_err(err)?))
 }
 
+/// Seconds since the last keyboard or mouse input anywhere in Windows (0 on other systems).
+#[tauri::command]
+#[allow(unreachable_code)]
+fn idle_secs() -> u64 {
+    #[cfg(windows)]
+    {
+        use windows_sys::Win32::System::SystemInformation::GetTickCount;
+        use windows_sys::Win32::UI::Input::KeyboardAndMouse::{GetLastInputInfo, LASTINPUTINFO};
+        let mut lii = LASTINPUTINFO { cbSize: std::mem::size_of::<LASTINPUTINFO>() as u32, dwTime: 0 };
+        let ok = unsafe { GetLastInputInfo(&mut lii) };
+        if ok != 0 {
+            let tick = unsafe { GetTickCount() };
+            return (tick.wrapping_sub(lii.dwTime) / 1000) as u64;
+        }
+        return 0;
+    }
+    0
+}
+
+/// Interface size: the main window's own zoom, so every coordinate stays consistent.
+#[tauri::command]
+async fn set_zoom(app: AppHandle, scale: f64) -> Result<(), String> {
+    if let Some(w) = app.get_webview_window("main") {
+        w.set_zoom(scale.clamp(0.7, 1.6)).map_err(err)?;
+    }
+    Ok(())
+}
+
+/// A copy of the data in a folder the person picked (Google Drive, Dropbox…), keeping the newest `keep`.
+#[tauri::command]
+fn cloud_backup(folder: String, json: String, stamp: String, keep: usize) -> Result<String, String> {
+    let dir = PathBuf::from(&folder);
+    if !dir.is_dir() {
+        return Err("folder not found".into());
+    }
+    let stamp: String = stamp.chars().filter(|c| c.is_ascii_digit() || *c == '-').collect();
+    let path = dir.join(format!("taskromancer-{stamp}.json"));
+    let tmp = dir.join(format!("taskromancer-{stamp}.json.tmp"));
+    fs::write(&tmp, &json).map_err(err)?;
+    fs::rename(&tmp, &path).map_err(err)?;
+    prune(&dir, "taskromancer-", keep.max(1));
+    Ok(path.to_string_lossy().to_string())
+}
+
 #[tauri::command]
 fn list_dir(path: String) -> Result<Vec<(String, bool)>, String> {
     let mut out: Vec<(String, bool)> = fs::read_dir(&path)
@@ -677,7 +721,10 @@ pub fn run() {
             close_board_window,
             set_board_on_top,
             list_images,
-            read_image
+            read_image,
+            idle_secs,
+            set_zoom,
+            cloud_backup
         ])
         .run(tauri::generate_context!())
         .expect("error while running Taskromancer");
