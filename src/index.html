@@ -3150,12 +3150,12 @@ document.addEventListener('keydown', e=>{
   if(e.key==='F11' && DESK){ e.preventDefault(); tinvoke('toggle_fullscreen'); return; }
   if(boardKeys(e)) return;
   if(atlasKeys(e)) return;
-  if((e.ctrlKey||e.metaKey) && e.shiftKey && e.key.toLowerCase()==='f' && ['boards','atlas'].includes(state.ui.tab) && !BOARDWIN){ e.preventDefault(); setFullView(!state.ui.fullView); return; }
+  if((e.ctrlKey||e.metaKey) && e.shiftKey && keyOf(e)==='f' && ['boards','atlas'].includes(state.ui.tab) && !BOARDWIN){ e.preventDefault(); setFullView(!state.ui.fullView); return; }
   if(e.key==='Escape' && state.ui.fullView && !BOARDWIN && !$('#dlg').open && !/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName)){ e.preventDefault(); setFullView(false); return; }
   const ae=document.activeElement, typing=/^(INPUT|TEXTAREA|SELECT)$/.test(ae?.tagName) || !!ae?.isContentEditable;
   if(ae?.classList?.contains('rich')){
     if(e.key==='Enter' && (e.ctrlKey||e.metaKey) && ae.dataset.rich==='composer'){ e.preventDefault(); A_['note-add'](); return; }
-    const k=e.key.toLowerCase();
+    const k=keyOf(e);
     if((e.ctrlKey||e.metaKey) && e.shiftKey && (k==='x')){ e.preventDefault(); richCmd(ae,'strikeThrough'); return; }
     if((e.ctrlKey||e.metaKey) && e.shiftKey && e.code==='Digit9'){ e.preventDefault(); toggleTodo(ae); return; }
     if((e.ctrlKey||e.metaKey) && e.shiftKey && (e.code==='Digit8'||k==='l')){ e.preventDefault(); richCmd(ae,'insertUnorderedList'); return; }
@@ -3180,7 +3180,7 @@ document.addEventListener('keydown', e=>{
   if(e.key==='Enter' && ae?.id==='presetName'){ e.preventDefault(); A_['sess-preset-save'](); return; }
   if(e.key==='Escape'){ if(typing){ ae.blur(); return; } if(A){ A=null; renderHarvest(); return; } }
   if(typing || e.ctrlKey || e.metaKey || e.altKey || $('#dlg').open) return;
-  const k=e.key.toLowerCase();
+  const k=keyOf(e);
   if(e.code==='Space'){ e.preventDefault(); rtab()==='sessions' ? sessToggle() : A_.toggle(); }
   else if(k==='c' || k==='с'){ if(state.timer.state!=='idle') cut(false); }
   else if(k==='s' || k==='і' || k==='ы'){ if(state.timer.state!=='idle') cut(true); }
@@ -3498,6 +3498,8 @@ function loadDemo(){
   state.focus=cd.id;
 }
 
+// letter shortcuts by physical key: P is P whether the layout is English or Ukrainian
+const keyOf = e => /^Key[A-Z]$/.test(e.code||'') ? e.code.slice(3).toLowerCase() : /^Digit\d$/.test(e.code||'') ? e.code.slice(5) : (e.key||'').toLowerCase();
 /* ================= boards: reference canvas (PureRef-style controls, Figma-style crop) ================= */
 const BB = () => state.boards.find(b=>b.id===state.ui.boardId) || state.boards[0] || null;
 const BS = { sel:new Set(), crop:null, drag:null, space:false, menu:null, mouse:{ x:0, y:0 }, cache:new Map() };
@@ -3826,6 +3828,17 @@ async function renderItems(list, maxSide=8192){
     if(it.gray||b.gray) g.filter='grayscale(1)'; g.drawImage(bmp,c.x,c.y,c.w,c.h,-it.w*k/2,-it.h*k/2,it.w*k,it.h*k); g.restore(); }
   return await new Promise(r=>cv.toBlob(r,'image/png'));
 }
+// copy the selection as a picture: the clipboard call starts right away (it needs the key press),
+// the picture is drawn while it waits; the desktop app has its own way in if the page's one is refused
+async function copySel(){
+  const L=selItems(); if(!L.length){ toast('Select what to copy'); return; }
+  const make=renderItems(L, 4096);
+  try{ await navigator.clipboard.write([new ClipboardItem({ 'image/png': make })]); toast(L.length>1?'Copied as one picture':'Image copied'); sfx('copy'); return; }
+  catch(e){ if(!DESK){ toast('The browser didn’t allow copying images. Use Export instead'); return; } }
+  try{ const blob=await make, bmp=await createImageBitmap(blob), cv=document.createElement('canvas'); cv.width=bmp.width; cv.height=bmp.height; const g=cv.getContext('2d'); g.drawImage(bmp,0,0);
+    const px=g.getImageData(0,0,cv.width,cv.height).data; await tinvoke('copy_image_rgba', new Uint8Array(px.buffer), { headers:{ w:String(cv.width), h:String(cv.height) } }); toast(L.length>1?'Copied as one picture':'Image copied'); sfx('copy'); }
+  catch(e){ toast('Could not copy: '+(e?.message||e)); }
+}
 async function saveBlobFile(name, blob){
   if(DESK){ const ok=await tinvoke('save_bytes_dialog', new Uint8Array(await blob.arrayBuffer()), { headers:{ name:encodeURIComponent(name) } }).catch(e=>{ toast('Could not save: '+e); return false; }); if(ok) toast(`Saved ${name}`); return; }
   try{ const dl=window.claude?.use?await claude.use('downloads'):null; if(dl){ await dl.save({ filename:name, data:blob }); return; } }catch(e){ if(e?.code==='declined') return; }
@@ -3862,7 +3875,7 @@ function openBoardMenu(x,y){
     it('pk-keep','Pack, keep order','P',!n), it('pk-size','Pack by size','',!n), it('pk-color','Pack by colour','',!n), it('pk-name','Pack by name','',!n), it('pk-date','Pack by date added','',!n), sep,
     it('group','Group','Ctrl G',n<2), it('ungroup','Ungroup','Ctrl Shift G',!n), it('front','Bring to front','Ctrl ]',!n), it('back','Send to back','Ctrl [',!n), it('dup','Duplicate','Ctrl D',!n), sep,
     it('op-100','Opacity 100%','',!n), it('op-60','Opacity 60%','',!n), it('op-30','Opacity 30%','',!n), it('igray','Grayscale image on/off','',!n), it('lock','Lock (click-through)','',!n), it('unlock','Unlock all',''), sep,
-    it('exp1','Export selection as one PNG','',!n), it('expn','Export each image…','',!n), it('del','Delete','Del',!n) ].join('');
+    it('copy','Copy to clipboard','Ctrl C',!n), it('exp1','Export selection as one PNG','',!n), it('expn','Export each image…','',!n), it('del','Delete','Del',!n) ].join('');
   document.body.appendChild(m); const r=m.getBoundingClientRect(); m.style.left=Math.min(x, innerWidth-r.width-8)+'px'; m.style.top=Math.min(y, innerHeight-r.height-8)+'px';
 }
 function boardCmd(c){
@@ -3885,19 +3898,20 @@ function boardCmd(c){
     group:()=>groupSel(true), ungroup:()=>groupSel(false), front:()=>zOrder(true), back:()=>zOrder(false), dup:dupSel,
     'op-100':()=>selTransform(i=>{ i.op=1; }), 'op-60':()=>selTransform(i=>{ i.op=.6; }), 'op-30':()=>selTransform(i=>{ i.op=.3; }), igray:()=>selTransform(i=>{ i.gray=!i.gray; }),
     lock:()=>{ selTransform(i=>{ i.locked=true; }); BS.sel.clear(); drawSel(); toast('Locked. Right click → Unlock all to free them'); }, unlock:()=>{ snap(); b.items.forEach(i=>{ i.locked=false; }); commit(); },
-    exp1:()=>exportSel(false), expn:()=>exportSel(true), del:delSel };
+    copy:copySel, exp1:()=>exportSel(false), expn:()=>exportSel(true), del:delSel };
   map[c]?.();
 }
 document.addEventListener('click', e=>{ const bm=e.target.closest?.('.bmenu [data-bm]'); if(bm){ e.preventDefault(); boardCmd(bm.dataset.bm); return; } if(!e.target.closest?.('.bmenu')) closeBoardMenu(); }, true);
 function boardKeys(e){
   if(state.ui.tab!=='boards' || !BB()) return false; const ae=document.activeElement; if(/^(INPUT|TEXTAREA|SELECT)$/.test(ae?.tagName) || ae?.isContentEditable || $('#dlg').open) return false;
-  const k=e.key.toLowerCase(), c=e.ctrlKey||e.metaKey;
+  const k=keyOf(e), c=e.ctrlKey||e.metaKey;
   if(e.code==='Space'){ e.preventDefault(); if(!BS.space){ BS.space=true; $('#bdStage')?.classList.add('grab'); } return true; }
   if(BS.crop){ if(e.key==='Enter'){ e.preventDefault(); toggleCrop(null); return true; } if(e.key==='Escape'){ e.preventDefault(); cancelCrop(); drawSel(); return true; } }
   const go=(fn)=>{ e.preventDefault(); fn(); return true; };
   if((e.key==='Delete'||e.key==='Backspace') && BS.edge){ return go(()=>{ tracked('delete connection', ()=>{ BB().edges=BB().edges.filter(x=>x.id!==BS.edge); }); BS.edge=null; commit(); }); }
   if(e.key==='Tab' && BS.sel.size===1){ return go(()=>tracked('new idea', ()=>addChild([...BS.sel][0]))); }
   if(e.key==='Delete'||e.key==='Backspace') return go(delSel);
+  if(c && k==='c' && BS.sel.size) return go(copySel);
   if(c && k==='a') return go(()=>boardCmd('selall'));
   if(c && e.shiftKey && k==='g') return go(()=>groupSel(false));
   if(c && k==='g') return go(()=>groupSel(true));
@@ -3912,7 +3926,7 @@ function boardKeys(e){
   if(k==='p') return go(()=>arrange('pack','keep'));
   if(k==='n') return go(()=>{ const st=$('#bdStage')?.getBoundingClientRect(), inside=st && BS.mouse.x>=st.left && BS.mouse.x<=st.right && BS.mouse.y>=st.top && BS.mouse.y<=st.bottom; tracked('new idea', ()=>addNode(inside?bToWorld(BS.mouse.x,BS.mouse.y):bToWorld(st.left+st.width/2,st.top+st.height/2),'')); });
   if(e.key==='Enter' && BS.sel.size===1) return go(()=>{ const it=bitem([...BS.sel][0]); if(it?.type==='node') editNode(it.id); else if(it?.type==='note') editNote(it.id); else toggleCrop(it.id); });
-  if(e.key==='1') return go(()=>{ const b=BB(), st=$('#bdStage'), cx=st.clientWidth/2, cy=st.clientHeight/2; b.view.x=cx-(cx-b.view.x)/b.view.z; b.view.y=cy-(cy-b.view.y)/b.view.z; b.view.z=1; syncView(); });
+  if(k==='1') return go(()=>{ const b=BB(), st=$('#bdStage'), cx=st.clientWidth/2, cy=st.clientHeight/2; b.view.x=cx-(cx-b.view.x)/b.view.z; b.view.y=cy-(cy-b.view.y)/b.view.z; b.view.z=1; syncView(); });
   if(e.key==='Escape' && BS.sel.size){ BS.sel.clear(); drawSel(); return true; }
   return false;
 }
@@ -3925,7 +3939,7 @@ function boardHelp(){
     <kbd>Double click</kbd><span>Crop like in Figma: drag edges, drag inside to slide; Enter finishes, Esc cancels</span>
     <kbd>F / Home</kbd><span>Fit everything or the selection</span><kbd>1</kbd><span>Zoom 100%</span><kbd>G</kbd><span>Grayscale view</span><kbd>P</kbd><span>Pack the selection</span>
     <kbd>N / double click</kbd><span>New idea; drag the round handle on the right of anything to connect it, or drop on empty space for a new idea</span><kbd>Tab</kbd><span>New idea connected to the selected one</span><kbd>Enter</kbd><span>Edit an idea or a note, crop an image</span>
-    <kbd>Alt Shift H / V</kbd><span>Flip</span><kbd>Ctrl G</kbd><span>Group, Ctrl Shift G ungroups</span><kbd>Ctrl ] / [</kbd><span>Front / back</span><kbd>Ctrl D</kbd><span>Duplicate</span><kbd>Del</kbd><span>Delete</span><kbd>Ctrl V</kbd><span>Paste images</span></div>`;
+    <kbd>Ctrl C</kbd><span>Copy the selection to the clipboard as a picture</span><kbd>Alt Shift H / V</kbd><span>Flip</span><kbd>Ctrl G</kbd><span>Group, Ctrl Shift G ungroups</span><kbd>Ctrl ] / [</kbd><span>Front / back</span><kbd>Ctrl D</kbd><span>Duplicate</span><kbd>Del</kbd><span>Delete</span><kbd>Ctrl V</kbd><span>Paste images</span></div>`;
   $('#dlg').showModal();
 }
 
@@ -4170,7 +4184,7 @@ function atlasConquest(q){ if(!q.done) return; const top=q.parentId?Q(q.parentId
 function atlasKeys(e){
   if(state.ui.tab!=='atlas' || !MP()) return false; const ae=document.activeElement; if(/^(INPUT|TEXTAREA|SELECT)$/.test(ae?.tagName) || ae?.isContentEditable || $('#dlg').open) return false;
   if(e.code==='Space'){ e.preventDefault(); MS.space=true; $('#mpStage')?.classList.add('grab'); return true; }
-  if(e.ctrlKey||e.metaKey||e.altKey) return false; const k=e.key.toLowerCase();
+  if(e.ctrlKey||e.metaKey||e.altKey) return false; const k=keyOf(e);
   if(e.key==='Enter' && state.ui.routeDraft){ e.preventDefault(); finishRoute(); return true; }
   if(e.key==='Escape' && state.ui.routeDraft){ e.preventDefault(); finishRoute(); return true; }
   if(k==='f'){ e.preventDefault(); atlasFit(); return true; }
@@ -4229,7 +4243,7 @@ function openAch(){
 }
 const KONAMI=['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a']; let konamiPos=0;
 document.addEventListener('keydown', e=>{
-  const k=e.key.length===1?e.key.toLowerCase():e.key; konamiPos = k===KONAMI[konamiPos] ? konamiPos+1 : (k===KONAMI[0]?1:0);
+  const k=e.key.length===1?keyOf(e):e.key; konamiPos = k===KONAMI[konamiPos] ? konamiPos+1 : (k===KONAMI[0]?1:0);
   if(konamiPos===KONAMI.length){ konamiPos=0; state.stats.konami=true; const svg=$('#sceneSvg'); svg?.classList.add('party'); setTimeout(()=>svg?.classList.remove('party'),7000); toast('The minions dance for the old ones. ↑↑↓↓←→←→BA'); checkAch(); }
 });
 
@@ -4836,7 +4850,7 @@ function openUpdate(){
 
 /* ================= desktop (Tauri) ================= */
 // Everything here is inert in the browser; in the desktop app it adds file storage, tray, mini timer and more.
-const APP_VER='2.2.0';
+const APP_VER='2.2.1';
 const DESK = !!(window.__TAURI__ && window.__TAURI__.core);
 const tinvoke = (cmd,args,opts) => window.__TAURI__.core.invoke(cmd,args,opts);
 const fileName = p => String(p||'').split(/[\\/]/).pop();

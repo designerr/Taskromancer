@@ -289,6 +289,19 @@ fn cloud_backup(folder: String, json: String, stamp: String, keep: usize) -> Res
     Ok(path.to_string_lossy().to_string())
 }
 
+/// Puts a picture on the system clipboard (raw RGBA pixels, width and height in the headers).
+#[tauri::command]
+fn copy_image_rgba(request: tauri::ipc::Request<'_>) -> Result<(), String> {
+    let bytes = raw_body(&request)?;
+    let w: usize = header(&request, "w").and_then(|v| v.parse().ok()).ok_or("missing width")?;
+    let h: usize = header(&request, "h").and_then(|v| v.parse().ok()).ok_or("missing height")?;
+    if w * h * 4 != bytes.len() {
+        return Err("picture size does not match".into());
+    }
+    let mut cb = arboard::Clipboard::new().map_err(err)?;
+    cb.set_image(arboard::ImageData { width: w, height: h, bytes: std::borrow::Cow::Borrowed(bytes) }).map_err(err)
+}
+
 #[tauri::command]
 fn list_dir(path: String) -> Result<Vec<(String, bool)>, String> {
     let mut out: Vec<(String, bool)> = fs::read_dir(&path)
@@ -724,7 +737,8 @@ pub fn run() {
             read_image,
             idle_secs,
             set_zoom,
-            cloud_backup
+            cloud_backup,
+            copy_image_rgba
         ])
         .run(tauri::generate_context!())
         .expect("error while running Taskromancer");

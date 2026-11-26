@@ -1,6 +1,6 @@
 [package]
 name = "taskromancer"
-version = "2.2.0"
+version = "2.2.1"
 description = "Taskromancer: time and quest tracker"
 edition = "2021"
 
@@ -24,6 +24,7 @@ serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 encoding_rs = "0.8"
 base64 = "0.22"
+arboard = "3"
 reqwest = { version = "0.13", default-features = false, features = ["rustls"] }
 
 [profile.release]
